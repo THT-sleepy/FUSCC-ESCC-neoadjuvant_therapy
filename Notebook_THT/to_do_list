@@ -1,0 +1,23 @@
+# 数据预处理
+## 1 Quanlity Control
+* 去除低质量细胞(通过设置nFeature和percent.mt的阈值)
+* 去除cell-free RNA(SoupX,CellBender)
+* 去除双细胞(scDblFinder)
+* 如果在聚类时发现低质量细胞/双细胞聚集在一起需要重设nFeature和percent.mt
+
+## 2 Normalization
+* log(y/s+1),s:size factor
+* 或者可选scran(如果batch effect不能很好去除)
+
+
+## 3 data correction
+* 去除批次效应(Harmony/canonical correlation analysis)
+* 评估去批次效果(scIB)
+* 去细胞周期(Scanpy,Seurat内置细胞周期标记函数+Tricycle)
+
+## 4 feature selection and dimentionality reduction  
+* feature selection(based on deviance)
+* 降维(PCA,t-SNE,UMAP,PHATE)
+
+## 数据预处理示意图
+<img src=".\figures\数据预处理步骤.png">
