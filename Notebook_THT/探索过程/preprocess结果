@@ -1,0 +1,86 @@
+# 第一次对127个样本做预处理的结果讨论         (What)
+
+* Oct 3, 2025                                 (When)
+* liyi /data1/liyi/zhaoyue/FUSCC-ESCC-neoadjuvant_thrapy           (Where)
+* 单细胞数据需要去除cell-free RNA,低质量细胞,必要的情况去除双细胞(Why)
+
+## (How) 质控-标化-筛选特征基因-降维聚类
+### QC
+* 1 对单个样本利用soupX去除cell-free RNA
+* 2 对单个样本利用log1p_total_counts,log1p_n_genes_by_counts,
+ pct_counts_in_top20_genes的情况进行去除，具体来说就是就算出样本中所有细胞的
+ 总counts数,总基因数,前20gene占所有counts的比例的median absolute deviation(MAD)
+然后去掉那些超过中位数+- nMAD的outlier
+* 3 对单个去线粒体基因过多者，标准是线粒体基因占比不超过8%,以及在中位数+- 3MAD范围内
+* 4 最后用scDblFinder标记可能的双细胞
+
+### 标化
+* 用的是Shifted logarithm
+
+### 特征基因筛选
+* 根据single-cell best practices的推荐，用了一种叫binomial deviance的方法，
+ 挑选了前4000的基因(高变基因)
+
+### 降维聚类
+* 利用scanpy自带的包做了pca,tsne以及umap
+
+## (Results)
+### 一开始MAD的n使用的是5
+* pca
+<img src="..\figures\mad5_pca.png">
+* tsne
+<img src="..\figures\mad5_tsne.png">
+* umap
+<img src="..\figures\mad5_umap_simple.png">
+
+结果看起来不太行，有很多散在的小细胞团，我推测可能是
+由于MAD的值设的太大，导致基因数很少的细胞没有被去除
+* Distribution of genes per cell
+<img src="..\figures\mad5_distribution_of_gene_percell.png">
+
+从上图看起来小于500基因的细胞有13w多，所以确实是有这个可能性，
+所以我把MAD设为4,3,2都跑了一遍，为了简单只看tsne和umap
+
+*tsne mad=5
+<img src="..\figures\mad5_tsne.png">
+*tsne mad=4
+<img src="..\figures\mad4_tsne.png">
+*tsne mad=3
+<img src="..\figures\mad3_tsne.png">
+*tsne mad=2
+<img src="..\figures\mad2_tsne.png">
+
+tsne结果不仔细看感觉没什么区别
+
+*umap mad=5
+<img src="..\figures\mad5_umap_simple.png">
+*umap mad=4
+<img src="..\figures\mad4_umap_simple.png">
+*umap mad=3
+<img src="..\figures\mad3_umap_simple.png">
+*tsne mad=2
+<img src="..\figures\mad2_umap_simple.png">
+
+umap不仔细看感觉也是没什么区别
+
+看了下原因是因为用这个MAD的方法去除不了基因数特别少的细胞，
+原因可能是这些细胞所在的样本总的细胞数就比较少？
+* mad=5 Distribution of genes per cell
+<img src="..\figures\mad5_distribution_of_gene_percell.png">
+* mad=4 Distribution of genes per cell
+<img src="..\figures\mad4_distribution_of_gene_percell.png">
+* mad=3 Distribution of genes per cell
+<img src="..\figures\mad3_distribution_of_gene_percell.png">
+* mad=2 Distribution of genes per cell
+<img src="..\figures\mad2_distribution_of_gene_percell.png">
+
+* 各样本的基因数分布箱线图
+<img src="..\figures\genes_per_cell_by_sample_boxplot.png">
+这个图可以看出来pbmc的总体来说gene数都会少一些，另外有一个样本SZR_op_2279307
+的细胞的基因数都特别少，后续可能要去掉
+
+
+
+
+### 为了快速验证下是不是把gene数特别少的细胞去掉就会好一些，在mad=5的基础上把gene<500的细胞都给去掉
+*mad=5 n_Feature>500 umap
