@@ -5,37 +5,9 @@
 
 # In[1]:
 
-
+import sys
 import os
 
-
-# In[2]:
-
-
-print(os.environ['PATH'])
-
-
-# In[3]:
-
-
-conda_path = "/data1/liyi/zhaoyue/miniconda3/envs/sc_preprocess/bin:/data1/liyi/zhaoyue/miniconda3/condabin:/data1/liyi/softwares/STAR-2.7.11b/source:/data1/liyi/softwares/RSEM-master:/home/liyi301/sratoolkit.3.2.1-ubuntu64/bin:/home/liyi301/.local/bin:/home/liyi301/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/usr/libexec/gcc/x86_64-redhat-linux/8:/home/liyi301/.local/bin:/home/liyi301/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin"
-
-
-# In[4]:
-
-
-os.environ['PATH'] = conda_path + os.environ['PATH']
-
-
-# In[5]:
-
-
-print(os.environ['PATH'])
-
-
-# ## 导入包及设置参数
-
-# In[6]:
 
 
 import scanpy as sc
@@ -51,9 +23,9 @@ sc.settings.autoshow = False
 
 # In[9]:
 
-
+input_fpath="RData/"+"mad"+sys.argv[1]+"_"+"hvgn"+sys.argv[2]+"_feature_selection.h5ad"
 adata = sc.read(
-    filename="RData/feature_selection.h5ad"
+    filename=input_fpath
 )
 
 
@@ -73,46 +45,60 @@ sc.pp.pca(adata, svd_solver="arpack", use_highly_variable=True)
 
 # In[12]:
 
-
-sc.pl.pca_scatter(adata, color="total_counts",save="pre04_pca.pdf")
+pcaplt_path = "mad"+sys.argv[1] + "hvg"+ sys.argv[2] + "pre04_pca.pdf"
+sc.pl.pca_scatter(adata, color="total_counts",save=pcaplt_path)
 
 
 # In[13]:
 
 
-sc.tl.tsne(adata, use_rep="X_pca") ##默认是50个PC
+sc.tl.tsne(adata, use_rep="X_pca")
 
 
 # In[14]:
 
-
-sc.pl.tsne(adata, color="total_counts",save="pre04_tsne.pdf")
+tsneplt_path = "mad"+sys.argv[1] + "hvg"+ sys.argv[2] +"pre04_tsne.pdf"
+sc.pl.tsne(adata, color="total_counts",save=tsneplt_path)
 
 
 # In[15]:
 
 
-sc.pp.neighbors(adata) ##默认是50个PC,15个neighbors
+sc.pp.neighbors(adata)
 sc.tl.umap(adata)
 
 
 # In[16]:
 
-
-sc.pl.umap(adata, color="total_counts",save="pre04_umap.pdf")
+umapplt_path1 = "mad"+sys.argv[1] + "hvg"+ sys.argv[2] +"pre04_umap.pdf"
+sc.pl.umap(adata, color="total_counts",save=umapplt_path1)
 
 
 # In[17]:
 
-
+umapplt_path2 = "mad"+sys.argv[1] + "hvg"+ sys.argv[2] +"pre04_umap_annoQC.pdf"
 sc.pl.umap(
     adata,
     color=["total_counts", "pct_counts_mt", "scDblFinder_score", "scDblFinder_class"],
-    save="pre04_umap_annoQC.pdf"
+    save=umapplt_path2
 )
+##基因数目分布直方图
+sc.pp.calculate_qc_metrics(adata, inplace=True)
+import matplotlib.pyplot as plt
+n_genes_per_cell = adata.obs['n_genes_by_counts']
+plt.figure(figsize=(10, 6))
+plt.hist(n_genes_per_cell, bins=50, color='skyblue', edgecolor='black')
+plt.title('Distribution of Number of Genes per Cell', fontsize=16)
+plt.xlabel('Number of Genes', fontsize=12)
+plt.ylabel('Number of Cells', fontsize=12)
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+barplot_fpath = "plots/" + "mad" + sys.argv[1] + "n_genes_distribution.pdf"
+plt.savefig(barplot_fpath, dpi=300)
+plt.close()
 
 
 # In[18]:
 
+output_fpath="RData/"+ "mad"+sys.argv[1]+"_"+"hvg"+ sys.argv[2] +"_dimensionality_reduction.h5ad"
+adata.write(output_fpath)
 
-adata.write("RData/dimensionality_reduction.h5ad")

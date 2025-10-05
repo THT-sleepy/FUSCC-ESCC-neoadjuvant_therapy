@@ -1,36 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# ## 修改路径为conda路径
-
-# In[1]:
-
+##指定MAD的值
+import sys
+mad_n = int(sys.argv[1])
+n = int(sys.argv[2])
 
 import os
-
-
-# In[2]:
-
-
-print(os.environ['PATH'])
-
-
-# In[3]:
-
-
-conda_path ="/data1/liyi/zhaoyue/miniconda3/envs/sc_preprocess/bin:/data1/liyi/zhaoyue/miniconda3/condabin:/data1/liyi/softwares/STAR-2.7.11b/source:/data1/liyi/softwares/RSEM-master:/home/liyi301/sratoolkit.3.2.1-ubuntu64/bin:/home/liyi301/.local/bin:/home/liyi301/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/usr/libexec/gcc/x86_64-redhat-linux/8:/home/liyi301/.local/bin:/home/liyi301/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin"
-
-
-# In[4]:
-
-
-os.environ['PATH'] = conda_path + os.environ['PATH']
-
-
-# In[5]:
-
-
-print(os.environ['PATH'])
 
 
 # ## 导入库
@@ -79,9 +55,11 @@ for sample_id in os.listdir(data_root):
     # 构建cluster信息文件路径
     cluster_path = os.path.join(sample_dir,"clusters.csv")
     # 指定质控后h5ad文件输出路径
-    quanlity_control_h5_path = os.path.join(sample_dir,"quanlity_control.h5ad")
+    qc_fname = "mad" + sys.argv[1] + "_quanlity_control.h5ad"
+    quanlity_control_h5_path = os.path.join(sample_dir,qc_fname)
     # 指定质控信息输出路径
-    quanlity_control_info_path = os.path.join(sample_dir,"quanlity_control_info.txt")
+    qc_info_fname = "mad" + sys.argv[1] + "_quanlity_control_info.txt"
+    quanlity_control_info_path = os.path.join(sample_dir,qc_info_fname)
     # 构建样本信息字典
     sample_info = {
                 "sample_id": sample_id,
@@ -290,9 +268,9 @@ def is_outlier(adata, metric: str, nmads: int):
 
 
 adata.obs["outlier"] = (
-    is_outlier(adata, "log1p_total_counts", 5)
-    | is_outlier(adata, "log1p_n_genes_by_counts", 5)
-    | is_outlier(adata, "pct_counts_in_top_20_genes", 5)
+    is_outlier(adata, "log1p_total_counts", mad_n)
+    | is_outlier(adata, "log1p_n_genes_by_counts", mad_n)
+    | is_outlier(adata, "pct_counts_in_top_20_genes", mad_n)
 )
 adata.obs.outlier.value_counts()
 

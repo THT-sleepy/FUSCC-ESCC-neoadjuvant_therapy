@@ -1,37 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# ## 修改路径为conda路径
-
-# In[1]:
-
-
-import os
-print(os.environ['PATH'])
-
-
-# In[2]:
-
-
-conda_path = "/data1/liyi/zhaoyue/miniconda3/envs/sc_preprocess/bin:/data1/liyi/zhaoyue/miniconda3/condabin:/data1/liyi/softwares/STAR-2.7.11b/source:/data1/liyi/softwares/RSEM-master:/home/liyi301/sratoolkit.3.2.1-ubuntu64/bin:/home/liyi301/.local/bin:/home/liyi301/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/usr/libexec/gcc/x86_64-redhat-linux/8:/home/liyi301/.local/bin:/home/liyi301/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin"
-
-
-# In[3]:
-
-
-os.environ['PATH'] = conda_path + os.environ['PATH']
-
-
-# In[4]:
-
-
-print(os.environ['PATH'])
-
-
 # ## 导入包,设置scanpy参数
-
-# In[5]:
-
+import sys
+import os
 
 import pandas as pd
 import ast
@@ -81,11 +53,12 @@ samples = []
 for sample_id in os.listdir(data_root):
     # 样本文件夹的完整路径
     sample_dir = os.path.join(data_root, sample_id)
-    
     # 指定质控后h5ad文件输出路径
-    quanlity_control_h5_path = os.path.join(sample_dir,"quanlity_control.h5ad")
+    qc_fname = "mad" + sys.argv[1] + "_quanlity_control.h5ad"
+    quanlity_control_h5_path = os.path.join(sample_dir,qc_fname)
     # 指定质控信息输出路径
-    quanlity_control_info_path = os.path.join(sample_dir,"quanlity_control_info.txt")
+    qc_info_fname = "mad" + sys.argv[1] + "_quanlity_control_info.txt"
+    quanlity_control_info_path = os.path.join(sample_dir,qc_info_fname)
     # 构建样本信息字典
     sample_info = {
                 "sample_id": sample_id,
@@ -94,10 +67,6 @@ for sample_id in os.listdir(data_root):
             }
     # 添加到样本列表
     samples.append(sample_info)
-
-
-
-# In[10]:
 
 
 qc_info = []
@@ -118,9 +87,8 @@ for sample_dict in samples:
 
 
 # In[11]:
-
-
-qc_info
+with open('qc_info.txt', 'w', encoding='utf-8') as f:
+    f.write(str(qc_info))
 
 
 # ## 把质控好的矩阵合并到一起
@@ -187,5 +155,6 @@ scales_counts = sc.pp.normalize_total(adata, target_sum=None, inplace=False)
 # log1p transform
 adata.layers["log1p_norm"] = sc.pp.log1p(scales_counts["X"], copy=True)
 
-adata.write("RData/normalization.h5ad")
+output_fname="RData/"+"mad"+sys.argv[1]+"_"+"normalization.h5ad"
+adata.write(output_fname)
 
