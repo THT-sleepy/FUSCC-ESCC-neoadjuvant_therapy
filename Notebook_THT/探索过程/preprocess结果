@@ -131,5 +131,9 @@ umap不仔细看感觉也是没什么区别
 <img src="..\figures\mad4_hvg1000_bbknn_sample_corrected_umap.png">
 这个看起来要比上面更好，但是pbmc_op混的更差
 
+
+
 *to do
 按照single cell best practices的推荐,多样本feature selection需要是batch-aware的
+
+mad=5 hvg=4000 PC=50 neighbors=30 batch_key=sample 看起来是目前不错的选择
