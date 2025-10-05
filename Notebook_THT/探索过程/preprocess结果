@@ -84,3 +84,52 @@ umap不仔细看感觉也是没什么区别
 
 ### 为了快速验证下是不是把gene数特别少的细胞去掉就会好一些，在mad=5的基础上把gene<500的细胞都给去掉
 *mad=5 n_Feature>500 umap
+<img src= "..\figures\mad5_geneover500_umap.png">
+另外下面这张图也说明并不是gene数特别少的细胞太多的问题，因为那些
+分散的小细胞团的基因数并不都很少
+*mad=4 hvg=1000
+<img src="..\figures\mad4_hvg1000_ngenes_umap.png">
+
+
+发现并不是这个问题，但公司聚出来挺好的？？
+
+更有可能是batch effect?或者高变基因选的太多了?
+
+理论上来说高变基因选的多了只是会算的慢和过拟合，应该不至于
+对降维聚类有负性影响，但还是先看了一下
+
+*mad=4 hvg=3000
+<img src="..\figures\mad4_hvg3000_umap.png">
+
+*mad=4 hvg=2000
+<img src="..\figures\mad4_hvg2000_umap.png">
+
+*mad=4 hvg=1000
+<img src="..\figures\mad4_hvg1000_umap.png">
+
+出乎意料，hvg降低后聚类结果变得更好了，说明hvg4000可能确实太多了？？
+
+
+
+
+不过umap聚类还是不够理想，还需要检查批次效应和对双细胞进行去除
+
+
+## 检查和去除批次效应
+*mad=4 hvg=1000 color=sample_group
+<img src="..\figures\mad4_hvg1000_samplegroup_umap.png">
+可以看到批次效应还是相当明显的，特别是pbmc_op和其它两组几乎完全是分开的
+
+打算使用Harmony(linear embedding model)和bbknn(graph based model;使用bychen yuqing,2014,cancer cell)方法，以取样类型或样本为单位进行
+去批次，取效果最佳者
+
+*mad=4 hvg=1000 method=bbknn batch=sample_group
+<img src="..\figures\mad4_hvg1000_bbknn_samplegroup_corrected_umap.png">
+看起来op和pre混的不错，但pbmc_op还是混的不好
+
+*mad=4 hvg=1000 method=bbknn batch=sample
+<img src="..\figures\mad4_hvg1000_bbknn_sample_corrected_umap.png">
+这个看起来要比上面更好，但是pbmc_op混的更差
+
+*to do
+按照single cell best practices的推荐,多样本feature selection需要是batch-aware的

@@ -80,7 +80,7 @@ sc.pl.pca_scatter(adata, color="total_counts",save="pre04_pca.pdf")
 # In[13]:
 
 
-sc.tl.tsne(adata, use_rep="X_pca")
+sc.tl.tsne(adata, use_rep="X_pca") ##默认是50个PC
 
 
 # In[14]:
@@ -92,7 +92,7 @@ sc.pl.tsne(adata, color="total_counts",save="pre04_tsne.pdf")
 # In[15]:
 
 
-sc.pp.neighbors(adata)
+sc.pp.neighbors(adata) ##默认是50个PC,15个neighbors
 sc.tl.umap(adata)
 
 
@@ -116,4 +116,3 @@ sc.pl.umap(
 
 
 adata.write("RData/dimensionality_reduction.h5ad")
-
