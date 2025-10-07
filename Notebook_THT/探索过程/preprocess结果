@@ -131,9 +131,22 @@ umap不仔细看感觉也是没什么区别
 <img src="..\figures\mad4_hvg1000_bbknn_sample_corrected_umap.png">
 这个看起来要比上面更好，但是pbmc_op混的更差
 
+*mad=4 hvg=1000 method=harmony batch=sample_group
+<img src="..\figures\mad4_hvg1000_harmony_samplegroup_corrected_umap.png">
+
+*mad=4 hvg=1000 method=harmony batch=sample
+<img src="..\figures\mad4_hvg1000_harmony_sample_corrected_umap.png">
+
+harmony的方法比起bbknn pbmc_op混的更好
+
+### 至此总结一下，MAD对聚类结果影响不大，因此可以就选择比较permisive的5，高变基因数对聚类结果有影响，hvg=1000和hvg=4000比起来聚类结果看起来要好一些(但最后还是选了4000 理由见下一条)。对聚类结果影响最大的是批次效应，使用Harmony以单个样本为批次可以较好地去除批次效应。
+
+### 根据single cell best practices的说法，虽然选择较小的高变基因数的确有一定的去批次作用，但为了描述更多的生物学效应，选择 slightly too many要比too few好
+<img src="..\figures\scbp-关于hvg数目选择的建议.png">
+
 
 
 *to do
-按照single cell best practices的推荐,多样本feature selection需要是batch-aware的
+按照single cell best practices的推荐,多样本feature selection需要是batch-aware的-done
 
 mad=5 hvg=4000 PC=50 neighbors=30 batch_key=sample 看起来是目前不错的选择
