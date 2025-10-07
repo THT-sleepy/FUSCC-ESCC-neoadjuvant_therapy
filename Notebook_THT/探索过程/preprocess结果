@@ -144,6 +144,7 @@ harmony的方法比起bbknn pbmc_op混的更好
 ### 根据single cell best practices的说法，虽然选择较小的高变基因数的确有一定的去批次作用，但为了描述更多的生物学效应，选择 slightly too many要比too few好
 <img src="..\figures\scbp-关于hvg数目选择的建议.png">
 
+*mad=5 hvg=4000 PC=50 neighbors=30 batch_method =harmony batch_key=sample
 
 
 *to do
