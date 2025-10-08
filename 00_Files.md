@@ -1,8 +1,11 @@
 # Files generate for this project and their location
 
 ##cellranger结果(没有任何下游filter)
-all_matrix.zip文件-127个样本的所有结果:位置在THT百度网盘以及THT生信技能树服务器/home/data/t190513/FUSCC-ESCC-neoadjuvant_thrapy/input/all_matrix/all_matrix.zip
+all_matrix.zip文件-127个样本的filtered matrix:位置在THT百度网盘/食管癌新辅助课题数据
+final_cellranger_data.zip-127个样本的cell ranger完整结果(比上面的多raw matrix和cluster.csv文件等)：位置在THT百度网盘/食管癌新辅助课题数据
 
+##患者临床信息表格
+单细胞测序患者.xls:位置在THT百度网盘/食管癌新辅助课题数据
 
 
 ## Raw data location
@@ -11,7 +14,7 @@ Be sure you have a local copy of the raw data saved to your own file system or b
 
 
 ### Illumina Reads
-xx
+
 ### Nanopore Reads
 
 ### Pacbio Reads
