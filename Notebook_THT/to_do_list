@@ -1,4 +1,4 @@
-# 数据预处理-done?
+# 数据预处理-done
 ## 1 Quanlity Control
 * 去除低质量细胞(通过设置nFeature和percent.mt的阈值)-done
 * 去除cell-free RNA(SoupX,CellBender)-done
@@ -23,6 +23,7 @@
 <img src=".\figures\数据预处理步骤.png">
 
 # 注释和双细胞的去除
+
 ##1 level1(上皮,免疫,基质细胞)注释和去除双细胞
 
 ##2 level2(免疫分为T,B,ILC,髓系)注释

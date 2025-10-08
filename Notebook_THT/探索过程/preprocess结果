@@ -156,8 +156,8 @@ harmony的方法比起bbknn pbmc_op混的更好
 
 
 ## 需要获得/讨论的信息
-* hvg的选择
+* hvg的选择-在聚类可接受的情况下越高越好
 * response group
 * color pallete/和颜色深浅
 * 关于level1注释 canonical marker的选择，EPCAM和MME不表达样本？(查查文献)
-* 有一个基因数特别低的样本是否要去除？
+* 有一个基因数特别低的样本是否要去除？-先不管吧
