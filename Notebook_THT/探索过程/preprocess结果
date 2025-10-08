@@ -148,15 +148,22 @@ harmony的方法比起bbknn pbmc_op混的更好
 ### 所以也试了下把hvg稍微设高一点会怎样
 *mad=5 hvg=4000 PC=50 neighbors=30 batch_method=harmony batch_key=sample
 <img src="..\figures\mad5_hvg4000_neighbor30_sample_harmony_corrected_umap.png">
-好像hvg弄到4000还是不太行..
 
 *mad=5 hvg=2000 PC=50 neighbors=30 batch_method=harmony batch_key=sample
 <img src="..\figures\mad5_hvg2000neighbors30_sample_harmony_corrected_umap.png">
 
+### 设高一些会出现的情况是有一些拉丝的和细胞大群之间的散在细胞，考虑可能是双细胞
+* 去掉双细胞 MAD=5,hvg=2000,PC=30,neighbors=30,method=harmony,batch=sample
+<img src="..\figures\umapmad5_hvg2000_neighbor30_pc30_nodouble.png">
+* 去掉双细胞 MAD=5,hvg=4000,PC=30,neighbors=30,method=harmony,batch=sample
+<img src="..\figures\umapmad5_hvg4000_neighbor30_pc30_nodouble.png">
+
+# okk,后面的注释就从去掉双细胞(scDoubleFinder)，MAD=5,hvg=2000,PC=30,neighbors=30,method=harmony,batch=sample开始吧
+
 
 
 ## 需要获得/讨论的信息
-* hvg的选择-在聚类可接受的情况下越高越好
+* hvg的选择-和傅师兄讨论下来觉得还是设高一点比较好
 * response group
 * color pallete/和颜色深浅
 * 关于level1注释 canonical marker的选择，EPCAM和MME不表达样本？(查查文献)
