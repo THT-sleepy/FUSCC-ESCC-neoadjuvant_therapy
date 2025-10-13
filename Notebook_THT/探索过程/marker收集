@@ -57,4 +57,142 @@ T cells with expression of both CD4 and CD8A/B were considered as unresolved
 T cells, which were not included in downstream analysis.
 
 # CellMarker2.0数据库食管癌
+
+B:CD19,CD27,CD79A,FCER2,IGHD,IGKC,JCHAIN,MS4A1,MZB1,TCL1A,TNFRSF13B<br>
+Epi: CDH1,Claudin,E-cadherin,EPCAM,JUP,KRT13,KRT14,KRT5,PPL,SFN,SPRR3,TFF3<br>
+Myeloid: C1QB,CD14,CD68,CLEC4C,CSF1R,IL3RA,LAMP3,LYZ,TPSAB1<br>
+Stromal:COL1A2,DCN,FBLN1
+T:CD2,CD3,CD3D,CD3E,CD3G,TRBC2
+
 # 联川公司大类注释Marker
+Epithelial:EPCAM,KRT8,KRT18,SFN,KRT5,KRT14
+Fibroblasts:DCN,COL1A1,COL3A1,FN1,COL1A2,COL6A1
+Endothelial_cells:VWF,PECAM1,ENG,CDH5
+T :TRAC,CD4,CD3E,CD3D,CD3G,CD8A,CD8B
+Mast: KIT,TPSB2,CPA3,TPSAB1,TNF,MS4A2,HDC,CSF1,CCL3
+NK:GZMA,NCAM1,NKG7,KLRC1,IFNG,GZMB,KLRD1
+B:CD79A,CD79B,MZB1,MS4A1,CD19,CD40
+Macrophage:CSF1R,IL1B,MRC1,ARG1,CD163,C1QA
+Monocytes:CD14,FCN1,CCR2,LYZ,VCAN
+Neutrophils:S100A8,S100A9,MMP9,CXCR2,CSF3R
+cycle_cells:MKI67
+Plasma:MZB1,IGKC
+
+# single cell best practices免疫marker(它这个是骨髓里免疫细胞)
+marker_genes = {
+    "CD14+ Mono": ["FCN1", "CD14"],
+    "CD16+ Mono": ["TCF7L2", "FCGR3A", "LYN"],
+    "ID2-hi myeloid prog": [
+        "CD14",
+        "ID2",
+        "VCAN",
+        "S100A9",
+        "CLEC12A",
+        "KLF4",
+        "PLAUR",
+    ],
+    "cDC1": ["CLEC9A", "CADM1"],
+    "cDC2": [
+        "CST3",
+        "COTL1",
+        "LYZ",
+        "DMXL2",
+        "CLEC10A",
+        "FCER1A",
+    ],  # Note: DMXL2 should be negative
+    "Normoblast": ["SLC4A1", "SLC25A37", "HBB", "HBA2", "HBA1", "TFRC"],
+    "Erythroblast": ["MKI67", "HBA1", "HBB"],
+    "Proerythroblast": [
+        "CDK6",
+        "SYNGR1",
+        "HBM",
+        "GYPA",
+    ],  # Note HBM and GYPA are negative markers
+    "NK": ["GNLY", "NKG7", "CD247", "GRIK4", "FCER1G", "TYROBP", "KLRG1", "FCGR3A"],
+    "ILC": ["ID2", "PLCG2", "GNLY", "SYNE1"],
+    "Lymph prog": [
+        "VPREB1",
+        "MME",
+        "EBF1",
+        "SSBP2",
+        "BACH2",
+        "CD79B",
+        "IGHM",
+        "PAX5",
+        "PRKCE",
+        "DNTT",
+        "IGLL1",
+    ],
+    "Naive CD20+ B": ["MS4A1", "IL4R", "IGHD", "FCRL1", "IGHM"],
+    "B1 B": [
+        "MS4A1",
+        "SSPN",
+        "ITGB1",
+        "EPHA4",
+        "COL4A4",
+        "PRDM1",
+        "IRF4",
+        "CD38",
+        "XBP1",
+        "PAX5",
+        "BCL11A",
+        "BLK",
+        "IGHD",
+        "IGHM",
+        "ZNF215",
+    ],  # Note IGHD and IGHM are negative markers
+    "Transitional B": ["MME", "CD38", "CD24", "ACSM3", "MSI2"],
+    "Plasma cells": ["MZB1", "HSP90B1", "FNDC3B", "PRDM1", "IGKC", "JCHAIN"],
+    "Plasmablast": ["XBP1", "RF4", "PRDM1", "PAX5"],  # Note PAX5 is a negative marker
+    "CD4+ T activated": ["CD4", "IL7R", "TRBC2", "ITGB1"],
+    "CD4+ T naive": ["CD4", "IL7R", "TRBC2", "CCR7"],
+    "CD8+ T": ["CD8A", "CD8B", "GZMK", "GZMA", "CCL5", "GZMB", "GZMH", "GZMA"],
+    "T activation": ["CD69", "CD38"],  # CD69 much better marker!
+    "T naive": ["LEF1", "CCR7", "TCF7"],
+    "pDC": ["GZMB", "IL3RA", "COBLL1", "TCF4"],
+    "G/M prog": ["MPO", "BCL2", "KCNQ5", "CSF3R"],
+    "HSC": ["NRIP1", "MECOM", "PROM1", "NKAIN2", "CD34"],
+    "MK/E prog": [
+        "ZNF385D",
+        "ITGA2B",
+        "RYR3",
+        "PLCB1",
+    ],  # Note PLCB1 is a negative marker
+}
+
+
+## 总结
+### 1大类
+marker_genes = {
+"Immune":["PTPRC"],
+"Fib": ["DCN","COL1A1","COL1A2","FN1","COL3A1","COL6A1"],
+"Endo" : ["VWF","PECAM1","ENG","CDH5"],
+"Epi" : ["EPCAM","KRT8","KRT18","SFN","KRT5","KRT14",
+         "CDH1","JUP","KRT13",
+         "PPL","SPRR3"],
+}
+
+### 2大类-免疫细分为B,T,髓系,ILC?
+T细胞:<br>
+CD2是早期的T细胞marker,广泛表达于T,NK,部分B和单核<br>
+CD3和TCR形成CD3-TCR复合物<br>
+TRAC是编码T细胞受体（TCR）α链恒定区的基因<br>
+TRBC2 编码TCR β链
+
+
+B细胞
+CD19存在于自原始B细胞（Progenitor B cell）后期以后的各阶段，包括浆细胞。(好像T细胞也有表达?)<br>
+CD79A和CD79B编码的蛋白和BCR形成复合物<br>
+MS4A1(CD20)在B细胞的活化和信号转导中有重要作用<br>
+JCHAIN J链把IGA和IGM的单体连接在一起<br>
+MZB1 marginal zone B and B1 cell specific protein Gene<br>
+
+髓系
+主要包括巨噬细胞,粒细胞,单核细胞,树突状细胞
+
+Immnue_marker_genes ={
+"T":["CD3D","CD2","CD3E","CD3G","TRAC","TRBC2"],
+"B":["CD79A","MS4A1","CD79B","JCHAIN","CD19","MZB1"],
+"Myeloids":["LYZ","CD14","GCA","HPGDS","CD68","IL3RA","LAMP3",
+            "CLEC4C","TPSAB1"],
+}
