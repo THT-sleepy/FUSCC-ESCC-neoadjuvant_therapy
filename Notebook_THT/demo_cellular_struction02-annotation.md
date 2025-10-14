@@ -61,7 +61,7 @@ from scipy.sparse import csr_matrix
 ```
 
     In order to use the mouse gastrulation seqFISH datsets, please install squidpy (see https://github.com/scverse/squidpy).
-    In order to use sagenet models, please install pytorch geometric (see https://pytorch-geometric.readthedocs.io) and 
+    In order to use sagenet models, please install pytorch geometric (see https://pytorch-geometric.readthedocs.io) and
      captum (see https://github.com/pytorch/captum).
     mvTCR is not installed. To use mvTCR models, please install it first using "pip install mvtcr"
     multigrate is not installed. To use multigrate models, please install it first using "pip install multigrate".
@@ -107,7 +107,7 @@ marker_genes = {
     "Fibro Cell" : ["MME", "COL1A2", "DCN", "FBLN1",
                     "COL1A1","COL3A1","FN1","COL6A1"],
     "Endo Cell" : ["PECAM1"]
-   , 
+   ,
 }
 ```
 
@@ -148,7 +148,7 @@ level1_cts = [
     "Immune Cell",
     "Fibro Cell",
     "Endo Cell",
-] 
+]
 ```
 
 
@@ -186,54 +186,54 @@ for ct in level1_cts:
 
 
 
-    
+
 ![png](output_23_1.png)
-    
 
 
-    
-    
-    
-    
+
+
+
+
+
     IMMUNE CELL:
 
 
 
-    
+
 ![png](output_23_3.png)
-    
 
 
-    
-    
-    
-    
+
+
+
+
+
     FIBRO CELL:
 
 
 
-    
+
 ![png](output_23_5.png)
-    
 
 
-    
-    
-    
-    
+
+
+
+
+
     ENDO CELL:
 
 
 
-    
+
 ![png](output_23_7.png)
-    
 
 
-    
-    
-    
-    
+
+
+
+
+
 
 
 
@@ -256,131 +256,9 @@ adata
 
 
 
-```python
-?sc.tl.umap
-```
 
 
-    [0;31mSignature:[0m
-    [0msc[0m[0;34m.[0m[0mtl[0m[0;34m.[0m[0mumap[0m[0;34m([0m[0;34m[0m
-    [0;34m[0m    [0madata[0m[0;34m:[0m [0;34m'AnnData'[0m[0;34m,[0m[0;34m[0m
-    [0;34m[0m    [0;34m*[0m[0;34m,[0m[0;34m[0m
-    [0;34m[0m    [0mmin_dist[0m[0;34m:[0m [0;34m'float'[0m [0;34m=[0m [0;36m0.5[0m[0;34m,[0m[0;34m[0m
-    [0;34m[0m    [0mspread[0m[0;34m:[0m [0;34m'float'[0m [0;34m=[0m [0;36m1.0[0m[0;34m,[0m[0;34m[0m
-    [0;34m[0m    [0mn_components[0m[0;34m:[0m [0;34m'int'[0m [0;34m=[0m [0;36m2[0m[0;34m,[0m[0;34m[0m
-    [0;34m[0m    [0mmaxiter[0m[0;34m:[0m [0;34m'int | None'[0m [0;34m=[0m [0;32mNone[0m[0;34m,[0m[0;34m[0m
-    [0;34m[0m    [0malpha[0m[0;34m:[0m [0;34m'float'[0m [0;34m=[0m [0;36m1.0[0m[0;34m,[0m[0;34m[0m
-    [0;34m[0m    [0mgamma[0m[0;34m:[0m [0;34m'float'[0m [0;34m=[0m [0;36m1.0[0m[0;34m,[0m[0;34m[0m
-    [0;34m[0m    [0mnegative_sample_rate[0m[0;34m:[0m [0;34m'int'[0m [0;34m=[0m [0;36m5[0m[0;34m,[0m[0;34m[0m
-    [0;34m[0m    [0minit_pos[0m[0;34m:[0m [0;34m'_InitPos | np.ndarray | None'[0m [0;34m=[0m [0;34m'spectral'[0m[0;34m,[0m[0;34m[0m
-    [0;34m[0m    [0mrandom_state[0m[0;34m:[0m [0;34m'_LegacyRandom'[0m [0;34m=[0m [0;36m0[0m[0;34m,[0m[0;34m[0m
-    [0;34m[0m    [0ma[0m[0;34m:[0m [0;34m'float | None'[0m [0;34m=[0m [0;32mNone[0m[0;34m,[0m[0;34m[0m
-    [0;34m[0m    [0mb[0m[0;34m:[0m [0;34m'float | None'[0m [0;34m=[0m [0;32mNone[0m[0;34m,[0m[0;34m[0m
-    [0;34m[0m    [0mmethod[0m[0;34m:[0m [0;34m"Literal['umap', 'rapids']"[0m [0;34m=[0m [0;34m'umap'[0m[0;34m,[0m[0;34m[0m
-    [0;34m[0m    [0mkey_added[0m[0;34m:[0m [0;34m'str | None'[0m [0;34m=[0m [0;32mNone[0m[0;34m,[0m[0;34m[0m
-    [0;34m[0m    [0mneighbors_key[0m[0;34m:[0m [0;34m'str'[0m [0;34m=[0m [0;34m'neighbors'[0m[0;34m,[0m[0;34m[0m
-    [0;34m[0m    [0mcopy[0m[0;34m:[0m [0;34m'bool'[0m [0;34m=[0m [0;32mFalse[0m[0;34m,[0m[0;34m[0m
-    [0;34m[0m[0;34m)[0m [0;34m->[0m [0;34m'AnnData | None'[0m[0;34m[0m[0;34m[0m[0m
-    [0;31mDocstring:[0m
-    Embed the neighborhood graph using UMAP :cite:p:`McInnes2018`.
-    
-    UMAP (Uniform Manifold Approximation and Projection) is a manifold learning
-    technique suitable for visualizing high-dimensional data. Besides tending to
-    be faster than tSNE, it optimizes the embedding such that it best reflects
-    the topology of the data, which we represent throughout Scanpy using a
-    neighborhood graph. tSNE, by contrast, optimizes the distribution of
-    nearest-neighbor distances in the embedding such that these best match the
-    distribution of distances in the high-dimensional space.
-    We use the implementation of umap-learn_ :cite:p:`McInnes2018`.
-    For a few comparisons of UMAP with tSNE, see :cite:t:`Becht2018`.
-    
-    .. _umap-learn: https://github.com/lmcinnes/umap
-    
-    Parameters
-    ----------
-    adata : 'AnnData'
-        Annotated data matrix.
-    min_dist : 'float', optional (default: 0.5)
-        The effective minimum distance between embedded points. Smaller values
-        will result in a more clustered/clumped embedding where nearby points on
-        the manifold are drawn closer together, while larger values will result
-        on a more even dispersal of points. The value should be set relative to
-        the ``spread`` value, which determines the scale at which embedded
-        points will be spread out. The default of in the `umap-learn` package is
-        0.1.
-    spread : 'float', optional (default: 1.0)
-        The effective scale of embedded points. In combination with `min_dist`
-        this determines how clustered/clumped the embedded points are.
-    n_components : 'int', optional (default: 2)
-        The number of dimensions of the embedding.
-    maxiter : 'int | None', optional (default: None)
-        The number of iterations (epochs) of the optimization. Called `n_epochs`
-        in the original UMAP.
-    alpha : 'float', optional (default: 1.0)
-        The initial learning rate for the embedding optimization.
-    gamma : 'float', optional (default: 1.0)
-        Weighting applied to negative samples in low dimensional embedding
-        optimization. Values higher than one will result in greater weight
-        being given to negative samples.
-    negative_sample_rate : 'int', optional (default: 5)
-        The number of negative edge/1-simplex samples to use per positive
-        edge/1-simplex sample in optimizing the low dimensional embedding.
-    init_pos : '_InitPos | np.ndarray | None', optional (default: 'spectral')
-        How to initialize the low dimensional embedding. Called `init` in the
-        original UMAP. Options are:
-    
-        * Any key for `adata.obsm`.
-        * 'paga': positions from :func:`~scanpy.pl.paga`.
-        * 'spectral': use a spectral embedding of the graph.
-        * 'random': assign initial embedding positions at random.
-        * A numpy array of initial embedding positions.
-    random_state : '_LegacyRandom', optional (default: 0)
-        If `int`, `random_state` is the seed used by the random number generator;
-        If `RandomState` or `Generator`, `random_state` is the random number generator;
-        If `None`, the random number generator is the `RandomState` instance used
-        by `np.random`.
-    a : 'float | None', optional (default: None)
-        More specific parameters controlling the embedding. If `None` these
-        values are set automatically as determined by `min_dist` and
-        `spread`.
-    b : 'float | None', optional (default: None)
-        More specific parameters controlling the embedding. If `None` these
-        values are set automatically as determined by `min_dist` and
-        `spread`.
-    method : "Literal['umap', 'rapids']", optional (default: 'umap')
-        Chosen implementation.
-    
-        ``'umap'``
-            Umap’s simplical set embedding.
-        ``'rapids'``
-            GPU accelerated implementation.
-    
-            .. deprecated:: 1.10.0
-                Use :func:`rapids_singlecell.tl.umap` instead.
-    key_added : 'str | None', optional (default: None)
-        If not specified, the embedding is stored as
-        :attr:`~anndata.AnnData.obsm`\ `['X_umap']` and the the parameters in
-        :attr:`~anndata.AnnData.uns`\ `['umap']`.
-        If specified, the embedding is stored as
-        :attr:`~anndata.AnnData.obsm`\ ``[key_added]`` and the the parameters in
-        :attr:`~anndata.AnnData.uns`\ ``[key_added]``.
-    neighbors_key : 'str', optional (default: 'neighbors')
-        Umap looks in
-        :attr:`~anndata.AnnData.uns`\ ``[neighbors_key]`` for neighbors settings and
-        :attr:`~anndata.AnnData.obsp`\ ``[.uns[neighbors_key]['connectivities_key']]`` for connectivities.
-    copy : 'bool', optional (default: False)
-        Return a copy instead of writing to adata.
-    
-    Returns
-    -------
-    Returns `None` if `copy=False`, else returns an `AnnData` object. Sets the following fields:
-    
-    `adata.obsm['X_umap' | key_added]` : :class:`numpy.ndarray` (dtype `float`)
-        UMAP coordinates of data.
-    `adata.uns['umap' | key_added]` : :class:`dict`
-        UMAP parameters.
-    [0;31mFile:[0m      ~/miniconda3/envs/sc_annotation/lib/python3.10/site-packages/scanpy/tools/_umap.py
-    [0;31mType:[0m      function
+
 
 
 
@@ -389,9 +267,9 @@ sc.pl.umap(adata, color=["leiden_res0_1","scDblFinder_class"],legend_loc="on dat
 ```
 
 
-    
+
 ![png](output_26_0.png)
-    
+
 
 
 ### 用点图来看一下
@@ -416,9 +294,9 @@ sc.pl.dotplot(
 ```
 
 
-    
+
 ![png](output_29_0.png)
-    
+
 
 
 
@@ -437,7 +315,7 @@ cl_annotation = {
 
 
 ```python
-adata.obs["manual_celltype_level1"] = adata.obs.leiden_res0_1.map(cl_annotation)
+adata.obs["manual_celltype_level1"]=adata.obs.leiden_res0_1.map(cl_annotation)
 ```
 
 
@@ -446,9 +324,9 @@ sc.pl.umap(adata, color=["manual_celltype_level1"])
 ```
 
 
-    
+
 ![png](output_32_0.png)
-    
+
 
 
 
@@ -468,9 +346,9 @@ sc.pl.rank_genes_groups_dotplot(
 ```
 
 
-    
+
 ![png](output_35_0.png)
-    
+
 
 
 ### 有些基因在多个cluster高表达，过滤一下这些基因
@@ -498,9 +376,9 @@ sc.pl.rank_genes_groups_dotplot(
 ```
 
 
-    
+
 ![png](output_38_0.png)
-    
+
 
 
 ## 可以再详细看每个cluster
@@ -579,7 +457,7 @@ fixed_columns = []
 for field in field_names:
     # 提取当前字段的列数据（每个字段对应一列）
     col_data = names_recarray[field]  # 每列是一个 numpy 数组（元素可能是 object 类型，含 nan）
-    
+
     # 处理该列的 nan：将 nan 转为空字符串 ""，其他元素转为字符串
     # 注意：object 类型数组中的 nan 需用 np.isnan 先判断（但需避免非数值类型报错）
     def safe_replace_nan(x):
@@ -587,7 +465,7 @@ for field in field_names:
             return ""  #  nan 替换为空字符串
         else:
             return str(x)  # 其他元素转为字符串
-    
+
     # 对列中每个元素应用处理函数
     fixed_col = np.array([safe_replace_nan(x) for x in col_data], dtype=str)
     fixed_columns.append(fixed_col)
@@ -611,7 +489,7 @@ print("是否存在非字符串值:", any(not isinstance(x, str) for row in name
     recarray 字段名: ('0', '1', '2', '3', '4', '5', '6', '7')
     修复后数组 dtype: <U15
     修复后数组形状: (15674, 8)
-    
+
     修复后前 3 行数据:
     [['' 'NKG7' 'AIF1' 'IL7R' 'CALD1' '' '' 'LST1']
      ['' '' 'SPI1' 'LTB' 'SPARC' '' 'PECAM1' 'AIF1']
@@ -637,7 +515,7 @@ fixed_columns = []
 for field in field_names:
     # 提取当前字段的列数据（每个字段对应一列）
     col_data = names_recarray[field]  # 每列是一个 numpy 数组（元素可能是 object 类型，含 nan）
-    
+
     # 处理该列的 nan：将 nan 转为空字符串 ""，其他元素转为字符串
     # 注意：object 类型数组中的 nan 需用 np.isnan 先判断（但需避免非数值类型报错）
     def safe_replace_nan(x):
@@ -645,7 +523,7 @@ for field in field_names:
             return ""  #  nan 替换为空字符串
         else:
             return str(x)  # 其他元素转为字符串
-    
+
     # 对列中每个元素应用处理函数
     fixed_col = np.array([safe_replace_nan(x) for x in col_data], dtype=str)
     fixed_columns.append(fixed_col)
@@ -669,7 +547,7 @@ print("是否存在非字符串值:", any(not isinstance(x, str) for row in name
     recarray 字段名: ('0', '1', '2', '3', '4', '5', '6', '7')
     修复后数组 dtype: <U15
     修复后数组形状: (15674, 8)
-    
+
     修复后前 3 行数据:
     [['' 'NKG7' 'AIF1' 'IL7R' 'CALD1' '' '' 'LST1']
      ['' '' 'SPI1' 'LTB' 'SPARC' '' 'PECAM1' 'AIF1']
@@ -695,7 +573,7 @@ fixed_columns = []
 for field in field_names:
     # 提取当前字段的列数据（每个字段对应一列）
     col_data = names_recarray[field]  # 每列是一个 numpy 数组（元素可能是 object 类型，含 nan）
-    
+
     # 处理该列的 nan：将 nan 转为空字符串 ""，其他元素转为字符串
     # 注意：object 类型数组中的 nan 需用 np.isnan 先判断（但需避免非数值类型报错）
     def safe_replace_nan(x):
@@ -703,7 +581,7 @@ for field in field_names:
             return ""  #  nan 替换为空字符串
         else:
             return str(x)  # 其他元素转为字符串
-    
+
     # 对列中每个元素应用处理函数
     fixed_col = np.array([safe_replace_nan(x) for x in col_data], dtype=str)
     fixed_columns.append(fixed_col)
@@ -727,7 +605,7 @@ print("是否存在非字符串值:", any(not isinstance(x, str) for row in name
     recarray 字段名: ('0', '1', '2', '3', '4', '5', '6', '7')
     修复后数组 dtype: <U15
     修复后数组形状: (15674, 8)
-    
+
     修复后前 3 行数据:
     [['' 'NKG7' 'AIF1' 'IL7R' 'CALD1' '' '' 'LST1']
      ['' '' 'SPI1' 'LTB' 'SPARC' '' 'PECAM1' 'AIF1']
@@ -922,9 +800,9 @@ sc.pl.umap(
 ```
 
 
-    
+
 ![png](output_60_0.png)
-    
+
 
 
 
@@ -939,9 +817,9 @@ sc.pl.umap(
 ```
 
 
-    
+
 ![png](output_61_0.png)
-    
+
 
 
 
@@ -958,9 +836,9 @@ sc.pl.dendrogram(adata, groupby="celltypist_cell_label_fine")
 
 
 
-    
+
 ![png](output_63_1.png)
-    
+
 
 
 
@@ -1215,9 +1093,9 @@ sc.pl.umap(
 ```
 
 
-    
+
 ![png](output_91_0.png)
-    
+
 
 
 
@@ -1289,9 +1167,9 @@ sc.pl.umap(
 
 
 
-    
+
 ![png](output_99_1.png)
-    
+
 
 
 
@@ -1313,9 +1191,9 @@ sc.pl.umap(
 ```
 
 
-    
+
 ![png](output_101_0.png)
-    
+
 
 
 
@@ -1327,7 +1205,7 @@ knn_transformer = sca.utils.knn.weighted_knn_trainer(
 )
 ```
 
-    Weighted KNN with n_neighbors = 15 ... 
+    Weighted KNN with n_neighbors = 15 ...
 
 
 ```python
@@ -1500,9 +1378,9 @@ import scanpy as sc
     [0;34m[0m[0;34m)[0m [0;34m->[0m [0;34m'AnnData'[0m[0;34m[0m[0;34m[0m[0m
     [0;31mDocstring:[0m
     Concatenates AnnData objects along an axis.
-    
+
     See the :doc:`concatenation <../concatenation>` section in the docs for a more in-depth description.
-    
+
     Params
     ------
     adatas
@@ -1517,7 +1395,7 @@ import scanpy as sc
     merge
         How elements not aligned to the axis being concatenated along are selected.
         Currently implemented strategies include:
-    
+
         * `None`: No elements are kept.
         * `"same"`: Elements that are the same in each of the objects.
         * `"unique"`: Elements for which there is only one possible value.
@@ -1544,21 +1422,21 @@ import scanpy as sc
     pairwise
         Whether pairwise elements along the concatenated dimension should be included.
         This is False by default, since the resulting arrays are often not meaningful.
-    
+
     Notes
     -----
-    
+
     .. warning::
-    
+
         If you use `join='outer'` this fills 0s for sparse data when
         variables are absent in a batch. Use this with care. Dense data is
         filled with `NaN`.
-    
+
     Examples
     --------
-    
+
     Preparing example objects
-    
+
     >>> import anndata as ad, pandas as pd, numpy as np
     >>> from scipy import sparse
     >>> a = ad.AnnData(
@@ -1587,9 +1465,9 @@ import scanpy as sc
     ...     var=pd.DataFrame(index=["var3", "var4"]),
     ...     uns={"a": 1, "b": 4, "c": {"c.a": 3, "c.b": 4, "c.c": 5}},
     ... )
-    
+
     Concatenating along different axes
-    
+
     >>> ad.concat([a, b]).to_df()
         var1  var2
     s1     0     1
@@ -1600,9 +1478,9 @@ import scanpy as sc
         var1  var2  var3  var4
     s1     0     1    10    11
     s2     2     3    12    13
-    
+
     Inner and outer joins
-    
+
     >>> inner = ad.concat([a, b])  # Joining on intersection of variables
     >>> inner
     AnnData object with n_obs × n_vars = 4 × 2
@@ -1622,9 +1500,9 @@ import scanpy as sc
     s2     2     3     0
     s3     4     5     6
     s4     7     8     9
-    
+
     Keeping track of source objects
-    
+
     >>> ad.concat({"a": a, "b": b}, label="batch").obs
        group batch
     s1     a     a
@@ -1643,9 +1521,9 @@ import scanpy as sc
     s2-a     b
     s3-b     b
     s4-b     c
-    
+
     Combining values not aligned to axis of concatenation
-    
+
     >>> ad.concat([a, b], merge="same")
     AnnData object with n_obs × n_vars = 4 × 2
         obs: 'group'
@@ -1662,9 +1540,9 @@ import scanpy as sc
     AnnData object with n_obs × n_vars = 4 × 2
         obs: 'group'
         varm: 'zeros'
-    
+
     The same merge strategies can be used for elements in `.uns`
-    
+
     >>> dict(ad.concat([a, b, c], uns_merge="same").uns)
     {'a': 1, 'c': {'c.b': 4}}
     >>> dict(ad.concat([a, b, c], uns_merge="unique").uns)
@@ -1675,4 +1553,3 @@ import scanpy as sc
     {'a': 1, 'b': 2, 'c': {'c.a': 3, 'c.b': 4, 'c.c': 5}}
     [0;31mFile:[0m      ~/miniconda3/envs/sc_annotation/lib/python3.10/site-packages/anndata/_core/merge.py
     [0;31mType:[0m      function
-

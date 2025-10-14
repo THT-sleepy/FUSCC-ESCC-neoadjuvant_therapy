@@ -11,3 +11,100 @@
 用res=2来进行注释，之所以要用高的我的考虑是这样才能去掉一些可能的双细胞团
 
 ### step1 先用CD45分成Immune和Non-immune
+```
+sc.pl.umap(adata,color="PTPRC",vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="CD45.png")
+```
+* umap图
+<img src="..\figures\umapCD45.png">
+```python
+sc.pl.dotplot(
+    adata,
+    groupby="leiden_res2",
+    var_names="PTPRC",
+    standard_scale="var",  # standard scale: normalize each gene to range from 0 to 1
+)
+```
+
+* 点图
+<img src="..\figures\dotplot_dotplot_CD45.png"><br>
+14群有点摸棱两可(这个是pct_ccounts_top20gene很高的那一群细胞)，其它还是很明确的，
+先暂时把14放到Immune组中
+```
+cl_annotation = {
+    "0": "Immune",
+    "1": "Immune",
+    "2": "Non-Immune",
+    "3": "Non-Immune",
+    "4": "Immune",
+    "5": "Non-Immune",
+    "6": "Immune",
+    "7": "Non-Immune",
+    "8": "Non-Immune",
+    "9": "Immune",
+    "10":"Non-Immune",
+    "11":"Immune",
+    "12":"Immune",
+    "13":"Non-Immune",
+    "14":"Immune",
+    "15":"Non-Immune",
+    "16":"Immune",
+    "17":"Non-Immune",
+    "18":"Non-Immune",
+    "19":"Immune",
+    "20":"Non-Immune",
+    "21":"Non-Immune",
+    "22":"Immune",
+    "23":"Immune",
+    "24":"Immune",
+    "25":"Immune",
+    "26":"Immune",
+    "27":"Immune",
+    "28":"Non-Immune",
+    "29":"Immune",
+    "30":"Immune",
+}
+adata.obs["Immune_celltype"]=adata.obs.leiden_res2.map(cl_annotation)
+```
+
+### step2 check Epi,Endo,Fib,T,B marker这几个marker比较明确
+```
+marker_genes = {
+"Immune":["PTPRC"],
+"Fib": ["DCN","COL1A1","COL1A2","FN1","COL3A1","COL6A1"],
+"Endo" : ["VWF","PECAM1","ENG","CDH5"],
+"Epi" : ["EPCAM","KRT8","KRT18","SFN","KRT5","KRT14",
+         "CDH1","JUP","KRT13",
+         "PPL","SPRR3"],
+"T":["CD3D","CD2","CD3E","CD3G","TRAC","TRBC2"],
+"B":["CD79A","MS4A1","CD79B","JCHAIN","CD19","MZB1"],
+}
+marker_genes_in_data = {}
+for ct, markers in marker_genes.items():
+    markers_found = []
+    for marker in markers:
+        if marker in adata.var.index:
+            markers_found.append(marker)
+    marker_genes_in_data[ct] = markers_found
+```
+### 先检查下我们的这些marker是不是好用,好用的再用来画点图
+
+```
+sc.pl.umap(adata,color=marker_genes_in_data["Fib"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Fib.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Endo"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Endo.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Epi"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Epi.png")
+sc.pl.umap(adata,color=marker_genes_in_data["T"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="T.png")
+sc.pl.umap(adata,color=marker_genes_in_data["B"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="B.png")
+```
+* fib
+<img src="..\figures\umapFib.png">
+几个marker都还可以<br>
+
+* Endo
+<img src="..\figures\umapEndo.png">
+VWF和CDH5是比较好的，PECAM1查过了确实是不止在内皮表达
+* Epi
+<img src="..\figures\umapEpi.png">
+* T
+<img src="..\figures\umapT.png">
+* B
+<img src="..\figures\umapB.png">
