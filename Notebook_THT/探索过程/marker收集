@@ -179,7 +179,6 @@ CD3和TCR形成CD3-TCR复合物<br>
 TRAC是编码T细胞受体（TCR）α链恒定区的基因<br>
 TRBC2 编码TCR β链
 
-
 B细胞
 CD19存在于自原始B细胞（Progenitor B cell）后期以后的各阶段，包括浆细胞。(好像T细胞也有表达?)<br>
 CD79A和CD79B编码的蛋白和BCR形成复合物<br>
@@ -193,6 +192,122 @@ MZB1 marginal zone B and B1 cell specific protein Gene<br>
 Immnue_marker_genes ={
 "T":["CD3D","CD2","CD3E","CD3G","TRAC","TRBC2"],
 "B":["CD79A","MS4A1","CD79B","JCHAIN","CD19","MZB1"],
+#按Cheng et al., 2021, Cell 184, 792–809的说法CST3应该是髓系的大类marker?
 "Myeloids":["LYZ","CD14","GCA","HPGDS","CD68","IL3RA","LAMP3",
             "CLEC4C","TPSAB1"],
+}
+
+## 大类总结
+marker_genes = {
+"Immune":["PTPRC"],
+"Fib": ["DCN","COL1A1","COL1A2","FN1","COL3A1","COL6A1"],
+"Endo" : ["VWF","PECAM1","ENG","CDH5"],
+"Epi" : ["EPCAM","KRT8","KRT18","SFN","KRT5","KRT14",
+         "CDH1","JUP","KRT13",
+         "PPL","SPRR3"],
+"T":["CD3D","CD2","CD3E","CD3G","TRAC","TRBC2"],
+"B":["CD79A","MS4A1","CD79B","JCHAIN","CD19","MZB1"],#按Cheng et al., 2021, Cell 184, 792–809的说法CST3应该是髓系的大类marker?
+"Myeloids":["LYZ","CD14","GCA","HPGDS","CD68","IL3RA","LAMP3","CLEC4C","TPSAB1"],
+}
+比较搞不太清的是髓系到底有没有一个共同的marker,还有就是ILC
+
+
+
+
+### 3亚群之上皮-就用InferCNV分成恶性和正常上皮就行
+
+### 4亚群之内皮-基质细胞一般按功能(是什么管的内皮)进行细分
+内皮细胞包括淋巴内皮细胞(LEC),静脉内皮细胞(VEC),动脉内皮细胞(AEC),
+尖端细胞(TipEC),毛细血管内皮细胞(CapEC),富含干扰素诱导基因的内皮细胞(ISG+EC),
+增殖相关内皮细胞(prolEC)(主要参考了https://duty-blog.pages.dev/posts/2024-08/%E5%8D%95%E7%BB%86%E8%83%9E%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98%E8%BF%9B%E9%98%B6%E5%88%86%E6%9E%90%E4%B9%8B%E4%BA%9A%E7%BE%A4%E7%BB%86%E5%88%86/)
+marker_genes = {
+"LEC":["PROX1","PDPN","ALCAM","CD44","VEGFA"],
+"VEC":["EPHB4","NR2F2","ACKR1","MMRN1","SELP",
+      "VCAM1","POSTN","IGFBP7","CCL14","PRCP"],
+"AEC":["GJA4","GJA5","EFNB2","VEGFC","SOX17",
+      "DKK2","LTBP4","FBLN5","FN1","MGP",
+      "SERPINE2","ENPP2","TFPI","NPR3"],
+"TipEC":["CXCL12","CXCR4","ACKR3","LYVE1","DLL4",
+        "KCNE3","ESM1","ANGPT2","APLN"],
+"CapEC":["CA4","CD36"],
+"ISG+EC":["ISG20","IFIT1","IFIT3"],
+"prolEC":["MKI67","TOP2A"],
+}
+
+### 5亚群之纤维
+纤维细胞主要亚群包括myofibroblast(myCAF),细胞外基质细胞成纤维细胞(mCAF),
+炎性相关CAF(iCAF),抗原呈递相关CAFs(apCAFs),脂质相关CAFs(LipCAFs),
+周细胞(pericyte,有的文章称为vCAF),增殖相关CAFs(dCAF)
+marker_genes={
+"myCAF":["ACAT2","COL1A2","PDGFRB"],
+"mCAF":["POSTN","FN1","LUM","DCN",
+        "VCAN","COL5A1","COL5A2","COL6A3"],
+"iCAF":["FBLN1","IGF1","CXCL1","IGFBP6",
+        "SLPI","SAA1","C3","C7"],
+"apCAF":["CD74","HLA-DRA","HLA-DRB1"],
+"LipCAF":["APOPA2","FABP1","FABP4",
+          "FRZB","CFD","APOD"],
+"Pericyte":["MCAM","MYH11","GJA4","RGS5"],
+"dCAF":["MKI67","TOP2A"],
+}
+
+### 6亚群之淋巴-T-这里的应该不全
+常见的大类有CD4T,CD8T,T Cycling,NKT,常见的亚类有T naive(Tn),
+T memory(Tm),Effect/Cytotoxic(Tem/Teffe),耗竭T(Tex),应激相关
+T细胞(HSP+,Tstr),Tissue-resident T(Trm),Treg(CD4T),Th1/Tfh(CD4T),
+Th17,T cycling
+marker_genes={
+"Tn":["LEF1","CCR7","TCF7","SELL"],
+"Tm":["IL7R","CD69","GRP183","ANXA1"],
+"Tem":["GZMK","IFNG","GZMH","GNLY",
+      "PRF1","NKG7","GZMA","GZMB"],
+"Tex":["LAG3","PDCD1","CTLA4","TIGIT",
+      "BTLA","HAVCR2"],
+"Tstr":["HSPA1B","HSPH1","HSPA1A","DNAJB1"],
+"Trm":["XCL1","XCL2","MYADM","CAPG",
+        "CD6","NR4A1","CD69","ITGAE"],
+"Treg":["FOXP3","IL2RA","IKZF2"],
+"Th1":["CXCL13","IL6ST","ICOS"],
+"Th17":["IL17A","IL23R","RORC",
+        "FURIN","CTSH","CCR6",
+        "KLRB1","CAPG","ITGAE"],
+"T cycling":["MKI67","TOP2A"],
+}
+
+### 7亚群之淋巴-B-这里应该也不全
+B细胞主要包括Naive B细胞,Memory B细胞,Plasma B细胞,
+Plasmablast,short-lived plasma cells,long-lived plasma cycle_cells
+marker_genes = {
+"B Naive":["IGHD","IL4R","FCER2","TCL1A"],
+"B Memory":["CD27","IGHG1","AIM2","TNFRSF13B"],
+"B Plasma":["PRDM1","MZB1"],
+"B Plasmablast":["XBP1","SDC1"],#SDC1 is negative marker
+"B Short-lived plasma cells":["SDC1"],#SDC1高表达
+"B Long-lived plasma cells":["SDC1","STAT3","IKZF3"],
+}
+
+### 8亚群之淋巴-ILC-来自deepseek,要在文献里确认
+这个最后把T,B,髓系都分好后先定义成other lymphocell
+主要亚群包括ILC1,ILC2,ILC3和NK细胞
+ILC主要是要T细胞,B细胞,CD14,CD15这些都阴性
+marker_genes = {
+"CD56bright NK":["KLRC1","CD44","COTL1","XCL1","XCL2","TBX21","EOMES"],
+"CD56dim NK":["GZMB","FGFBP2","PRF1","FCGR3A","TBX21"],
+
+}
+
+### 9亚群之髓系
+髓系细胞主要包括Monocytes,Macrophage,DC,中性粒和肥大细胞
+巨噬和单核一般分不开可以
+marker_genes = {
+"Mono CD14+":["CD14","S100A9","S100A8"],
+"Mono CD16+":["FCGR3A","LST1","LILRB2"],
+"pDC":["LILRA4","GZMB","IL3RA"],
+"cDC1":["CLEC9A","FLT3","IDO1"],
+"cDC2":["CD1C","FCER1A","HLA-DQA1"],
+"cDC3":["LAMP3","CCR7","FSCN1"],
+"MAST":["KIT","TPSAB1","CPA3"],
+"Neutrophil":["CSF3R","S100A9","FGR3B",
+              "ALPL","CXCR1"],
+"Cycling":["MKI67","STMN1","TOP2A"],
 }

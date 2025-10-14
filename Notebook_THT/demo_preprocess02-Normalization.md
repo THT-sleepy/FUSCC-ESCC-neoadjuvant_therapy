@@ -59,7 +59,7 @@ anndata2ri.activate()
 %load_ext rpy2.ipython
 ```
 
-## 先把前面的质控信息整理一下输出成excel
+## 先把前面的质控信息整理一下
 
 
 ```python
@@ -93,11 +93,6 @@ for sample_id in os.listdir(data_root):
 
 
 ```python
-samples = samples[0:2]
-```
-
-
-```python
 qc_info = []
 for sample_dict in samples:
     try:
@@ -115,8 +110,9 @@ for sample_dict in samples:
         print(f"读取样本 {sample_id} 失败: {str(e)}")
 ```
 
-    已读取样本: XZM_preC1_2285332
-    已读取样本: YXY_preC2_2282374
+    已读取样本: CDZ_preC2_2282421
+    已读取样本: CDZ_op_2282421
+    已读取样本: CDZ_pbmc_op_2282421
 
 
 
@@ -127,18 +123,24 @@ qc_info
 
 
 
-    [{'sample_id': 'XZM_preC1_2285332',
-      'cellranger_filtered_cell_count': 11162,
-      'contamination_fraction_bysoupx': 0.01,
-      'cell_count_after_soupx': 11162,
-      'cell_count_after_lowquanlity_filter': 5182,
-      'double_cell_numbers': 389},
-     {'sample_id': 'YXY_preC2_2282374',
-      'cellranger_filtered_cell_count': 12216,
-      'contamination_fraction_bysoupx': 0.019,
-      'cell_count_after_soupx': 12216,
-      'cell_count_after_lowquanlity_filter': 8061,
-      'double_cell_numbers': 742}]
+    [{'sample_id': 'CDZ_preC2_2282421',
+      'cellranger_filtered_cell_count': 11232,
+      'contamination_fraction_bysoupx': 0.067,
+      'cell_count_after_soupx': 11232,
+      'cell_count_after_lowquanlity_filter': 7681,
+      'double_cell_numbers': 767},
+     {'sample_id': 'CDZ_op_2282421',
+      'cellranger_filtered_cell_count': 18443,
+      'contamination_fraction_bysoupx': 0.028,
+      'cell_count_after_soupx': 18443,
+      'cell_count_after_lowquanlity_filter': 9322,
+      'double_cell_numbers': 1027},
+     {'sample_id': 'CDZ_pbmc_op_2282421',
+      'cellranger_filtered_cell_count': 13799,
+      'contamination_fraction_bysoupx': 0.055,
+      'cell_count_after_soupx': 13799,
+      'cell_count_after_lowquanlity_filter': 11908,
+      'double_cell_numbers': 1383}]
 
 
 
@@ -159,8 +161,9 @@ for sample_dict in samples:
         print(f"读取样本 {sample_id} 失败: {str(e)}")
 ```
 
-    已读取样本: XZM_preC1_2285332
-    已读取样本: YXY_preC2_2282374
+    已读取样本: CDZ_preC2_2282421
+    已读取样本: CDZ_op_2282421
+    已读取样本: CDZ_pbmc_op_2282421
 
 
 
@@ -180,7 +183,7 @@ adata
 
 
 
-    AnnData object with n_obs × n_vars = 13243 × 18289
+    AnnData object with n_obs × n_vars = 28911 × 15674
         obs: 'n_genes_by_counts', 'log1p_n_genes_by_counts', 'total_counts', 'log1p_total_counts', 'pct_counts_in_top_20_genes', 'total_counts_mt', 'log1p_total_counts_mt', 'pct_counts_mt', 'total_counts_ribo', 'log1p_total_counts_ribo', 'pct_counts_ribo', 'total_counts_hb', 'log1p_total_counts_hb', 'pct_counts_hb', 'outlier', 'mt_outlier', 'scDblFinder_score', 'scDblFinder_class', 'sample'
         layers: 'counts', 'soupX_counts'
 
@@ -209,7 +212,7 @@ adata
 
 
 
-    AnnData object with n_obs × n_vars = 13243 × 18289
+    AnnData object with n_obs × n_vars = 28911 × 15674
         obs: 'n_genes_by_counts', 'log1p_n_genes_by_counts', 'total_counts', 'log1p_total_counts', 'pct_counts_in_top_20_genes', 'total_counts_mt', 'log1p_total_counts_mt', 'pct_counts_mt', 'total_counts_ribo', 'log1p_total_counts_ribo', 'pct_counts_ribo', 'total_counts_hb', 'log1p_total_counts_hb', 'pct_counts_hb', 'outlier', 'mt_outlier', 'scDblFinder_score', 'scDblFinder_class', 'sample'
         var: 'gene_ids', 'feature_types', 'mt', 'ribo', 'hb', 'n_cells_by_counts', 'mean_counts', 'log1p_mean_counts', 'pct_dropout_by_counts', 'total_counts', 'log1p_total_counts', 'n_cells'
         layers: 'counts', 'soupX_counts'
@@ -218,7 +221,7 @@ adata
 
 ## 标化
 
-### 1 Shifted logarithm
+###  1 Shifted logarithm
 
 
 ```python
@@ -227,87 +230,7 @@ scales_counts = sc.pp.normalize_total(adata, target_sum=None, inplace=False)
 adata.layers["log1p_norm"] = sc.pp.log1p(scales_counts["X"], copy=True)
 ```
 
-### 2 scran
-
 
 ```python
-from scipy.sparse import csr_matrix
-```
-
-
-```r
-%%R
-library(scran)
-library(BiocParallel)
-```
-
-
-```python
-#这一步差不多要1h,可以搞点其它事情
-# Preliminary clustering for differentiated normalisation
-adata_pp = adata.copy()
-sc.pp.normalize_total(adata_pp)
-sc.pp.log1p(adata_pp)
-sc.pp.pca(adata_pp, n_comps=15)
-sc.pp.neighbors(adata_pp)
-sc.tl.leiden(adata_pp, key_added="groups")
-```
-
-    /tmp/ipykernel_1914047/2223024553.py:8: FutureWarning: In the future, the default backend for leiden will be igraph instead of leidenalg.
-    
-     To achieve the future defaults please pass: flavor="igraph" and n_iterations=2.  directed must also be False to work with igraph's implementation.
-      sc.tl.leiden(adata_pp, key_added="groups")
-
-
-
-```python
-data_mat = adata_pp.X.T
-# convert to CSC if possible. See https://github.com/MarioniLab/scran/issues/70
-if issparse(data_mat):
-    if data_mat.nnz > 2**31 - 1:
-        data_mat = data_mat.tocoo()
-    else:
-        data_mat = data_mat.tocsc()
-ro.globalenv["data_mat"] = data_mat
-ro.globalenv["input_groups"] = adata_pp.obs["groups"]
-```
-
-
-```python
-del adata_pp
-```
-
-
-```r
-%%R -o size_factors
-
-size_factors = sizeFactors(
-    computeSumFactors(
-        SingleCellExperiment(
-            list(counts=data_mat)), 
-            clusters = input_groups,
-            min.mean = 0.1,
-            BPPARAM = SerialParam()
-    )
-)
-```
-
-
-```python
-adata.obs["size_factors"] = size_factors
-scran = adata.X / adata.obs["size_factors"].values[:, None]
-adata.layers["scran_normalization"] = csr_matrix(sc.pp.log1p(scran.tocsr()))
-```
-
-### Analytic Pearson residuals
-
-
-```python
-analytic_pearson = sc.experimental.pp.normalize_pearson_residuals(adata, inplace=False)
-adata.layers["analytic_pearson_residuals"] = csr_matrix(analytic_pearson["X"])
-```
-
-
-```python
-adata.write("RData/merge_normalization.h5ad")
+adata.write("RData/merge_demo.normalization.h5ad")
 ```

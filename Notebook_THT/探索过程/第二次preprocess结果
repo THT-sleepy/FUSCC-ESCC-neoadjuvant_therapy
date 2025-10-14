@@ -175,6 +175,10 @@ min dist=0.4我觉得是最好的<br>
 后面看到多系marker表达的cluster再去一去就行
 
 ## 修改去批次方法后重新一轮注释
+1 Immune vs NonImmune
+2 Immune先把T,B分出来,髓系用点图去找，剩下的再看是不是ILC
+3 NonImmune 把上皮,内皮和纤维分出来就行
+过程中res=2的cluster都检查下是不是双细胞群
 
 
 

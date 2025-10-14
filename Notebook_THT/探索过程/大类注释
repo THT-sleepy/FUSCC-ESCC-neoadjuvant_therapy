@@ -1,0 +1,13 @@
+# 注释过程及结果记录         (What)
+
+* Oct 14, 2025                                 (When)
+* liyi /data1/liyi/zhaoyue/FUSCC-ESCC-neoadjuvant_thrapy           (Where)
+* 单细胞需要注释后才能进行后续分析 (Why)
+
+## 1大类注释
+目标是分出Epi,Endo,fib,T,B,Myeloid,ILC七大类
+### leiden聚类结果
+<img src="..\figures\umaphvg4000_cluster.png">
+用res=2来进行注释，之所以要用高的我的考虑是这样才能去掉一些可能的双细胞团
+
+### step1 先用CD45分成Immune和Non-immune

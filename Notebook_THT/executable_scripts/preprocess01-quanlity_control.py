@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-##指定MAD的值
+##指定的值
 import sys
-mad_n = int(sys.argv[1])
-n = int(sys.argv[2])
-
+n = int(sys.argv[1])
 import os
 
 
@@ -47,7 +45,7 @@ samples = []
 for sample_id in os.listdir(data_root):
     # 样本文件夹的完整路径
     sample_dir = os.path.join(data_root, sample_id)
-    
+
     # 构建filtered特征矩阵文件夹路径
     filtered_matrix_dir = os.path.join(sample_dir, "sample_filtered_feature_bc_matrix")
     # 构建raw 特征矩阵文件路径
@@ -55,10 +53,10 @@ for sample_id in os.listdir(data_root):
     # 构建cluster信息文件路径
     cluster_path = os.path.join(sample_dir,"clusters.csv")
     # 指定质控后h5ad文件输出路径
-    qc_fname = "mad" + sys.argv[1] + "_quanlity_control.h5ad"
+    qc_fname = "quanlity_control.h5ad"
     quanlity_control_h5_path = os.path.join(sample_dir,qc_fname)
     # 指定质控信息输出路径
-    qc_info_fname = "mad" + sys.argv[1] + "_quanlity_control_info.txt"
+    qc_info_fname = "quanlity_control_info.txt"
     quanlity_control_info_path = os.path.join(sample_dir,qc_info_fname)
     # 构建样本信息字典
     sample_info = {
@@ -76,19 +74,13 @@ for sample_id in os.listdir(data_root):
 # In[59]:
 
 
-sample = samples[n]
-
-
-# In[60]:
-
-
-sample
+sample=samples[n]
 
 
 # In[10]:
 
 
-samples
+#samples
 
 
 # In[11]:
@@ -268,9 +260,7 @@ def is_outlier(adata, metric: str, nmads: int):
 
 
 adata.obs["outlier"] = (
-    is_outlier(adata, "log1p_total_counts", mad_n)
-    | is_outlier(adata, "log1p_n_genes_by_counts", mad_n)
-    | is_outlier(adata, "pct_counts_in_top_20_genes", mad_n)
+     adata.obs.n_genes_by_counts < 500
 )
 adata.obs.outlier.value_counts()
 
@@ -278,16 +268,19 @@ adata.obs.outlier.value_counts()
 # In[34]:
 
 
-adata.obs["mt_outlier"] = is_outlier(adata, "pct_counts_mt", 3) | (
-    adata.obs["pct_counts_mt"] > 8
+adata.obs["mt_outlier"] = (
+    adata.obs["pct_counts_mt"] > 5
 )
 adata.obs.mt_outlier.value_counts()
 
 
+adata.obs["ribo_outlier"] =  (
+    adata.obs["pct_counts_ribo"] < 3
+)
 # In[35]:
 
 
-adata = adata[(~adata.obs.outlier) & (~adata.obs.mt_outlier)].copy()
+adata = adata[(~adata.obs.outlier) & (~adata.obs.mt_outlier) & (~adata.obs.ribo_outlier)].copy()
 
 
 # In[36]:

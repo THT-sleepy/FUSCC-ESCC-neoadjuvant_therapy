@@ -54,10 +54,10 @@ for sample_id in os.listdir(data_root):
     # 样本文件夹的完整路径
     sample_dir = os.path.join(data_root, sample_id)
     # 指定质控后h5ad文件输出路径
-    qc_fname = "mad" + sys.argv[1] + "_quanlity_control.h5ad"
+    qc_fname = "quanlity_control.h5ad"
     quanlity_control_h5_path = os.path.join(sample_dir,qc_fname)
     # 指定质控信息输出路径
-    qc_info_fname = "mad" + sys.argv[1] + "_quanlity_control_info.txt"
+    qc_info_fname = "quanlity_control_info.txt"
     quanlity_control_info_path = os.path.join(sample_dir,qc_info_fname)
     # 构建样本信息字典
     sample_info = {
@@ -112,7 +112,7 @@ for sample_dict in samples:
 # In[13]:
 
 
-adata = sc.concat(adatas,label="sample")
+adata = sc.concat(adatas,label="sample",join="outer")
 
 
 # In[14]:
@@ -155,6 +155,6 @@ scales_counts = sc.pp.normalize_total(adata, target_sum=None, inplace=False)
 # log1p transform
 adata.layers["log1p_norm"] = sc.pp.log1p(scales_counts["X"], copy=True)
 
-output_fname="RData/"+"mad"+sys.argv[1]+"_"+"normalization.h5ad"
+output_fname="RData/merge_normalization.h5ad"
 adata.write(output_fname)
 
