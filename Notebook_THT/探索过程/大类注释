@@ -365,6 +365,14 @@ adata.write("RData/first_round_anno.h5ad")
 另外也还看到一些可能的双细胞团，在亚类注释里要注意,可以把res提到4看下能不能先去了，可以先按公司的思路，
 把每个群的UMAP范围圈出来，然后把不在范围内的该大群细胞都给去掉
 
+纹饰-dirtywork-一个亚群一个亚群来
+```
+```
+
+
+
+
+
 * 模仿chen的多marker区分图
 
 ## to do list
