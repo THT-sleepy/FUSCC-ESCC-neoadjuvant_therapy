@@ -187,7 +187,16 @@ JCHAIN J链把IGA和IGM的单体连接在一起<br>
 MZB1 marginal zone B and B1 cell specific protein Gene<br>
 
 髓系
-主要包括巨噬细胞,粒细胞,单核细胞,树突状细胞
+主要包括单核和巨噬细胞,粒细胞,树突状细胞,肥大细胞
+LYZ:溶菌酶,单核巨噬里面多,中性粒里面也可能有
+CD14:单核细胞经典标记,巨噬里面也可能有
+GCA:颗粒钙蛋白,中性粒里面有
+HPGDS:前列腺素D2合酶，主要在肥大里，Th2里可能也有
+CD68:巨噬细胞经典marker
+IL3RA:pDC中高表达
+LAMP3：LAMP3+cDC在张泽民泛癌髓系文章里是各组织中都有的
+CLEC4C:pDC的标记
+TPSAB1:类胰蛋白酶,肥大细胞特异性标记
 
 Immnue_marker_genes ={
 "T":["CD3D","CD2","CD3E","CD3G","TRAC","TRBC2"],
