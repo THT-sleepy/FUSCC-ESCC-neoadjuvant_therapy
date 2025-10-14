@@ -177,6 +177,23 @@ marker_genes = {
 "Epi" : ["EPCAM","SFN","KRT5","KRT14"],
 "T":["CD3D","CD2","CD3E","CD3G"],
 "B":["CD79A","JCHAIN","CD19","MZB1"],
+"Myeloid":["LYZ","CD14","CD68",
+           "HPGDS","TPSAB1",
+          "GCA",
+          "IL3RA","CLEC4C",
+          "CLEC9A",
+          "LAMP3",
+          "CD1C","FCER1A"],
+}
+marker_genes_in_data = {}
+for ct, markers in marker_genes.items():
+    markers_found = []
+    for marker in markers:
+        if marker in adata.var.index:
+            markers_found.append(marker)
+    marker_genes_in_data[ct] = markers_found
+sc.pl.umap(adata,color=marker_genes_in_data["Myeloid"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Myeloid.png")
+```
 "Myeloid":["LYZ","CD14","CD68", #单核巨噬
            "HPGDS","TPSAB1",#MAST
           "GCA", #中性粒细胞
@@ -184,5 +201,176 @@ marker_genes = {
           "CLEC9A",#cDC1
           "LAMP3", #cDC3
           "CD1C","FCER1A" #cDC2],
+
+### 同样地也先umap看下髓系这些marker到底如何
+<img src="..\figures\umapMyeloid.png">
+前面6个marker可以，后面的可能是亚群marker
+
+
+### 更新marker绘制点图
+```
+marker_genes = {
+"Immune":["PTPRC"],
+"Fib": ["DCN","COL1A1","COL1A2","FN1","COL3A1","COL6A1"],
+"Endo" : ["VWF","PECAM1","ENG","CDH5"],
+"Epi" : ["EPCAM","SFN","KRT5","KRT14"],
+"T":["CD3D","CD2","CD3E","CD3G"],
+"B":["CD79A","JCHAIN","CD19","MZB1"],
+"Myeloid":["LYZ","CD14","CD68",
+           "HPGDS","TPSAB1",
+          "GCA"],
+}
+sc.pl.dotplot(
+    adata,
+    groupby="leiden_res2",
+    var_names=marker_genes,
+    standard_scale="var",
+    save="EpiEndoFibTBMyeloid.png"
+)
+```
+<img src="..\figures\dotplot_EpiEndoFibTBMyeloid.png"><br>
+```
+cl_annotation = {
+    "0": "T",
+    "1": "T",
+    "2": "Epi",
+    "3": "Epi",
+    "4": "Myeloid",
+    "5": "Epi",
+    "6": "T",
+    "7": "Epi",
+    "8": "Epi",
+    "9": "Myeloid",
+    "10":"Epi",
+    "11":"T",
+    "12":"T",
+    "13":"Fib",
+    "14":"B",
+    "15":"Endo",
+    "16":"Myeloid",
+    "17":"Epi",
+    "18":"Epi",
+    "19":"B",
+    "20":"Fib",
+    "21":"Fib",
+    "22":"Myeloid",
+    "23":"Myeloid",
+    "24":"Myeloid",
+    "25":"Myeloid",
+    "26":"B",
+    "27":"T",
+    "28":"Epi",
+    "29":"Epi+T",
+    "30":"T",
 }
 ```
+24存疑，比较像是中性粒,但也要再排除下ILC和周细胞什么的
+
+### 把周细胞的marker拿进来看一下
+```
+marker_genes = {
+"Immune":["PTPRC"],
+"Fib": ["DCN","COL1A1","COL1A2","FN1","COL3A1","COL6A1"],
+"Endo" : ["VWF","PECAM1","ENG","CDH5"],
+"Epi" : ["EPCAM","SFN","KRT5","KRT14"],
+"T":["CD3D","CD2","CD3E","CD3G"],
+"B":["CD79A","JCHAIN","CD19","MZB1"],
+"Myeloid":["LYZ","CD14","CD68",
+           "HPGDS","TPSAB1",
+          "GCA"],
+"Pericyte":["RGS5","MCAM","ACTA2","MYH11"],
+}
+marker_genes_in_data = {}
+for ct, markers in marker_genes.items():
+    markers_found = []
+    for marker in markers:
+        if marker in adata.var.index:
+            markers_found.append(marker)
+    marker_genes_in_data[ct] = markers_found
+sc.pl.umap(adata,color=marker_genes_in_data["Pericyte"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Pericyte.png")
+}
+```
+* 是存在于纤维细胞和内皮细胞里面的，怪不得叫vCAF有点道理
+<img src="..\figures\umapPericyte.png">
+
+### 最后再看看NK的marker,ILC需要不是T不是B不是髓系目前res的cluster应该是没有的
+```
+marker_genes = {
+"Immune":["PTPRC"],
+"Fib": ["DCN","COL1A1","COL1A2","FN1","COL3A1","COL6A1"],
+"Endo" : ["VWF","PECAM1","ENG","CDH5"],
+"Epi" : ["EPCAM","SFN","KRT5","KRT14"],
+"T":["CD3D","CD2","CD3E","CD3G"],
+"B":["CD79A","JCHAIN","CD19","MZB1"],
+"Myeloid":["LYZ","CD14","CD68",
+           "HPGDS","TPSAB1",
+          "GCA"],
+"NK":["GZMA","NCAM1","NKG7","KLRC1","IFNG","GZMB","KLRD1"],
+}
+marker_genes_in_data = {}
+for ct, markers in marker_genes.items():
+    markers_found = []
+    for marker in markers:
+        if marker in adata.var.index:
+            markers_found.append(marker)
+    marker_genes_in_data[ct] = markers_found
+sc.pl.umap(adata,color=marker_genes_in_data["NK"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="NK.png")
+```
+* 是和T细胞聚在一起的要在亚类里面再去看
+<img src="..\figures\umapNK.png">
+
+### 大类注释基本完成后画三张图，一张是注释后的UMAP图，一张是模仿chen的多marker区分图,另一张是每个cluster的top10 gene
+* 注释后的UMAP图
+```
+cl_annotation = {
+    "0": "T",
+    "1": "T",
+    "2": "Epi",
+    "3": "Epi",
+    "4": "Myeloid",
+    "5": "Epi",
+    "6": "T",
+    "7": "Epi",
+    "8": "Epi",
+    "9": "Myeloid",
+    "10":"Epi",
+    "11":"T",
+    "12":"T",
+    "13":"Fib",
+    "14":"B",
+    "15":"Endo",
+    "16":"Myeloid",
+    "17":"Epi",
+    "18":"Epi",
+    "19":"B",
+    "20":"Fib",
+    "21":"Fib",
+    "22":"Myeloid",
+    "23":"Myeloid",
+    "24":"Myeloid",
+    "25":"Myeloid",
+    "26":"B",
+    "27":"T",
+    "28":"Epi",
+    "29":"Epi+T",
+    "30":"T",
+}
+adata.obs["first_round_celltype"]=adata.obs.leiden_res2.map(cl_annotation)
+adata=adata[adata.obs.leiden_res2 != '29'].copy()   ##去掉29群
+sc.pl.umap(adata,color="first_round_celltype",save="first_round_celltype.png")
+adata.write("RData/first_round_anno.h5ad")
+```
+<img src="..\figures\一轮注释结果.png"><br>
+总体来说挺不错的，但红圈标起来的几处在亚类里还得注意去除，包括B，Endo混的上皮，髓系里混的T，
+另外也还看到一些可能的双细胞团，在亚类注释里要注意,可以把res提到4看下能不能先去了，可以先按公司的思路，
+把每个群的UMAP范围圈出来，然后把不在范围内的该大群细胞都给去掉
+
+* 模仿chen的多marker区分图
+
+## to do list
+*1 内皮,纤维，B都没有跑到其它群里面的cluster，可以先亚群注释起来了
+sc.settings.set_figure_params(
+     dpi=300,
+     facecolor="white",
+     frameon=False
+ )
