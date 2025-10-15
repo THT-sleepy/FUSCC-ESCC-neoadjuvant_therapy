@@ -437,6 +437,7 @@ adata_filtered.write("RData/first_round_anno_umapfiltered.h5ad")
 ```
 <img src="..\figures\umap_withaxis.png">
 * 弄完之后的图
+<img src="..\figures\umapfirst_round_celltype_umapfiltered.png">
 
 
 * 模仿chen的多marker区分图
