@@ -444,9 +444,10 @@ adata_filtered.write("RData/first_round_anno_umapfiltered.h5ad")
 * 模仿chen的多marker区分图
 
 ## to do list
-* 1 把亚群提出来重新标化，选高变基因，去批次，降维聚类(0.6-1.2)(免疫细胞单独提出来用celltypist注释)
+* 1 把亚群提出来重新标化，选高变基因，去批次，降维聚类(0.6-1.2)
+* 1.5 把综述再改一改提交上去
 * 2 把first_round_anno的代码整理出来，添上top10基因点图
-* 3 把inferCNV跑了，结果整理出来
+* 3 把inferCNV跑了，结果大致整理出来-不够亚群注释的时候如果又去了一些cluster就要重跑
 * 4 中间的空闲时间可以查marker文献
 * 5 空闲时间也可以研究下Figure1,Sup. Fig1需要的图片
 这些事情搞好暂时应该就没啥事了,其它的后面再来慢慢研究吧
