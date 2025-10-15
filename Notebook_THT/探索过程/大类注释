@@ -438,14 +438,15 @@ adata_filtered.write("RData/first_round_anno_umapfiltered.h5ad")
 <img src="..\figures\umap_withaxis.png">
 * 弄完之后的图
 <img src="..\figures\umapfirst_round_celltype_umapfiltered.png">
-
+* 这一小撮细胞要注意，之前发现是既表达B细胞marker又表达髓系marker(髓系亚群注释时要当心)
+<img src="..\figures\first_round_celltype_标记.png"><br>
 
 * 模仿chen的多marker区分图
 
 ## to do list
-*1 内皮,纤维，B都没有跑到其它群里面的cluster，可以先亚群注释起来了
-sc.settings.set_figure_params(
-     dpi=300,
-     facecolor="white",
-     frameon=False
- )
+* 1 把亚群提出来重新标化，选高变基因，去批次，降维聚类(0.6-1.2)(免疫细胞单独提出来用celltypist注释)
+* 2 把first_round_anno的代码整理出来，添上top10基因点图
+* 3 把inferCNV跑了，结果整理出来
+* 4 中间的空闲时间可以查marker文献
+* 5 空闲时间也可以研究下Figure1,Sup. Fig1需要的图片
+这些事情搞好暂时应该就没啥事了,其它的后面再来慢慢研究吧
