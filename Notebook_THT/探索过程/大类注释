@@ -371,7 +371,72 @@ adata.write("RData/first_round_anno.h5ad")
 
 
 ```
+import matplotlib.pyplot as plt
+import scanpy as sc
+from matplotlib.ticker import MaxNLocator
+import pandas as pd
+sc.settings.set_figure_params(
+     dpi=300,
+     facecolor="white",
+     frameon=True
+ )
+sc.settings.figdir = "plots"
+
+fig, ax = plt.subplots(1, 1)
+sc.pl.umap(adata, color='first_round_celltype', title="1st round anno ct umap", ax=ax, show=False)
+ax.set_xscale('linear')
+ax.set_yscale('linear')
+ax.xaxis.set_major_locator(MaxNLocator(nbins=8))  # x轴最多显示8个刻度（可按需调整）
+ax.yaxis.set_major_locator(MaxNLocator(nbins=8))  # y轴最多显示8个刻度
+plt.savefig("plots/umap_withaxis.png", dpi=300, bbox_inches="tight")
+plt.show()
+
+umap1 = adata.obsm['X_umap'][:, 0]  # 提取UMAP1坐标
+umap2 = adata.obsm['X_umap'][:, 1]  # 提取UMAP2坐标
+
+##B
+mask = (umap1 >= -4) & (umap1 <= 8) & (umap2 >= 0) & (umap2 <= 6) & (adata.obs['first_round_celltype'] == "B")
+adata_B = adata[mask, :].copy()
+
+##Endo
+mask = (umap1 >= 0) & (umap1 <= 8) & (umap2 >= 10) & (umap2 <= 15) & (adata.obs['first_round_celltype'] == "Endo")
+adata_Endo = adata[mask, :].copy()
+
+##上皮
+mask = (umap1 >= 8) & (umap2 >= 0) & (umap2 <= 12.5) & (adata.obs['first_round_celltype'] == "Epi")
+adata_Epi = adata[mask, :].copy()
+
+##纤维
+mask = (umap1 >= 4) & (umap1 <= 12) & (umap2 >= 12.5) & (umap2 <= 20) & (adata.obs['first_round_celltype'] == "Fib")
+adata_Fib = adata[mask, :].copy()
+
+##髓系
+mask = (umap1 >= -12) & (umap1 <= 8) & (umap2 >= 2.5) & (umap2 <= 12.5) & (adata.obs['first_round_celltype'] == "Myeloid")
+adata_Myeloid = adata[mask, :].copy()
+
+##T
+mask = (umap1 >= -4) & (umap1 <= 12) & (umap2 >= -15) & (umap2 <= 0) & (adata.obs['first_round_celltype'] == "T")
+adata_T = adata[mask, :].copy()
+
+adatas ={
+"B":adata_B,
+"Endo":adata_Endo,
+"Epi":adata_Epi,
+"Fib":adata_Fib,
+"Myeloid":adata_Myeloid,
+"T":adata_T,
+}
+adata_filtered = sc.concat(adatas,join="outer")
+all_var = [x.var for x in adatas.values()]
+all_var = pd.concat(all_var,join="outer")
+all_var = all_var[~all_var.index.duplicated()]
+adata_filtered.var = all_var.loc[adata_filtered.var_names]
+sc.pl.umap(adata_filtered,color="first_round_celltype",save="first_round_celltype_umapfiltered.png")
+adata_filtered.write("RData/first_round_anno_umapfiltered.h5ad")
+
 ```
+<img src="..\figures\umap_withaxis.png">
+
 
 * 模仿chen的多marker区分图
 

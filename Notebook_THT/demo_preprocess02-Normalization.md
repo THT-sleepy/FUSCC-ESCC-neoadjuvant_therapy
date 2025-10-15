@@ -76,7 +76,7 @@ samples = []
 for sample_id in os.listdir(data_root):
     # 样本文件夹的完整路径
     sample_dir = os.path.join(data_root, sample_id)
-    
+
     # 指定质控后h5ad文件输出路径
     quanlity_control_h5_path = os.path.join(sample_dir,"quanlity_control.h5ad")
     # 指定质控信息输出路径
@@ -168,7 +168,7 @@ for sample_dict in samples:
 
 
 ```python
-adata = sc.concat(adatas,label="sample")
+adata = sc.concat(adatas,label="sample",join="outer")
 ```
 
     /home/data/t190513/miniconda3/envs/sc_preprocess/lib/python3.12/site-packages/anndata/_core/anndata.py:1791: UserWarning: Observation names are not unique. To make them unique, call `.obs_names_make_unique`.
