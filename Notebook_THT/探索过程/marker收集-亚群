@@ -1,0 +1,24 @@
+# 通过查找文献和博客得到亚群的marker         (What)
+
+* Oct 16, 2025                                 (When)
+* 不是脚本           (Where)
+* 细胞类型注释需要很多的背景知识(Why)
+
+## 1 T
+* 首先要用大类marker检查下有没有哪个cluster可能是双细胞
+
+# single-cell best practices
+marker_genes = {
+"CD4+ T activated": ["CD4", "IL7R", "TRBC2", "ITGB1"],
+"CD4+ T naive": ["CD4", "IL7R", "TRBC2", "CCR7"],
+"CD8+ T": ["CD8A", "CD8B", "GZMK", "GZMA", "CCL5", "GZMB", "GZMH", "GZMA"],
+"T activation": ["CD69", "CD38"],  # CD69 much better marker!
+"T naive": ["LEF1", "CCR7", "TCF7"],
+}
+
+# （Liu et al., 2023, Cancer Cell 41, 1–19）
+marker_genes = {
+"Tem":["GNLY","FOS","JUN","IL7R"],
+"Tex":["PDCD1","HAVCR2","LAG3","ENTPD1","CXCL13","HLA-DR"],
+"Trm":["ZNF683"],
+}
