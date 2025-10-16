@@ -6,6 +6,7 @@
 
 ## 1 T
 * 首先要用大类marker检查下有没有哪个cluster可能是双细胞
+* 常见的大类有CD4T,CD8T,T Cycling,NKT,常见的亚类有T naive(Tn)
 
 # single-cell best practices
 marker_genes = {
@@ -22,3 +23,13 @@ marker_genes = {
 "Tex":["PDCD1","HAVCR2","LAG3","ENTPD1","CXCL13","HLA-DR"],
 "Trm":["ZNF683"],
 }
+
+# (Zhang et al., 2021, Nature Communications)
+For T-cell specific clustering, we additionally removed genes related to general cell
+stress, type I Interferon (IFN) response and cell cycle as previously suggested41. The
+contaminating immune cells in CD45- dataset and nonimmune cells in CD45+
+dataset were removed prior to clustering on the basis of their expression patterns.
+T cells with expression of both CD4 and CD8A/B were considered as unresolved
+T cells, which were not included in downstream analysis.
+
+# 
