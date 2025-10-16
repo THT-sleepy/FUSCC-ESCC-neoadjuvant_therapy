@@ -4,11 +4,13 @@
 * 不是脚本           (Where)
 * 细胞类型注释需要很多的背景知识(Why)
 
-## 1 T
+# 1 T
 * 首先要用大类marker检查下有没有哪个cluster可能是双细胞
-* 常见的大类有CD4T,CD8T,T Cycling,NKT,常见的亚类有T naive(Tn)
+* 常见的大类有CD4T,CD8T,T Cycling,NKT,NK应该也混里面了
+* 要做两轮注释,第一轮把CD8,CD4,NK,NKT,T cycling(Tprf)分出来,第二轮把
 
-# single-cell best practices
+
+## single-cell best practices
 marker_genes = {
 "CD4+ T activated": ["CD4", "IL7R", "TRBC2", "ITGB1"],
 "CD4+ T naive": ["CD4", "IL7R", "TRBC2", "CCR7"],
@@ -17,14 +19,14 @@ marker_genes = {
 "T naive": ["LEF1", "CCR7", "TCF7"],
 }
 
-# （Liu et al., 2023, Cancer Cell 41, 1–19）
+## （Liu et al., 2023, Cancer Cell 41, 1–19）
 marker_genes = {
 "Tem":["GNLY","FOS","JUN","IL7R"],
 "Tex":["PDCD1","HAVCR2","LAG3","ENTPD1","CXCL13","HLA-DR"],
 "Trm":["ZNF683"],
 }
 
-# (Zhang et al., 2021, Nature Communications)
+## (Zhang et al., 2021, Nature Communications)
 For T-cell specific clustering, we additionally removed genes related to general cell
 stress, type I Interferon (IFN) response and cell cycle as previously suggested41. The
 contaminating immune cells in CD45- dataset and nonimmune cells in CD45+
@@ -32,4 +34,21 @@ dataset were removed prior to clustering on the basis of their expression patter
 T cells with expression of both CD4 and CD8A/B were considered as unresolved
 T cells, which were not included in downstream analysis.
 
-# 
+## 生信加油站
+marker_genes={
+"Tn":["LEF1","CCR7","TCF7","SELL"],
+"Tm":["IL7R","CD69","GRP183","ANXA1"],
+"Tem":["GZMK","IFNG","GZMH","GNLY",
+      "PRF1","NKG7","GZMA","GZMB"],
+"Tex":["LAG3","PDCD1","CTLA4","TIGIT",
+      "BTLA","HAVCR2"],
+"Tstr":["HSPA1B","HSPH1","HSPA1A","DNAJB1"],
+"Trm":["XCL1","XCL2","MYADM","CAPG",
+        "CD6","NR4A1","CD69","ITGAE"],
+"Treg":["FOXP3","IL2RA","IKZF2"],
+"Th1":["CXCL13","IL6ST","ICOS"],
+"Th17":["IL17A","IL23R","RORC",
+        "FURIN","CTSH","CCR6",
+        "KLRB1","CAPG","ITGAE"],
+"T cycling":["MKI67","TOP2A","STMN1"],
+}
