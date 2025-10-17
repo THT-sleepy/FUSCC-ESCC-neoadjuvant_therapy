@@ -122,6 +122,13 @@ cl_annotation = {
 ```
 第8群有点麻烦,感觉需要提高一点分辨率(试一下2吧)
 
-
-
 ```
+sc.pl.dotplot(
+    adata,
+    groupby="leiden_res2",
+    var_names=marker_genes_in_data,
+    standard_scale="var",
+    save="Tsubset_T_ILCmarker_res2.png"
+)
+```
+<img src="..\figures\dotplot_Tsubset_T_ILCmarker_res2.png">
