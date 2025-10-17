@@ -165,7 +165,7 @@ sc.pl.umap(adata,color=marker_genes_in_data["Tprf"],vmin=0,vmax="p99",sort_order
 ```
 cl_annotation = {
     "0": "CD4+T",
-    "1": "NKT/ILC",
+    "1": "NKT_ILC",
     "2": "CD8+T",
     "3": "CD4+T",
     "4": "CD8+T",
@@ -173,7 +173,7 @@ cl_annotation = {
     "6": "CD4+T",
     "7": "CD8+T",
     "8": "CD8+T",
-    "9": "NKT/ILC"
+    "9": "NKT_ILC"
 }
 adata.obs["TILC_celltype"]=adata.obs.leiden_res1_2.map(cl_annotation)
 adata.write("RData/T_1st_round_anno.h5ad")
@@ -272,3 +272,72 @@ for celltype in celltypes_to_process:
         plot_prefix=""  # 图片名前缀（如scRNA_T_umapmd0.1_cluster.png）
     )
 ```
+
+### final_anno NK,NKT,ILC
+```
+import scanpy as sc
+
+sc.settings.set_figure_params(
+    dpi=300,
+    facecolor="white",
+    frameon=False
+)
+sc.settings.figdir = "plots"
+sc.settings.autoshow = False
+
+adata = sc.read("RData/NKT_ILC__umapmd0.4.h5ad") #X是log1p_norm
+
+marker_genes = {
+"NK":["NCAM1","NKG7","KLRC1","KLRD1","KLRG1","GNLY", "TYROBP", "FCGR3A"],
+"NKT":["KIR","EOMES","TXK","CD3D","CD3E","CD3G","CD4","CD8A","CD8B","NCAM1"],
+"ILC":["ID2", "PLCG2", "GNLY", "SYNE1","IL7R"],
+}
+marker_genes_in_data = {}
+for ct, markers in marker_genes.items():
+    markers_found = []
+    for marker in markers:
+        if marker in adata.var.index:
+            markers_found.append(marker)
+    marker_genes_in_data[ct] = markers_found
+sc.pl.umap(adata,color=marker_genes_in_data["NK"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Tresubset_NK.png")
+sc.pl.umap(adata,color=marker_genes_in_data["NKT"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Tsubset_NKT.png")
+sc.pl.umap(adata,color=marker_genes_in_data["ILC"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Tsubset_ILC.png")
+## 筛几个基因画点图
+marker_genes = {
+"NK":["NCAM1","NKG7","KLRC1","KLRD1","KLRG1","GNLY", "TYROBP", "FCGR3A"],
+"NKT":["CD3D","CD3E","CD3G","NCAM1"],
+}
+sc.pl.dotplot(
+    adata,
+    groupby="leiden_res1",
+    var_names=marker_genes_in_data,
+    standard_scale="var",
+    save="Tresubset_NKNKT.png"
+)
+
+
+
+```
+
+* 聚类情况
+<img src="..\figures\umapNKT_ILC_umapmd0.4_cluster.png">
+* NK
+<img src="..\figures\umapTresubset_NK.png">
+
+* NKT
+<img src="..\figures\umapTresubset_NKT.png">
+
+* ILC
+<img src="..\figures\umapTresubset_ILC.png">
+看下来res1的0,2,5,6像是NKT,其它的像是NK，ILC很难分出来
+
+*点图
+<img src="..\figures\dotplot_Tresubset_NKNKT.png">
+其实NK和NKT也分不太开,就归到NK/NKT好了，保守一点，不然主观性太强
+
+```
+adata.obs["final_anno_celltype"] = "NK/NKT"
+adata.write("RData/NK_NKT_final_anno.h5ad")
+```
+
+### final anno CD4+T细胞

@@ -49,8 +49,8 @@ T cells, which were not included in downstream analysis.
 marker_genes={
 "Tn":["LEF1","CCR7","TCF7","SELL"],
 "Tm":["IL7R","CD69","GRP183","ANXA1"],
-"Tem":["GZMK","IFNG","GZMH","GNLY",
-      "PRF1","NKG7","GZMA","GZMB"],
+"Tem":["GNLY","GZMK","IFNG","GZMH","PRF1",
+       "NKG7","GZMA","GZMB"],
 "Tex":["LAG3","PDCD1","CTLA4","TIGIT",
       "BTLA","HAVCR2"],
 "Tstr":["HSPA1B","HSPH1","HSPA1A","DNAJB1"],
@@ -75,21 +75,37 @@ marker_genes ={
 marker_genes = {
 "T" :["CD4","CD8A","CD8B","CD3D","CD3E","CD3G"],
 "NK":["FCGR3A","KLRC1","NCAM1"],
+
 }
 
 ## 总结第二轮marker-NKT和NK及其它可能的ILC
-
-
-
+*NK marker是联川+single cell best practices
+*NKT marker参照的是张泽民
+marker_genes = {
+"NK":["GZMA","NCAM1","NKG7","KLRC1","IFNG","GZMB","KLRD1","GNLY", "CD247", "GRIK4", "FCER1G", "TYROBP", "KLRG1", "FCGR3A"],
+"NKT":["KIR","EOMES","TXK","CD3D","CD3E","CD3G","CD4","CD8A","CD8B","NCAM1"],
+"ILC":["ID2", "PLCG2", "GNLY", "SYNE1","IL7R"],
+}
 
 ## 总结第二轮marker-CD4+T和CD8+T细分
 ##
-
 marker_genes = {
-"CD4+":["CD4", "IL7R", "TRBC2"],
-"CD8+":["CD8A", "CD8B"],
-"NK":["NCAM1","KLRC1","GNLY", "NKG7", "CD247", "GRIK4", "FCER1G", "TYROBP", "KLRG1", "FCGR3A"], #CD247 negatve
-NCAM1,KLRC1
-"NKT":[],
-"Tprf:["MKI67","TOP2A","STMN1"],
+"Tn":["LEF1","CCR7","TCF7","SELL"],
+"Tm":["IL7R","CD69","GRP183","ANXA1"],
+"Tem":["GNLY","FOS","JUN","IL7R",
+      ,"GZMK","IFNG","GZMH","GNLY",
+      "PRF1","NKG7","GZMA","GZMB",],
+"Tex":["LAG3","PDCD1","CTLA4","TIGIT",
+      "BTLA","HAVCR2","PDCD1","TOX",
+      "CXCL13","TIGIT","TNFRSF9",],
+"Tstr":["HSPA1B","HSPH1","HSPA1A","DNAJB1"],
+"Trm":["ZNF683","CXCR6","XCL1","XCL2",
+      "MYADM","CAPG","CD6","NR4A1","CD69","ITGAE",
+      ],
+"Treg":["FOXP3","IL2RA","IKZF2"],
+"Th1":["CXCL13","IL6ST","ICOS"],
+"Th17":["IL17A","IL23R","RORC",
+        "FURIN","CTSH","CCR6",
+        "KLRB1","CAPG","ITGAE"],
 }
+事实上像Tfh,Temra,Tcm,CD4+MT都没找到marker
