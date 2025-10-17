@@ -6,12 +6,18 @@
 
 # 1 T
 * 首先要用大类marker检查下有没有哪个cluster可能是双细胞
-* 常见的大类有CD4T,CD8T,T Cycling,NKT(好像包括CD4+和DN两大类),NK应该也混里面了
+* 常见的大类有CD4T,CD8T,T Cycling,NKT(好像包括CD4+和DN两大类),NK应该也混里面了,
+亚类里还可能有T Naive
 * 要做两轮注释,第一轮把CD8,CD4,NK,NKT,T cycling(Tprf)分出来,第二轮把
 
 * 各文献T细胞分类
-1 林东昕院士21年NC T Naive,Th17,Tmem-CD4,Tfh1,Tfh2,Treg,Teff,Tmem-CD8,Tex,NK/NKT
-2 Liu cancer cell 2023 CD4+Tcm(中央记忆T细胞)
+1 林东昕院士21年NC: T Naive,Th17,Tmem-CD4,Tfh1,Tfh2,Treg,Teff,Tmem-CD8,Tex,NK/NKT<br>
+2 Liu cancer cell 2023: CD4+Tcm(中央记忆T细胞),CD4+Tem(效应记忆T细胞),CD4+ Tex CXCL13,
+CD4+ Treg,CD8+ Tem,CD8+ Tex-SPRY1,CD8+ Tex-XAF1,CD8+ Trm,NK,NKT,Tprf-MKI67
+3 结直肠癌 Chen Cancer cell 2024:Tn,Tcm,Trm,Th17,Tfh,Temra(terminally differentiated effector
+memory or effector cells),Treg,CD4+MT(Mucosal Tissue T cells),Tem,Tex,
+CD8+IEL(Intraepithelial Lymphocytes,肠道特有的),CD8+MAIT(黏膜相关恒定T细胞)
+
 
 
 
@@ -56,4 +62,11 @@ marker_genes={
         "FURIN","CTSH","CCR6",
         "KLRB1","CAPG","ITGAE"],
 "T cycling":["MKI67","TOP2A","STMN1"],
+}
+
+## 张泽民泛癌
+marker_genes ={
+"Trm":["ZNF683","CXCR6"],
+"Tex":["PDCD1","TOX","CXCL13","TIGIT",
+      "CTLA4","TNFRSF9","HAVCR2","LAG3"]
 }

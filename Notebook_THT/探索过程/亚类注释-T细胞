@@ -1,0 +1,80 @@
+# T细胞注释过程及结果记录         (What)
+
+* Oct 17, 2025                                 (When)
+* liyi /data1/liyi/zhaoyue/FUSCC-ESCC-neoadjuvant_thrapy           (Where)
+* 单细胞需要注释后才能进行后续分析 (Why)
+
+## 1 再次检查有无混杂的其它细胞系如上皮的marker表达
+*聚类情况
+<img src="..\figures\umapT_umapmd0.4_cluster.png">
+```
+import scanpy as sc
+
+sc.settings.set_figure_params(
+    dpi=300,
+    facecolor="white",
+    frameon=False
+)
+sc.settings.figdir = "plots"
+
+adata = sc.read("RData/T__umapmd0.4.h5ad")
+
+marker_genes = {
+"Immune":["PTPRC"],
+"Fib": ["DCN","COL1A1","COL1A2","FN1","COL3A1","COL6A1"],
+"Endo" : ["VWF","PECAM1","ENG","CDH5"],
+"Epi" : ["EPCAM","SFN","KRT5","KRT14"],
+"T":["CD3D","CD2","CD3E","CD3G"],
+"B":["CD79A","JCHAIN","CD19","MZB1"],
+"Myeloid":["LYZ","CD14","CD68",
+           "HPGDS","TPSAB1",
+          "GCA"],
+"NK":["GZMA","NCAM1","NKG7","KLRC1","IFNG","GZMB","KLRD1"],
+}
+marker_genes_in_data = {}
+for ct, markers in marker_genes.items():
+    markers_found = []
+    for marker in markers:
+        if marker in adata.var.index:
+            markers_found.append(marker)
+    marker_genes_in_data[ct] = markers_found
+sc.pl.umap(adata,color=marker_genes_in_data["Fib"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Tsubset_Fib.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Endo"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Tsubset_Endo.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Epi"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Tsubset_Epi.png")
+sc.pl.umap(adata,color=marker_genes_in_data["B"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Tsubset_B.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Myeloid"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Tsubset_Myeloid.png")
+
+sc.pl.dotplot(
+    adata,
+    groupby="leiden_res1_2",
+    var_names=marker_genes_in_data,
+    standard_scale="var",
+    save="Tsubset_大类marker.png"
+)
+```
+<img src="..\figures\umapTsubset_Fib.png">
+看起来没有混的纤维细胞<br>
+
+<img src="..\figures\umapTsubset_Endo.png">
+好像也没有混的内皮细胞
+
+<img src="..\figures\umapTsubset_Epi.png">
+好像也没有混的上皮细胞
+
+<img src="..\figures\umapTsubset_B.png">
+B细胞也没有混
+
+<img src="..\figures\umapTsubset_Myeloid.png">
+GCA不对劲！这一群(res1.2 cl10)可能是粒细胞混了T细胞
+
+* 点图
+<img src="..\figures\dotplot_Tsubset_大类marker.png">
+第10群确实是会高表达GCA这个中性粒的marker，去掉吧
+
+```
+adata = adata[adata.obs.leiden_res1_2 != '10'].copy()
+```
+
+## 2 接下来区分CD4,CD8,NKT,NK,T cycling五大类细胞
+```
+```
