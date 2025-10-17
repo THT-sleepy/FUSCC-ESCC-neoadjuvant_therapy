@@ -75,10 +75,15 @@ marker_genes ={
 marker_genes = {
 "T" :["CD4","CD8A","CD8B","CD3D","CD3E","CD3G"],
 "NK":["FCGR3A","KLRC1","NCAM1"],
-"ILC":["ID2", "PLCG2", "GNLY", "SYNE1"],
 }
 
+## 总结第二轮marker-NKT和NK及其它可能的ILC
 
+
+
+
+## 总结第二轮marker-CD4+T和CD8+T细分
+##
 
 marker_genes = {
 "CD4+":["CD4", "IL7R", "TRBC2"],
