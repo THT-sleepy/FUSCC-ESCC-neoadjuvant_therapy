@@ -6,8 +6,13 @@
 
 # 1 T
 * 首先要用大类marker检查下有没有哪个cluster可能是双细胞
-* 常见的大类有CD4T,CD8T,T Cycling,NKT,NK应该也混里面了
+* 常见的大类有CD4T,CD8T,T Cycling,NKT(好像包括CD4+和DN两大类),NK应该也混里面了
 * 要做两轮注释,第一轮把CD8,CD4,NK,NKT,T cycling(Tprf)分出来,第二轮把
+
+* 各文献T细胞分类
+1 林东昕院士21年NC T Naive,Th17,Tmem-CD4,Tfh1,Tfh2,Treg,Teff,Tmem-CD8,Tex,NK/NKT
+2 Liu cancer cell 2023 CD4+Tcm(中央记忆T细胞)
+
 
 
 ## single-cell best practices
