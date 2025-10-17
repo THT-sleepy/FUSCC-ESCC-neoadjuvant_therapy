@@ -8,7 +8,7 @@
 * 首先要用大类marker检查下有没有哪个cluster可能是双细胞
 * 常见的大类有CD4T,CD8T,T Cycling,NKT(好像包括CD4+和DN两大类),NK应该也混里面了,
 亚类里还可能有T Naive
-* 要做两轮注释,第一轮把CD8,CD4,NK,NKT,T cycling(Tprf)分出来,第二轮把
+* 要做三轮注释,第一轮把T和NK分开，第二轮区分CD8,CD4,NKT,T cycling(Tprf)分出来,第三轮再做更详细的注释
 
 * 各文献T细胞分类
 1 林东昕院士21年NC: T Naive,Th17,Tmem-CD4,Tfh1,Tfh2,Treg,Teff,Tmem-CD8,Tex,NK/NKT<br>
@@ -69,4 +69,22 @@ marker_genes ={
 "Trm":["ZNF683","CXCR6"],
 "Tex":["PDCD1","TOX","CXCL13","TIGIT",
       "CTLA4","TNFRSF9","HAVCR2","LAG3"]
+}
+
+## 总结T细胞第一轮marker-区分T和NK，以及其它可能的ILC
+marker_genes = {
+"T" :["CD4","CD8A","CD8B","CD3D","CD3E","CD3G"],
+"NK":["FCGR3A","KLRC1","NCAM1"],
+"ILC":["ID2", "PLCG2", "GNLY", "SYNE1"],
+}
+
+
+
+marker_genes = {
+"CD4+":["CD4", "IL7R", "TRBC2"],
+"CD8+":["CD8A", "CD8B"],
+"NK":["NCAM1","KLRC1","GNLY", "NKG7", "CD247", "GRIK4", "FCER1G", "TYROBP", "KLRG1", "FCGR3A"], #CD247 negatve
+NCAM1,KLRC1
+"NKT":[],
+"Tprf:["MKI67","TOP2A","STMN1"],
 }
