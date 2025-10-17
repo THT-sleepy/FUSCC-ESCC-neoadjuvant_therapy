@@ -87,10 +87,10 @@ marker_genes = {
 "ILC":["ID2", "PLCG2", "GNLY", "SYNE1","IL7R"],
 }
 
-## 总结第二轮marker-CD4+T和CD8+T细分
+## 总结第二轮marker-CD4+T和CD8+T细分-(生信加油站+胸科cancer cell+张泽民泛癌)
 ##
 marker_genes = {
-"Tn":["LEF1","CCR7","TCF7","SELL"],
+"Tn":["LEF1","CCR7","TCF7","SELL","MAL"],
 "Tm":["IL7R","CD69","GRP183","ANXA1"],
 "Tem":["GNLY","FOS","JUN","IL7R",
       ,"GZMK","IFNG","GZMH","GNLY",

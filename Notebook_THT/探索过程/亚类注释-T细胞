@@ -339,5 +339,35 @@ sc.pl.dotplot(
 adata.obs["final_anno_celltype"] = "NK/NKT"
 adata.write("RData/NK_NKT_final_anno.h5ad")
 ```
+* 最后看下每个cluster top10gene
+```
+##各cluster top10gene
+sc.tl.rank_genes_groups(
+ adata, groupby="leiden_res1", method="wilcoxon", key_added="dea_leiden_res1"
+)
+sc.tl.filter_rank_genes_groups(
+  adata,
+  min_in_group_fraction=0.2,
+  max_out_group_fraction=0.2,
+  key="dea_leiden_res1",
+  key_added="dea_leiden_res1_filtered",
+ )
+sc.pl.rank_genes_groups_dotplot(
+  adata,
+  groupby="leiden_res1",
+  standard_scale="var",
+  n_genes=10,
+  key="dea_leiden_res1_filtered",
+  save="NK_NKT_top10gene.png"
+)
+```
+<img src="..\探索过程\亚类注释-T细胞">
+
+
+
+
+
+
+
 
 ### final anno CD4+T细胞
