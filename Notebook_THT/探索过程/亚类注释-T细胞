@@ -361,7 +361,7 @@ sc.pl.rank_genes_groups_dotplot(
   save="NK_NKT_top10gene.png"
 )
 ```
-<img src="..\探索过程\亚类注释-T细胞">
+<img src="..\figures\dotplot_NK_NKT_top10gene.png">
 
 
 
