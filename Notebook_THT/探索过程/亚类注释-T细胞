@@ -363,11 +363,110 @@ sc.pl.rank_genes_groups_dotplot(
 ```
 <img src="..\figures\dotplot_NK_NKT_top10gene.png">
 
-
-
-
-
-
-
-
 ### final anno CD4+T细胞
+```
+import scanpy as sc
+
+sc.settings.set_figure_params(
+    dpi=300,
+    facecolor="white",
+    frameon=False
+)
+sc.settings.figdir = "plots"
+
+adata = sc.read("RData/CD4+T__umapmd0.4.h5ad")
+
+
+
+
+
+```
+
+```
+marker_genes = {
+    "Activated Teff":["CD40LG"],
+    "Treg": ["FOXP3"],
+    "Naive_Tcm_Tfh_precursor": [
+        "TCF7",
+        "LEF1",
+        "TXK",
+        "CCR7",
+        "SELL",
+        "MAL",
+        "CXCR5",
+        "ADSL",
+        "IL16",
+        "IL7R"
+    ],
+    "Th1_Tem": [
+        "TNF",
+        "AREG",
+        "TIMP1",
+        "CREM1",
+        "CCL5",
+        "CAPG1",
+        "GZMK",
+        "KLRG1",
+        "CX3CR1",
+        "TBX21"
+    ],
+    "Th17": [
+        "RORA",
+        "RORC",
+        "CCR6",
+        "IL23R",
+        "IL22",
+        "IL17A",
+        "IL17F",
+        "IL26"
+    ],
+    "Tfh_Exhausted": [
+        "TOX",
+        "TOX2",
+        "IL21",
+        "CXCL13",
+        "GNG4",
+        "CD200",
+        "BCL6",
+        "ZBED2",
+        "CCL3",
+        "CCL4",
+        "IFNG",
+        "GZMB",
+        "LAG3",
+        "HAVCR2"
+    ],
+    "Treg_Activated": [
+        "RTKN2",
+        "IL2RA",
+        "SIPR1",
+        "TNFRSFP",
+        "CTLA4",
+        "LAYN",
+        "STAT1",
+        "IFIT1",
+        "IRF7"
+    ],
+    "Th2": [
+        "NME1",
+        "NME2",
+        "MND1",
+        "SPC24",
+        "CCR4"
+    ]
+}
+marker_genes_in_data = {}
+for ct, markers in marker_genes.items():
+    markers_found = []
+    for marker in markers:
+        if marker in adata.var.index:
+            markers_found.append(marker)
+    marker_genes_in_data[ct] = markers_found
+sc.pl.dotplot(
+    adata,
+    groupby="leiden_res1",
+    var_names=marker_genes_in_data,
+    standard_scale="var",
+    save="Tsubset_CD4Tanno.png"
+)
+```
