@@ -142,7 +142,40 @@ cd4_tcell_markers = {
         "CCR4"
     ]
 }
-
+cd8_tcell_markers = {
+    "1": ["TCF7", "LEF1", "CCR7", "SELL", "MAL"],#这些是T naive/Tcm的marker
+    "2": ["IL7R", #IL7R在T细胞激活后会迅速不表达,和记忆细胞的形成一些关系
+          "GPR183", #说是Tm
+          "ZFP36L2", #主要存在于Tn和Tm
+          "CXCR4"], #主要存在于Tn和Tm,激活后表达会迅速下降
+    "3": ["ZNF683", #高表达是Trm的标志
+          "CD52", 不清楚
+          "HOPX", #pre-effector T cells
+          "ID2", #ILC
+          "CXCR6", #Trm
+          "XCL1", #NK-like
+          "XCL2"], #NK-like
+    "4": ["TBX21", "ASCL2", "CX3CR1", "KLRG1"], #T细胞衰老标志
+    "5": ["KLRD1", "TYROBP", "KIR2DL3", "KIR2DL1", "KIR3DL1", "KIR3DL2"，"CD160", "EOMES", "TXK", "KLRC1", "KIR2DL4",], #NK-Like
+    "6": ["GZMK", #Teff
+         "CXCR5",#不清楚
+         "CCR4", #不清楚
+         "CD28", #是共刺激分子,但具体是区分什么的不知道
+         "CXCR3",#Teff
+         "GZMH", #NK??
+         "CD27", #不太清楚
+         "HLA-DRB1",#不太清楚
+         "GNLY", #Tem
+         "IFNG", #Tem
+         "PRF1", #Tem
+         "NKG7", #Tem
+         "GZMA", #Tem
+         "GZMB"], 
+    "7": ["PDCD1", "CXCL13", "LAYN","LAG3","CTLA4","TIGIT",
+          "BTLA","HAVCR2"],#耗竭相关的
+    "9": ["STAT1", "ISG15", "IFIT1", "CCR1"],#富含干扰素诱导基因的ISG+CD8T
+    "10": ["SLC4A10", "KLRB1", "TMIGD2", "RORA", "ZBTB16", "IL7R", "IL7A", "IL2RA"],#Tc17
+}
 
 
 

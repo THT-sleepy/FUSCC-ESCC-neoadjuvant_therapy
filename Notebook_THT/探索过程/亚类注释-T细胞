@@ -412,10 +412,7 @@ marker_genes = {
         "NKG7",
         "GZMA",
         "GZMB",
-        "FOS",
-        "JUN"
     ],
-    "Th1":["CXCL13","IL6ST","ICOS"],
     "Th17": [
         "RORA",
         "RORC",
@@ -442,18 +439,8 @@ marker_genes = {
         "GZMB",
         "LAG3",
     ],
-    "Th2": [
-        "CCR3",
-        "CCR8",
-        "CXCR4",
-        "ST2",
-        "STAT5"
-        "STAT6",
-        "GATA3",
-        "CCR4"],
     "Tstr":["HSPA1B","HSPH1","HSPA1A","DNAJB1"],
 }
-
 marker_genes_in_data = {}
 for ct, markers in marker_genes.items():
     markers_found = []
@@ -467,5 +454,147 @@ sc.pl.dotplot(
     var_names=marker_genes_in_data,
     standard_scale="var",
     save="Tsubset_CD4Tanno.png"
+)
+##各cluster top10gene
+sc.tl.rank_genes_groups(
+ adata, groupby="leiden_res1", method="wilcoxon", key_added="dea_leiden_res1"
+)
+sc.tl.filter_rank_genes_groups(
+  adata,
+  min_in_group_fraction=0.2,
+  max_out_group_fraction=0.2,
+  key="dea_leiden_res1",
+  key_added="dea_leiden_res1_filtered",
+ )
+sc.pl.rank_genes_groups_dotplot(
+  adata,
+  groupby="leiden_res1",
+  standard_scale="var",
+  n_genes=10,
+  key="dea_leiden_res1_filtered",
+  save="CD4T_top10gene.png"
+)
+```
+* 聚类图
+<img src="..\figures\umapCD4+T_umapmd0.4_cluster.png">
+* 点图
+<img src="..\figures\dotplot_Tsubset_CD4Tanno.png">
+* DEG top10gene
+<img src="..\figures\dotplot_CD4T_top10gene.png">
+
+```
+cl_annotation = {
+    "0": "CD4_Tcm_ANXA1",
+    "1": "CD4_Th?_NAR4A1",
+    "2": "CD4_Trm?_S100A8",
+    "3": "CD4_Treg_TNRSF18",
+    "4": "CD4_Treg_FOXP3",
+    "5": "CD4_Tn_SELL",
+    "6": "CD4_Tn_SELL",
+    "7": "CD4_Tcm_ANXA2",
+    "8": "CD4_?_CXCL13",
+}
+
+```
+
+1群和2群还有8群是真不太确定,后面可以再结合CellTypist看下
+
+### final anno CD8+T
+```
+import scanpy as sc
+
+sc.settings.set_figure_params(
+    dpi=300,
+    facecolor="white",
+    frameon=False
+)
+sc.settings.figdir = "plots"
+
+```
+
+```
+marker_genes = {
+    "Tn/Tcm": ["TCF7", "LEF1", "CCR7", "SELL", "MAL"],
+    "2": ["IL7R",
+          "GPR183",
+          "ZFP36L2",
+          "CXCR4"],
+    "3": ["ZNF683",
+          "CD52",
+          "HOPX",
+          "ID2",
+          "CXCR6",
+          "XCL1",
+          "XCL2"],
+    "4": ["TBX21", "ASCL2", "CX3CR1", "KLRG1"],
+    "6": ["GZMK",
+         "GZMH",
+         "CD27",
+         "HLA-DRB1",
+         "GNLY",
+         "IFNG",
+         "PRF1",
+         "NKG7",
+         "GZMA",
+         "GZMB"],
+    "7": ["PDCD1", "CXCL13", "LAYN","LAG3","CTLA4","TIGIT",
+        "HAVCR2"],
+    "9": ["STAT1", "ISG15", "IFIT1", "CCR1"],
+    "10": ["SLC4A10", "KLRB1", "TMIGD2", "RORA", "ZBTB16", "IL7R", "IL7A", "IL2RA"],
+}
+marker_genes_in_data = {}
+for ct, markers in marker_genes.items():
+    markers_found = []
+    for marker in markers:
+        if marker in adata.var.index:
+            markers_found.append(marker)
+    marker_genes_in_data[ct] = markers_found
+sc.pl.dotplot(
+    adata,
+    groupby="leiden_res1",
+    var_names=marker_genes_in_data,
+    standard_scale="var",
+    save="Tsubset_CD8Tanno.png"
+)
+
+```
+* 聚类
+<img src="..\figures\umapCD8+T_umapmd0.4_cluster.png">
+res1<br>
+0群:首先是Tm(ZFP36L2,CXCR4),其它没啥特别的表达，可以归为CD8_Tm_?<br>
+1群:有效应分子GZMA,GZMB所以是Teff，同时耗竭分子也高表达，可以归为CD8_Tex_?<br>
+2群:有效应分子，同时有T细胞衰老，可以归为CD8_Temra_?<br>
+3群:有记忆细胞marker的表达，同时有效应分子GZMK,应该是GZMK+ early Tem 可以归为CD8_Tem_?<br>
+4群:有记忆细胞marker的表达，同时有效应分子GZMK,应该是GZMK+ Tem 可以归为CD8_Tem_?<br>
+5群:有记忆细胞marker的表达，也有效应分子GZMK,比较像GZMK+ Tem,但这一群有小部分细胞表达Tn/Tcm的marker,<br>
+查了下Tem会低表达TCF,还是归为CD8_Tem_?<br>
+6群:怎么啥都不表达?是累了吗?<br>
+看了下可能res1有点高了，像5群和6群其实就不太搞得清是什么细胞，就用res0.8吧
+```
+sc.pl.dotplot(
+    adata,
+    groupby="leiden_res0_8",
+    var_names=marker_genes_in_data,
+    standard_scale="var",
+    save="Tsubset_CD8Tanno.png"
+)
+##各cluster top10gene
+sc.tl.rank_genes_groups(
+ adata, groupby="leiden_res0_8", method="wilcoxon", key_added="dea_leiden_res1"
+)
+sc.tl.filter_rank_genes_groups(
+  adata,
+  min_in_group_fraction=0.2,
+  max_out_group_fraction=0.2,
+  key="dea_leiden_res0_8",
+  key_added="dea_leiden_res0_8_filtered",
+ )
+sc.pl.rank_genes_groups_dotplot(
+  adata,
+  groupby="leiden_res1",
+  standard_scale="var",
+  n_genes=10,
+  key="dea_leiden_res0_8_filtered",
+  save="CD8T_top10gene.png"
 )
 ```
