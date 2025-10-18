@@ -164,23 +164,75 @@ marker_genes = {
 
 ## 总结第二轮marker-CD4+T和CD8+T细分-(生信加油站+胸科cancer cell+张泽民泛癌)
 ##
-marker_genes = {
-"Tn":["LEF1","CCR7","TCF7","SELL","MAL"],
-"Tm":["IL7R","CD69","GRP183","ANXA1"],
-"Tem":["GNLY","FOS","JUN","IL7R",
-      ,"GZMK","IFNG","GZMH","GNLY",
-      "PRF1","NKG7","GZMA","GZMB",],
-"Tex":["LAG3","PDCD1","CTLA4","TIGIT",
-      "BTLA","HAVCR2","PDCD1","TOX",
-      "CXCL13","TIGIT","TNFRSF9",],
-"Tstr":["HSPA1B","HSPH1","HSPA1A","DNAJB1"],
-"Trm":["ZNF683","CXCR6","XCL1","XCL2",
-      "MYADM","CAPG","CD6","NR4A1","CD69","ITGAE",
-      ],
-"Treg":["FOXP3","IL2RA","IKZF2"],
-"Th1":["CXCL13","IL6ST","ICOS"],
-"Th17":["IL17A","IL23R","RORC",
-        "FURIN","CTSH","CCR6",
-        "KLRB1","CAPG","ITGAE"],
+cd4_tcell_markers = {
+    "Activated Teff":["CD40LG"],
+    "Treg": ["FOXP3"],
+    "Naive_Tcm_Tfh_precursor": [
+        "TCF7", #Tn/Tcm
+        "LEF1", #Tn/Tcm
+        "TXK",  #Tn/Tcm
+        "CCR7", #Tn/Tcm
+        "SELL", #Tn/Tcm
+        "MAL",  #Tn/Tcm
+        "CXCR5", #pre Tfh
+        "ANXA1", #blood Tcm
+        "ANXA2", #blood Tcm
+        "GPR183", #Tcm
+        "PRF1", #Tcm
+        "GZMA", #Tcm
+    ],
+    "Tem": [
+        "KLRG1", #T细胞衰老 Temra
+        "CX3CR1", #我推测是T细胞衰老 Temra
+        "TBX21", #我推测是T细胞衰老 Temra
+        "GNLY", #Tem
+        "GZMK", #Tem
+        "IFNG", #Tem
+        "GZMH", #Tem
+        "PRF1", #Tem
+        "NKG7", #Tem
+        "GZMA", #Tem
+        "GZMB", #Tem
+        "FOS",
+        "JUN"
+    ],
+    "Th1":["CXCL13","IL6ST","ICOS"],
+    "Th17": [
+        "RORA",
+        "RORC",
+        "CCR6",
+        "IL23R",
+        "IL22",
+        "IL17A",
+        "IL17F",
+        "IL26"
+    ],
+    "Trm":["ZNF683","CXCR6"],
+    "Tex":["PDCD1","TOX","CXCL13","TIGIT",
+          "CTLA4","TNFRSF9","HAVCR2","LAG3"]
+    "Tfh/Th1": [
+        "TOX2",
+        "IL21",
+        "GNG4",
+        "CD200",
+        "BCL6",
+        "ZBED2",
+        "CCL3",
+        "CCL4",
+        "IFNG",
+        "GZMB",
+        "LAG3",
+    ],
+    "Th2": [
+        "CCR3",
+        "CCR8",
+        "CXCR4",
+        "ST2",
+        "STAT5"
+        "STAT6",
+        "GATA3",
+        "CCR4"
+    ],
+    "Tstr":["HSPA1B","HSPH1","HSPA1A","DNAJB1"],
 }
-事实上像Tfh,Temra,Tcm,CD4+MT都没找到marker
+,CD4+MT都没找到marker

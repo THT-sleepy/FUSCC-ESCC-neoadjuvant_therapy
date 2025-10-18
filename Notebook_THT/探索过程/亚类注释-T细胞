@@ -394,22 +394,28 @@ marker_genes = {
         "SELL",
         "MAL",
         "CXCR5",
-        "ADSL",
-        "IL16",
-        "IL7R"
+        "ANXA1",
+        "ANXA2",
+        "GPR183",
+        "PRF1",
+        "GZMA",
     ],
-    "Th1_Tem": [
-        "TNF",
-        "AREG",
-        "TIMP1",
-        "CREM1",
-        "CCL5",
-        "CAPG1",
-        "GZMK",
+    "Tem": [
         "KLRG1",
         "CX3CR1",
-        "TBX21"
+        "TBX21",
+        "GNLY",
+        "GZMK",
+        "IFNG",
+        "GZMH",
+        "PRF1",
+        "NKG7",
+        "GZMA",
+        "GZMB",
+        "FOS",
+        "JUN"
     ],
+    "Th1":["CXCL13","IL6ST","ICOS"],
     "Th17": [
         "RORA",
         "RORC",
@@ -420,11 +426,12 @@ marker_genes = {
         "IL17F",
         "IL26"
     ],
-    "Tfh_Exhausted": [
-        "TOX",
+    "Trm":["ZNF683","CXCR6"],
+    "Tex":["PDCD1","TOX","CXCL13","TIGIT",
+          "CTLA4","TNFRSF9","HAVCR2","LAG3"],
+    "Tfh/Th1": [
         "TOX2",
         "IL21",
-        "CXCL13",
         "GNG4",
         "CD200",
         "BCL6",
@@ -434,27 +441,19 @@ marker_genes = {
         "IFNG",
         "GZMB",
         "LAG3",
-        "HAVCR2"
-    ],
-    "Treg_Activated": [
-        "RTKN2",
-        "IL2RA",
-        "SIPR1",
-        "TNFRSFP",
-        "CTLA4",
-        "LAYN",
-        "STAT1",
-        "IFIT1",
-        "IRF7"
     ],
     "Th2": [
-        "NME1",
-        "NME2",
-        "MND1",
-        "SPC24",
-        "CCR4"
-    ]
+        "CCR3",
+        "CCR8",
+        "CXCR4",
+        "ST2",
+        "STAT5"
+        "STAT6",
+        "GATA3",
+        "CCR4"],
+    "Tstr":["HSPA1B","HSPH1","HSPA1A","DNAJB1"],
 }
+
 marker_genes_in_data = {}
 for ct, markers in marker_genes.items():
     markers_found = []
