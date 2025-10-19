@@ -376,17 +376,13 @@ sc.settings.figdir = "plots"
 
 adata = sc.read("RData/CD4+T__umapmd0.4.h5ad")
 
-
-
-
-
 ```
 
 ```
 marker_genes = {
-    "Activated Teff":["CD40LG"],
+    "Activated Teff":["CD40LG","CD69","CD38"],
     "Treg": ["FOXP3"],
-    "Naive_Tcm_Tfh_precursor": [
+    "Tn_Tcm_Tfh_pre": [
         "TCF7",
         "LEF1",
         "TXK",
@@ -399,19 +395,25 @@ marker_genes = {
         "GPR183",
         "PRF1",
         "GZMA",
+        "ADSL",
+        "IL16",
+        "IL7R"
     ],
     "Tem": [
         "KLRG1",
         "CX3CR1",
         "TBX21",
-        "GNLY",
         "GZMK",
+        "GNLY",
         "IFNG",
         "GZMH",
         "PRF1",
         "NKG7",
         "GZMA",
         "GZMB",
+        "FOS",
+        "JUN",
+        "TNF"
     ],
     "Th17": [
         "RORA",
@@ -439,7 +441,16 @@ marker_genes = {
         "GZMB",
         "LAG3",
     ],
-    "Tstr":["HSPA1B","HSPH1","HSPA1A","DNAJB1"],
+    "Th2": [
+        "CCR3",
+        "CCR8",
+        "CXCR4",
+        "ST2",
+        "STAT5"
+        "STAT6",
+        "GATA3",
+        "CCR4"
+    ],
 }
 marker_genes_in_data = {}
 for ct, markers in marker_genes.items():
@@ -481,23 +492,34 @@ sc.pl.rank_genes_groups_dotplot(
 <img src="..\figures\dotplot_Tsubset_CD4Tanno.png">
 * DEG top10gene
 <img src="..\figures\dotplot_CD4T_top10gene.png">
+0群:Tn+ANXA1,比较明确是CD4_Tcm_ANXA1
+1群:高表达JUN,FOS,IL7R根据胸科marker应该是CD4_Tem_?,但奇怪的是为什么CD69激活marker和静息markerCXCR4同时高表达？
+2群:和第1群基本一样,CD4_Tem_?
+3群:Foxp3阳性,CD4_Treg_?
+4群:Foxp3阳性,CD4_Treg_?
+5群:Tn marker表达多,同时ANXA1/ANXA2/GPR183阴性,CD4_Tn_?
+6群:和第5群基本一样,CD4_Tn_?
+7群:和第0群比较像,CD4_Tcm_ANXA2,
+8群:也是JUN,FOS,但Treg也可以表达这两个基因啊,同时还有一些耗竭基因,CD4_Tex_CXCL13
 
 ```
 cl_annotation = {
     "0": "CD4_Tcm_ANXA1",
-    "1": "CD4_Th?_NAR4A1",
-    "2": "CD4_Trm?_S100A8",
+    "1": "CD4_Tem?_NAR4A1",
+    "2": "CD4_Tem?_S100A8",
     "3": "CD4_Treg_TNRSF18",
     "4": "CD4_Treg_FOXP3",
     "5": "CD4_Tn_SELL",
     "6": "CD4_Tn_SELL",
     "7": "CD4_Tcm_ANXA2",
-    "8": "CD4_?_CXCL13",
+    "8": "CD4_Tex?_CXCL13",
 }
-
+adata.obs["final_anno_celltype"]=adata.obs.leiden_res0_8.map(cl_annotation)
+adata.write("RData/CD4T_final_anno.h5ad")
 ```
 
-1群和2群还有8群是真不太确定,后面可以再结合CellTypist看下
+1群和2群还有8群是真不太确定,后面可以再结合CellTypist看下,
+2群有一个非常奇怪的点是高表达的居然都是中性粒和上皮的marker
 
 ### final anno CD8+T
 ```
@@ -509,6 +531,8 @@ sc.settings.set_figure_params(
     frameon=False
 )
 sc.settings.figdir = "plots"
+adata = sc.read("RData/CD8+T__umapmd0.4.h5ad")
+
 
 ```
 
@@ -570,6 +594,7 @@ res1<br>
 查了下Tem会低表达TCF,还是归为CD8_Tem_?<br>
 6群:怎么啥都不表达?是累了吗?<br>
 看了下可能res1有点高了，像5群和6群其实就不太搞得清是什么细胞，就用res0.8吧
+
 ```
 sc.pl.dotplot(
     adata,
@@ -580,7 +605,7 @@ sc.pl.dotplot(
 )
 ##各cluster top10gene
 sc.tl.rank_genes_groups(
- adata, groupby="leiden_res0_8", method="wilcoxon", key_added="dea_leiden_res1"
+ adata, groupby="leiden_res0_8", method="wilcoxon", key_added="dea_leiden_res0_8"
 )
 sc.tl.filter_rank_genes_groups(
   adata,
@@ -591,10 +616,47 @@ sc.tl.filter_rank_genes_groups(
  )
 sc.pl.rank_genes_groups_dotplot(
   adata,
-  groupby="leiden_res1",
+  groupby="leiden_res0_8",
   standard_scale="var",
   n_genes=10,
   key="dea_leiden_res0_8_filtered",
   save="CD8T_top10gene.png"
 )
 ```
+<img src="..\figures\dotplot_Tsubset_CD8Tanno.png">
+0群:有记忆细胞marker的表达，其它没有,CD8_Tm_?
+1群:效应分子+耗竭分子,CD8_Tex_?,
+2群:效应分子+衰老分子,CD8_Temra_?
+3群:记忆细胞marker+GZMK,CD8_Tem_GZMK
+4群:记忆细胞marker+GZMK,CD8_Tem_IL7R
+<img src="..\figures\dotplot_CD8T_top10gene.png">
+
+```
+adata = sc.read("RData/CD8+T__umapmd0.4.h5ad")
+cl_annotation = {
+    "0": "CD8_Tm_NR4A1",
+    "1": "CD8_Tex_CXCL13",
+    "2": "CD8_Temra_CX3CR1",
+    "3": "CD8_Tem_GZMK",
+    "4": "CD8_Tem_IL7R",
+}
+adata.obs["final_anno_celltype"]=adata.obs.leiden_res0_8.map(cl_annotation)
+adata.write("RData/CD8T_final_anno.h5ad")
+```
+## 第3群有点奇怪的，DEG高表达的基因居然是S100A8,A9和KRT5,14这些..令人担忧,如果自动注释也认为其是其它类型细胞就去除吧
+
+## 用celltypist再注释,得到最终结果
+### NKT
+<img src="..\figures\umapcelltypist_coarse_NKNKT.png">
+<img src="..\figures\umapcelltypist_fine_NKNKT.png">
+没啥大问题，就这样
+
+### CD8T
+<img src="..\figures\umapcelltypist_coarse_CD8T.png">
+<img src="..\figures\umapcelltypist_fine_CD8T.png">
+也没大问题，就这样
+
+###CD4T
+<img src="..\figures\umapcelltypist_coarse_CD4T.png">
+<img src="..\figures\umapcelltypist_fine_CD4T.png">
+明早来仔细做决定

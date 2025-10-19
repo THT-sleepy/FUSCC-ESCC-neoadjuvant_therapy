@@ -73,7 +73,7 @@ marker_genes ={
 cd4_tcell_markers = {
     "Activated Teff":["CD40LG"],
     "Treg": ["FOXP3"],
-    "Naive_Tcm_Tfh_precursor": [
+    "1": [
         "TCF7",
         "LEF1",
         "TXK",
@@ -170,7 +170,7 @@ cd8_tcell_markers = {
          "PRF1", #Tem
          "NKG7", #Tem
          "GZMA", #Tem
-         "GZMB"], 
+         "GZMB"],
     "7": ["PDCD1", "CXCL13", "LAYN","LAG3","CTLA4","TIGIT",
           "BTLA","HAVCR2"],#耗竭相关的
     "9": ["STAT1", "ISG15", "IFIT1", "CCR1"],#富含干扰素诱导基因的ISG+CD8T
@@ -195,31 +195,34 @@ marker_genes = {
 "ILC":["ID2", "PLCG2", "GNLY", "SYNE1","IL7R"],
 }
 
-## 总结第二轮marker-CD4+T和CD8+T细分-(生信加油站+胸科cancer cell+张泽民泛癌)
+## 总结第二轮marker-CD4+T和CD8+T细分-(scbp+生信加油站+胸科cancer cell+张泽民泛癌)
 ##
 cd4_tcell_markers = {
-    "Activated Teff":["CD40LG"],
+    "Activated Teff":["CD40LG","CD69","CD38"],
     "Treg": ["FOXP3"],
-    "Naive_Tcm_Tfh_precursor": [
+    "Tn_Tcm_Tfh_pre": [
         "TCF7", #Tn/Tcm
         "LEF1", #Tn/Tcm
         "TXK",  #Tn/Tcm
         "CCR7", #Tn/Tcm
         "SELL", #Tn/Tcm
         "MAL",  #Tn/Tcm
-        "CXCR5", #pre Tfh
+        "CXCR5", #Tfh
         "ANXA1", #blood Tcm
         "ANXA2", #blood Tcm
-        "GPR183", #Tcm
-        "PRF1", #Tcm
-        "GZMA", #Tcm
+        "GPR183", #Tm
+        "PRF1", #CTL
+        "GZMA", #
+        "ADSL",
+        "IL16",
+        "IL7R" #IL7R在T细胞激活后会迅速不表达
     ],
     "Tem": [
         "KLRG1", #T细胞衰老 Temra
         "CX3CR1", #我推测是T细胞衰老 Temra
         "TBX21", #我推测是T细胞衰老 Temra
-        "GNLY", #Tem
         "GZMK", #Tem
+        "GNLY", #Tem
         "IFNG", #Tem
         "GZMH", #Tem
         "PRF1", #Tem
@@ -227,9 +230,9 @@ cd4_tcell_markers = {
         "GZMA", #Tem
         "GZMB", #Tem
         "FOS",
-        "JUN"
+        "JUN",
+        "TNF"
     ],
-    "Th1":["CXCL13","IL6ST","ICOS"],
     "Th17": [
         "RORA",
         "RORC",
@@ -266,6 +269,4 @@ cd4_tcell_markers = {
         "GATA3",
         "CCR4"
     ],
-    "Tstr":["HSPA1B","HSPH1","HSPA1A","DNAJB1"],
 }
-,CD4+MT都没找到marker
