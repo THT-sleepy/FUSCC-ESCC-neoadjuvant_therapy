@@ -1,0 +1,322 @@
+
+# （Liu et al., 2023, Cancer Cell 41, 1–19）
+<img src = "..\figures\胸科抗PD-1课题大类marker.png">
+
+
+
+### 大类注释marker
+T：CD3D，CD2,CD3E,CD3G<br>
+B：CD79A,MS4A1,CD79B,JCHAIN<br>
+Myeloids:LYZ,CD14,GCA,HPGDS<br>
+Fibroblasts:DCN,COL1A1,COL1A2,FN1<br>
+Pericyte:RGS5,MCAM,ACTA2,MYH11<br>
+Endothelial:CCL14,VWF,PECAM1,ENG<br>
+Epithelial:KRT5,SFN,KRT14,EPCAM<br>
+
+### 亚群注释marker
+The effector memory T cells (Tem): highly expression of GNLY, FOS, JUN, and IL7R.<br>
+The exhausted T cells (Tex) : including the expression of immune checkpoints (PDCD1, HAVCR2 and LAG3), along with genes associated with tumor reactivity (ENTPD1 (CD39), CXCL13, and HLA-DR).<br>
+Tissue-resident memory T cells: exceptionally high expression of ZNF683.<br>
+B cells encompassed plasma cells (MZB1, XBP1) and CD19+ B cells.<br>
+Monocytes : highly expressed CD14 and CD16,macrophages exhibited further elevated expression of CD68.<br>
+
+# (Shang et al., 2024, Cancer Cell 42)
+
+### 说是直接用singleR注释的
+"Cell type identification was performed using SingleR software."
+
+# (Zhang et al., 2021, Nature Communications)
+### 大类注释marker
+epithelial cell:EPCAM, SFN, KRT5, and KRT14 <br>
+fobroblas:FN1, DCN, COL1A1, COL1A2, COL3A1, and COL6A1<br>
+endothelial cell: VWF, PECAM1, ENG and CDH5<br>
+pericyte: RGS5, MCAM and ACTA2 <br>
+fibroblastic reticular cell: CCL21 and PDPN <br>
+T cell:CD2, CD3D, CD3E and CD3G <br>
+B cell:CD19,CD79A, MS4A1, JCHAIN and MZB1<br>
+myeloid cell:CD68, LYZ, CD14, IL3RA,LAMP3, CLEC4C and TPSAB1 for myeloid cell<br>
+
+### 上皮细胞注释
+WE inroduce defined epithelial markers, EPCAM, SFN, and all expressed cytokeratins for CD45− cells
+to identify epithelial cells. For each CD45− cluster, we calculated the average
+normalized expression level of the epithelial marker gene set and expressed as
+epithelial score. The clusters were ordered by epithelial scores and a significant
+drop between epithelial and non-epithelial clusters was seen. We defined a robust
+epithelial score threshold as 10 for epithelial clusters.
+
+### 亚群注释
+Subclustering of epithelial
+cells, fibroblasts, endothelial cells, T cells, B cells and myeloid cells was further
+performed with the same approach as CD45- and CD45+ cells. For epithelial cells,
+tumor samples (N= 52) with >100 epithelial cells were retained for subclustering.
+For T-cell specific clustering, we additionally removed genes related to general cell
+stress, type I Interferon (IFN) response and cell cycle as previously suggested41. The
+contaminating immune cells in CD45- dataset and nonimmune cells in CD45+
+dataset were removed prior to clustering on the basis of their expression patterns.
+T cells with expression of both CD4 and CD8A/B were considered as unresolved
+T cells, which were not included in downstream analysis.
+
+# CellMarker2.0数据库食管癌
+
+B:CD19,CD27,CD79A,FCER2,IGHD,IGKC,JCHAIN,MS4A1,MZB1,TCL1A,TNFRSF13B<br>
+Epi: CDH1,Claudin,E-cadherin,EPCAM,JUP,KRT13,KRT14,KRT5,PPL,SFN,SPRR3,TFF3<br>
+Myeloid: C1QB,CD14,CD68,CLEC4C,CSF1R,IL3RA,LAMP3,LYZ,TPSAB1<br>
+Stromal:COL1A2,DCN,FBLN1
+T:CD2,CD3,CD3D,CD3E,CD3G,TRBC2
+
+# 联川公司大类注释Marker
+Epithelial:EPCAM,KRT8,KRT18,SFN,KRT5,KRT14
+Fibroblasts:DCN,COL1A1,COL3A1,FN1,COL1A2,COL6A1
+Endothelial_cells:VWF,PECAM1,ENG,CDH5
+T :TRAC,CD4,CD3E,CD3D,CD3G,CD8A,CD8B
+Mast: KIT,TPSB2,CPA3,TPSAB1,TNF,MS4A2,HDC,CSF1,CCL3
+NK:GZMA,NCAM1,NKG7,KLRC1,IFNG,GZMB,KLRD1
+B:CD79A,CD79B,MZB1,MS4A1,CD19,CD40
+Macrophage:CSF1R,IL1B,MRC1,ARG1,CD163,C1QA
+Monocytes:CD14,FCN1,CCR2,LYZ,VCAN
+Neutrophils:S100A8,S100A9,MMP9,CXCR2,CSF3R
+cycle_cells:MKI67
+Plasma:MZB1,IGKC
+
+# single cell best practices免疫marker(它这个是骨髓里免疫细胞)
+marker_genes = {
+    "CD14+ Mono": ["FCN1", "CD14"],
+    "CD16+ Mono": ["TCF7L2", "FCGR3A", "LYN"],
+    "ID2-hi myeloid prog": [
+        "CD14",
+        "ID2",
+        "VCAN",
+        "S100A9",
+        "CLEC12A",
+        "KLF4",
+        "PLAUR",
+    ],
+    "cDC1": ["CLEC9A", "CADM1"],
+    "cDC2": [
+        "CST3",
+        "COTL1",
+        "LYZ",
+        "DMXL2",
+        "CLEC10A",
+        "FCER1A",
+    ],  # Note: DMXL2 should be negative
+    "Normoblast": ["SLC4A1", "SLC25A37", "HBB", "HBA2", "HBA1", "TFRC"],
+    "Erythroblast": ["MKI67", "HBA1", "HBB"],
+    "Proerythroblast": [
+        "CDK6",
+        "SYNGR1",
+        "HBM",
+        "GYPA",
+    ],  # Note HBM and GYPA are negative markers
+    "NK": ["GNLY", "NKG7", "CD247", "GRIK4", "FCER1G", "TYROBP", "KLRG1", "FCGR3A"],
+    "ILC": ["ID2", "PLCG2", "GNLY", "SYNE1"],
+    "Lymph prog": [
+        "VPREB1",
+        "MME",
+        "EBF1",
+        "SSBP2",
+        "BACH2",
+        "CD79B",
+        "IGHM",
+        "PAX5",
+        "PRKCE",
+        "DNTT",
+        "IGLL1",
+    ],
+    "Naive CD20+ B": ["MS4A1", "IL4R", "IGHD", "FCRL1", "IGHM"],
+    "B1 B": [
+        "MS4A1",
+        "SSPN",
+        "ITGB1",
+        "EPHA4",
+        "COL4A4",
+        "PRDM1",
+        "IRF4",
+        "CD38",
+        "XBP1",
+        "PAX5",
+        "BCL11A",
+        "BLK",
+        "IGHD",
+        "IGHM",
+        "ZNF215",
+    ],  # Note IGHD and IGHM are negative markers
+    "Transitional B": ["MME", "CD38", "CD24", "ACSM3", "MSI2"],
+    "Plasma cells": ["MZB1", "HSP90B1", "FNDC3B", "PRDM1", "IGKC", "JCHAIN"],
+    "Plasmablast": ["XBP1", "RF4", "PRDM1", "PAX5"],  # Note PAX5 is a negative marker
+    "CD4+ T activated": ["CD4", "IL7R", "TRBC2", "ITGB1"],
+    "CD4+ T naive": ["CD4", "IL7R", "TRBC2", "CCR7"],
+    "CD8+ T": ["CD8A", "CD8B", "GZMK", "GZMA", "CCL5", "GZMB", "GZMH", "GZMA"],
+    "T activation": ["CD69", "CD38"],  # CD69 much better marker!
+    "T naive": ["LEF1", "CCR7", "TCF7"],
+    "pDC": ["GZMB", "IL3RA", "COBLL1", "TCF4"],
+    "G/M prog": ["MPO", "BCL2", "KCNQ5", "CSF3R"],
+    "HSC": ["NRIP1", "MECOM", "PROM1", "NKAIN2", "CD34"],
+    "MK/E prog": [
+        "ZNF385D",
+        "ITGA2B",
+        "RYR3",
+        "PLCB1",
+    ],  # Note PLCB1 is a negative marker
+}
+
+
+## 总结
+### 1大类
+marker_genes = {
+"Immune":["PTPRC"],
+"Fib": ["DCN","COL1A1","COL1A2","FN1","COL3A1","COL6A1"],
+"Endo" : ["VWF","PECAM1","ENG","CDH5"],
+"Epi" : ["EPCAM","KRT8","KRT18","SFN","KRT5","KRT14",
+         "CDH1","JUP","KRT13",
+         "PPL","SPRR3"],
+}
+
+### 2大类-免疫细分为B,T,髓系,ILC?
+T细胞:<br>
+CD2是早期的T细胞marker,广泛表达于T,NK,部分B和单核<br>
+CD3和TCR形成CD3-TCR复合物<br>
+TRAC是编码T细胞受体（TCR）α链恒定区的基因<br>
+TRBC2 编码TCR β链
+
+B细胞
+CD19存在于自原始B细胞（Progenitor B cell）后期以后的各阶段，包括浆细胞。(好像T细胞也有表达?)<br>
+CD79A和CD79B编码的蛋白和BCR形成复合物<br>
+MS4A1(CD20)在B细胞的活化和信号转导中有重要作用<br>
+JCHAIN J链把IGA和IGM的单体连接在一起<br>
+MZB1 marginal zone B and B1 cell specific protein Gene<br>
+
+髓系
+主要包括单核和巨噬细胞,粒细胞,树突状细胞,肥大细胞
+LYZ:溶菌酶,单核巨噬里面多,中性粒里面也可能有
+CD14:单核细胞经典标记,巨噬里面也可能有
+GCA:颗粒钙蛋白,中性粒里面有
+HPGDS:前列腺素D2合酶，主要在肥大里，Th2里可能也有
+CD68:巨噬细胞经典marker
+IL3RA:pDC中高表达
+LAMP3：LAMP3+cDC在张泽民泛癌髓系文章里是各组织中都有的
+CLEC4C:pDC的标记
+TPSAB1:类胰蛋白酶,肥大细胞特异性标记
+
+Immnue_marker_genes ={
+"T":["CD3D","CD2","CD3E","CD3G","TRAC","TRBC2"],
+"B":["CD79A","MS4A1","CD79B","JCHAIN","CD19","MZB1"],
+#按Cheng et al., 2021, Cell 184, 792–809的说法CST3应该是髓系的大类marker?
+"Myeloids":["LYZ","CD14","GCA","HPGDS","CD68","IL3RA","LAMP3",
+            "CLEC4C","TPSAB1"],
+}
+
+## 大类总结
+marker_genes = {
+"Immune":["PTPRC"],
+"Fib": ["DCN","COL1A1","COL1A2","FN1","COL3A1","COL6A1"],
+"Endo" : ["VWF","PECAM1","ENG","CDH5"],
+"Epi" : ["EPCAM","KRT8","KRT18","SFN","KRT5","KRT14",
+         "CDH1","JUP","KRT13",
+         "PPL","SPRR3"],
+"T":["CD3D","CD2","CD3E","CD3G","TRAC","TRBC2"],
+"B":["CD79A","MS4A1","CD79B","JCHAIN","CD19","MZB1"],#按Cheng et al., 2021, Cell 184, 792–809的说法CST3应该是髓系的大类marker?
+"Myeloids":["LYZ","CD14","GCA","HPGDS","CD68","IL3RA","LAMP3","CLEC4C","TPSAB1"],
+}
+比较搞不太清的是髓系到底有没有一个共同的marker,还有就是ILC
+
+
+
+
+### 3亚群之上皮-就用InferCNV分成恶性和正常上皮就行
+
+### 4亚群之内皮-基质细胞一般按功能(是什么管的内皮)进行细分
+内皮细胞包括淋巴内皮细胞(LEC),静脉内皮细胞(VEC),动脉内皮细胞(AEC),
+尖端细胞(TipEC),毛细血管内皮细胞(CapEC),富含干扰素诱导基因的内皮细胞(ISG+EC),
+增殖相关内皮细胞(prolEC)(主要参考了https://duty-blog.pages.dev/posts/2024-08/%E5%8D%95%E7%BB%86%E8%83%9E%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98%E8%BF%9B%E9%98%B6%E5%88%86%E6%9E%90%E4%B9%8B%E4%BA%9A%E7%BE%A4%E7%BB%86%E5%88%86/)
+marker_genes = {
+"LEC":["PROX1","PDPN","ALCAM","CD44","VEGFA"],
+"VEC":["EPHB4","NR2F2","ACKR1","MMRN1","SELP",
+      "VCAM1","POSTN","IGFBP7","CCL14","PRCP"],
+"AEC":["GJA4","GJA5","EFNB2","VEGFC","SOX17",
+      "DKK2","LTBP4","FBLN5","FN1","MGP",
+      "SERPINE2","ENPP2","TFPI","NPR3"],
+"TipEC":["CXCL12","CXCR4","ACKR3","LYVE1","DLL4",
+        "KCNE3","ESM1","ANGPT2","APLN"],
+"CapEC":["CA4","CD36"],
+"ISG+EC":["ISG20","IFIT1","IFIT3"],
+"prolEC":["MKI67","TOP2A"],
+}
+
+### 5亚群之纤维
+纤维细胞主要亚群包括myofibroblast(myCAF),细胞外基质细胞成纤维细胞(mCAF),
+炎性相关CAF(iCAF),抗原呈递相关CAFs(apCAFs),脂质相关CAFs(LipCAFs),
+周细胞(pericyte,有的文章称为vCAF),增殖相关CAFs(dCAF)
+marker_genes={
+"myCAF":["ACAT2","COL1A2","PDGFRB"],
+"mCAF":["POSTN","FN1","LUM","DCN",
+        "VCAN","COL5A1","COL5A2","COL6A3"],
+"iCAF":["FBLN1","IGF1","CXCL1","IGFBP6",
+        "SLPI","SAA1","C3","C7"],
+"apCAF":["CD74","HLA-DRA","HLA-DRB1"],
+"LipCAF":["APOPA2","FABP1","FABP4",
+          "FRZB","CFD","APOD"],
+"Pericyte":["MCAM","MYH11","GJA4","RGS5"],
+"dCAF":["MKI67","TOP2A"],
+}
+
+### 6亚群之淋巴-T-这里的应该不全
+常见的大类有CD4T,CD8T,T Cycling,NKT,常见的亚类有T naive(Tn),
+T memory(Tm),Effect/Cytotoxic(Tem/Teffe),耗竭T(Tex),应激相关
+T细胞(HSP+,Tstr),Tissue-resident T(Trm),Treg(CD4T),Th1/Tfh(CD4T),
+Th17,T cycling
+marker_genes={
+"Tn":["LEF1","CCR7","TCF7","SELL"],
+"Tm":["IL7R","CD69","GRP183","ANXA1"],
+"Tem":["GZMK","IFNG","GZMH","GNLY",
+      "PRF1","NKG7","GZMA","GZMB"],
+"Tex":["LAG3","PDCD1","CTLA4","TIGIT",
+      "BTLA","HAVCR2"],
+"Tstr":["HSPA1B","HSPH1","HSPA1A","DNAJB1"],
+"Trm":["XCL1","XCL2","MYADM","CAPG",
+        "CD6","NR4A1","CD69","ITGAE"],
+"Treg":["FOXP3","IL2RA","IKZF2"],
+"Th1":["CXCL13","IL6ST","ICOS"],
+"Th17":["IL17A","IL23R","RORC",
+        "FURIN","CTSH","CCR6",
+        "KLRB1","CAPG","ITGAE"],
+"T cycling":["MKI67","TOP2A"],
+}
+
+### 7亚群之淋巴-B-这里应该也不全
+B细胞主要包括Naive B细胞,Memory B细胞,Plasma B细胞,
+Plasmablast,short-lived plasma cells,long-lived plasma cycle_cells
+marker_genes = {
+"B Naive":["IGHD","IL4R","FCER2","TCL1A"],
+"B Memory":["CD27","IGHG1","AIM2","TNFRSF13B"],
+"B Plasma":["PRDM1","MZB1"],
+"B Plasmablast":["XBP1","SDC1"],#SDC1 is negative marker
+"B Short-lived plasma cells":["SDC1"],#SDC1高表达
+"B Long-lived plasma cells":["SDC1","STAT3","IKZF3"],
+}
+
+### 8亚群之淋巴-ILC-来自deepseek,要在文献里确认
+这个最后把T,B,髓系都分好后先定义成other lymphocell
+主要亚群包括ILC1,ILC2,ILC3和NK细胞
+ILC主要是要T细胞,B细胞,CD14,CD15这些都阴性
+marker_genes = {
+"CD56bright NK":["KLRC1","CD44","COTL1","XCL1","XCL2","TBX21","EOMES"],
+"CD56dim NK":["GZMB","FGFBP2","PRF1","FCGR3A","TBX21"],
+
+}
+
+### 9亚群之髓系
+髓系细胞主要包括Monocytes,Macrophage,DC,中性粒和肥大细胞
+巨噬和单核一般分不开可以
+marker_genes = {
+"Mono CD14+":["CD14","S100A9","S100A8"],
+"Mono CD16+":["FCGR3A","LST1","LILRB2"],
+"pDC":["LILRA4","GZMB","IL3RA"],
+"cDC1":["CLEC9A","FLT3","IDO1"],
+"cDC2":["CD1C","FCER1A","HLA-DQA1"],
+"cDC3":["LAMP3","CCR7","FSCN1"],
+"MAST":["KIT","TPSAB1","CPA3"],
+"Neutrophil":["CSF3R","S100A9","FGR3B",
+              "ALPL","CXCR1"],
+"Cycling":["MKI67","STMN1","TOP2A"],
+}

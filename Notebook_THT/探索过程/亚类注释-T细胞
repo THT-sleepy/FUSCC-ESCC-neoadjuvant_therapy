@@ -461,28 +461,28 @@ for ct, markers in marker_genes.items():
     marker_genes_in_data[ct] = markers_found
 sc.pl.dotplot(
     adata,
-    groupby="leiden_res1",
+    groupby="leiden_res0_8",
     var_names=marker_genes_in_data,
     standard_scale="var",
     save="Tsubset_CD4Tanno.png"
 )
 ##各cluster top10gene
 sc.tl.rank_genes_groups(
- adata, groupby="leiden_res1", method="wilcoxon", key_added="dea_leiden_res1"
+ adata, groupby="leiden_res0_8", method="wilcoxon", key_added="dea_leiden_res0_8"
 )
 sc.tl.filter_rank_genes_groups(
   adata,
   min_in_group_fraction=0.2,
   max_out_group_fraction=0.2,
-  key="dea_leiden_res1",
-  key_added="dea_leiden_res1_filtered",
+  key="dea_leiden_res0_8",
+  key_added="dea_leiden_res0_8_filtered",
  )
 sc.pl.rank_genes_groups_dotplot(
   adata,
-  groupby="leiden_res1",
+  groupby="leiden_res0_8",
   standard_scale="var",
   n_genes=10,
-  key="dea_leiden_res1_filtered",
+  key="dea_leiden_res0_8_filtered",
   save="CD4T_top10gene.png"
 )
 ```
@@ -492,27 +492,21 @@ sc.pl.rank_genes_groups_dotplot(
 <img src="..\figures\dotplot_Tsubset_CD4Tanno.png">
 * DEG top10gene
 <img src="..\figures\dotplot_CD4T_top10gene.png">
-0群:Tn+ANXA1,比较明确是CD4_Tcm_ANXA1
-1群:高表达JUN,FOS,IL7R根据胸科marker应该是CD4_Tem_?,但奇怪的是为什么CD69激活marker和静息markerCXCR4同时高表达？
-2群:和第1群基本一样,CD4_Tem_?
-3群:Foxp3阳性,CD4_Treg_?
-4群:Foxp3阳性,CD4_Treg_?
-5群:Tn marker表达多,同时ANXA1/ANXA2/GPR183阴性,CD4_Tn_?
-6群:和第5群基本一样,CD4_Tn_?
-7群:和第0群比较像,CD4_Tcm_ANXA2,
-8群:也是JUN,FOS,但Treg也可以表达这两个基因啊,同时还有一些耗竭基因,CD4_Tex_CXCL13
+0群:Tn,CD4_Tn_?<br>
+1群:Tn+ANXA1,CD4_Tcm_ANXA1<br>
+2群:Foxp3+Treg,CD4_Treg_FOXP3<br>
+3群：FOS,JUN,IL7R根据胸科marker应该是CD4_Tem_?<br>
+4群：FOS,JUN,IL7R根据胸科marker应该是CD4_Tem_?<br>
+5群：之前觉得是Tcm，但CCR7是阴性的，所以应该不是，按照celltypist注释为Treg吧，CD4_Treg_?<br>
 
 ```
 cl_annotation = {
-    "0": "CD4_Tcm_ANXA1",
-    "1": "CD4_Tem?_NAR4A1",
-    "2": "CD4_Tem?_S100A8",
-    "3": "CD4_Treg_TNRSF18",
-    "4": "CD4_Treg_FOXP3",
-    "5": "CD4_Tn_SELL",
-    "6": "CD4_Tn_SELL",
-    "7": "CD4_Tcm_ANXA2",
-    "8": "CD4_Tex?_CXCL13",
+    "0": "CD4_Tn_MYC",
+    "1": "CD4_Tcm_ANXA1",
+    "2": "CD4_Treg_FOXP3",
+    "3": "CD4_Tem_KLRB1",
+    "4": "CD4_Tem_NR4A1",
+    "5": "CD4_Treg_CDC25B",
 }
 adata.obs["final_anno_celltype"]=adata.obs.leiden_res0_8.map(cl_annotation)
 adata.write("RData/CD4T_final_anno.h5ad")
@@ -624,26 +618,27 @@ sc.pl.rank_genes_groups_dotplot(
 )
 ```
 <img src="..\figures\dotplot_Tsubset_CD8Tanno.png">
-0群:有记忆细胞marker的表达，其它没有,CD8_Tm_?
+0群:不是Tcm/Tn,也不是Temra,同时有记忆细胞marker的表达,ZNF683/CXCR6也没有高表达所以不能确定为Trm，可以就归到Tem,CD8_Tem_?
 1群:效应分子+耗竭分子,CD8_Tex_?,
-2群:效应分子+衰老分子,CD8_Temra_?
+2群:效应分子+衰老分子+lack of CD27,CD8_Temra_?
 3群:记忆细胞marker+GZMK,CD8_Tem_GZMK
-4群:记忆细胞marker+GZMK,CD8_Tem_IL7R
+4群:记忆细胞marker+GZMK,CD8_Tem_LTB #不太对，Tem应该是激活状态的，IL7R不应该阳性才对吧;感觉这群细胞是很特殊的,又倒回去看来了下文献胸科的Tem也是IL7R高表达的，所以应该没问题
 <img src="..\figures\dotplot_CD8T_top10gene.png">
 
 ```
 adata = sc.read("RData/CD8+T__umapmd0.4.h5ad")
 cl_annotation = {
-    "0": "CD8_Tm_NR4A1",
+    "0": "CD8_Tem_NR4A1",
     "1": "CD8_Tex_CXCL13",
     "2": "CD8_Temra_CX3CR1",
     "3": "CD8_Tem_GZMK",
-    "4": "CD8_Tem_IL7R",
+    "4": "CD8_Tem_LTB",
 }
 adata.obs["final_anno_celltype"]=adata.obs.leiden_res0_8.map(cl_annotation)
 adata.write("RData/CD8T_final_anno.h5ad")
 ```
-## 第3群有点奇怪的，DEG高表达的基因居然是S100A8,A9和KRT5,14这些..令人担忧,如果自动注释也认为其是其它类型细胞就去除吧
+## 第3群有点奇怪的，DEG高表达的基因居然是S100A8,A9和KRT5,14这些..令人担忧,如果自动注释也认为其是其它类型细胞就去除吧，不过celltypist也认为是T
+
 
 ## 用celltypist再注释,得到最终结果
 ### NKT
@@ -654,9 +649,10 @@ adata.write("RData/CD8T_final_anno.h5ad")
 ### CD8T
 <img src="..\figures\umapcelltypist_coarse_CD8T.png">
 <img src="..\figures\umapcelltypist_fine_CD8T.png">
-也没大问题，就这样
+把CD8_Tm_NR4A1改成了CD8_Tem_NR4A1
 
-###CD4T
+### CD4T
 <img src="..\figures\umapcelltypist_coarse_CD4T.png">
 <img src="..\figures\umapcelltypist_fine_CD4T.png">
-明早来仔细做决定
+<img src="..\figures\umapCD4_final_anno.png">
+对比检查了后没有大问题

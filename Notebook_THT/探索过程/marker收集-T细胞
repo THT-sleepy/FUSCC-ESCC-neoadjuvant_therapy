@@ -144,7 +144,7 @@ cd4_tcell_markers = {
 }
 cd8_tcell_markers = {
     "1": ["TCF7", "LEF1", "CCR7", "SELL", "MAL"],#这些是T naive/Tcm的marker
-    "2": ["IL7R", #IL7R在T细胞激活后会迅速不表达,和记忆细胞的形成一些关系
+    "2": ["IL7R", #IL7R在T细胞激活后会迅速不表达,是静息T如记忆前体细胞/Tn的marker
           "GPR183", #说是Tm
           "ZFP36L2", #主要存在于Tn和Tm
           "CXCR4"], #主要存在于Tn和Tm,激活后表达会迅速下降
