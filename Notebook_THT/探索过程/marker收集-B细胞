@@ -1,0 +1,71 @@
+## B细胞主要包括Naive B细胞,Memory B细胞,Plasma B细胞以及生发中心B细胞
+## Plasmablast,short-lived plasma cells,long-lived plasma cycle_cells
+<img src="..\figures\人B细胞发育和细胞标志物.png">
+
+### 张泽明泛癌B
+将肿瘤浸润B细胞分为了Naive B(Bn),memory B(Bm),germinal centerB(Bgc)
+以及antibody-secreting cells(ASC)
+<img src = "..\figures\张泽明泛癌B点图.png">
+marker_genes = {
+"Bn":["FCER2","TCL1A","IL4R","CD72","BACH2","IGHD","IGHM"],
+"Bm":["CD27","TNFRSF13B"],
+"B Plasma":["CD38","MZB1","PRDM1","IRF4","XBP1"]
+}
+
+### 高强泛癌B
+看这篇的情况其实B比较难分得清，搞不清的就直接特征基因了
+<img src="..\figures\高强泛癌B-UMAP.png">
+<img src="..\figures\高强泛癌B-dotplot.png">
+marker_genes={
+"Bn":["TCL1A","YBX3","FCER2"],
+"Bm":["CRIP2","ITGB1"],
+"activated B":["CD69","CD83"],
+}
+
+
+### 生信加油站
+
+marker_genes = {
+"B Naive":["IGHD","IL4R","FCER2","TCL1A"],
+"B Memory":["CD27","IGHG1","AIM2","TNFRSF13B"],
+#CD27阳性就不再是初始成熟细胞了
+"B Plasma":["PRDM1","MZB1"],
+"B Plasmablast":["XBP1","SDC1"],#SDC1 is negative marker
+"B Short-lived plasma cells":["SDC1"],#SDC1高表达
+"B Long-lived plasma cells":["SDC1","STAT3","IKZF3"],
+}
+
+### Liu 2023 CancerCell
+marker_genes = {
+"B Plasma":["MZB1","XBP1"],
+"CD19+ B":["CD19"], #CD19表达于除了浆细胞外的绝大多数B细胞
+}
+
+### Single Cell Best Practices
+marker_genes = {
+"Naive CD20+ B": ["MS4A1", "IL4R", "IGHD", "FCRL1", "IGHM"], #CD20(MS4A1)也是不表达于浆细胞
+"B1 B": [
+    "MS4A1",
+    "SSPN",
+    "ITGB1",
+    "EPHA4",
+    "COL4A4",
+    "PRDM1",
+    "IRF4",
+    "CD38",
+    "XBP1",
+    "PAX5",
+    "BCL11A",
+    "BLK",
+    "IGHD",
+    "IGHM",
+    "ZNF215",
+],  # Note IGHD and IGHM are negative markers
+"Transitional B": ["MME", "CD38", "CD24", "ACSM3", "MSI2"],
+#MME是CD10,只在过渡B表达，CD38在初始成熟B和记忆B都低表达，CD24也是只在过渡B高表达，同时
+#过渡B还应该是CD20+/MS4A1阳性
+"Plasma cells": ["MZB1", "HSP90B1", "FNDC3B", "PRDM1", "IGKC", "JCHAIN"],
+"Plasmablast": ["XBP1", "RF4", "PRDM1", "PAX5"],  # Note PAX5 is a negative marker
+}
+
+## 各文献分的B细胞类型
