@@ -9,7 +9,8 @@
 marker_genes = {
 "Bn":["FCER2","TCL1A","IL4R","CD72","BACH2","IGHD","IGHM"],
 "Bm":["CD27","TNFRSF13B"],
-"B Plasma":["CD38","MZB1","PRDM1","IRF4","XBP1"]
+"B Plasma":["CD38","MZB1","PRDM1","IRF4","XBP1"],
+"GCB":["TCL1A","IL4R","BACH2","BCL6","RGS13","AICDA","IL21R","MKI67","STMN1","HMGB2","TOP2A"],
 }
 
 ### 高强泛癌B
@@ -19,7 +20,10 @@ marker_genes = {
 marker_genes={
 "Bn":["TCL1A","YBX3","FCER2"],
 "Bm":["CRIP2","ITGB1"],
-"activated B":["CD69","CD83"],
+"activated B":["CD69","CD83"], #激活了但还没到GCB阶段
+"GCB":["TCL1A","SUGCT","NEIL1","NEF2B","LMO2","GMDS","MARCKSL1","STMN1","HMGB2","MKI67"],
+"B Plasma":["XBP1","MZB1","JCHAIN"],
+"B Plasmablast":["XBP1","MZB1","JCHAIN","STMN1","HMGB2","MKI67"],
 }
 
 
@@ -69,3 +73,64 @@ marker_genes = {
 }
 
 ## 各文献分的B细胞类型
+林东昕2021 NC ESCC把B细胞分为了GC B,activated B,Resting B,浆细胞
+Liu 2024 CancerCell ESCC把B细胞分为了滤泡B细胞,Bm,Bn,浆细胞
+Chen 2024 CancerCell 结直肠癌(也有PBMC的样本)把B细胞分为了Bn,Bm,GCB,浆细胞
+张泽明泛癌B 把B细胞分为了Bn,Bm,GCB,激活的不典型B细胞，浆细胞
+
+## 总结B细胞注释可能用到的marker
+marker_genes = {
+"Bn":["TCL1A", #在张泽明泛癌中GCB也会表达这个细胞
+      "YBX3", #高强泛癌B中的marker,高表达但不是特别特异
+      "FCER2", #preGC和Bm也有可能表达
+      "IL4R", #生发中心的也可能表达
+      "MS4A1", #CD20,区别浆细胞
+      "FCRL1", #SCBP的
+      "CD72", #张泽明泛癌,Bm和GCB也可能表达
+      "BACH2", #张泽明泛癌,Bm和GCB也可能表达
+      "IGHD", #普遍表达但不高
+      "IGHM"] ,#普遍表达但不高
+"Bm":["CD27", #按理来说是阳性，但在张泽明文章里也没有高表达
+      "IGHG1", #IgG,第二次免疫应答才有IgG
+      "AIM2", #生信加油站的
+      "TNFRSF13B", #这个marker特异性应该可
+      "CRIP2", #高强泛癌B中的marker,好像不是很特异
+      "ITGB1"], #高强泛癌B中的marker,好像不是很特异
+"GCB":["BCL6",
+       "RGS13",
+       "AICDA",
+       "IL21R",
+       "MKI67",
+       "STMN1",
+       "HMGB2",
+       "TOP2A",
+       "TCL1A",
+       "SUGCT",
+       "NEIL1",
+       "NEF2B",
+       "LMO2",
+       "GMDS",
+       "MARCKSL1"],
+"activated B":["CD69","CD83"],
+"Transitional B": ["MME", "CD38", "CD24", "ACSM3", "MSI2"],
+"Plasma cells": ["MZB1",
+                "HSP90B1",
+                "FNDC3B",
+                "PRDM1",
+                "IGKC",
+                "JCHAIN",
+                "CD38",
+                "IRF4",
+                "XBP1"],
+"Plasmablast": ["XBP1",
+                "RF4",
+                "PRDM1",
+                "PAX5",
+                "MZB1",
+                "JCHAIN",
+                "STMN1",
+                "HMGB2",
+                "MKI67",
+                "SDC1"],  # Note PAX5 and SDC1 are negative marker
+
+}
