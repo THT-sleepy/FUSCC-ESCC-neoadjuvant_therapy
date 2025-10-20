@@ -328,7 +328,7 @@ sc.pl.dotplot(
     standard_scale="var",
     save="Bsubset.png"
 )
-
+adata.write("RData/B_final_anno.h5ad")
 ```
 <img src="..\figures\dotplot_B_top10gene.png">
 
@@ -336,3 +336,8 @@ sc.pl.dotplot(
 <img src="..\figures\umapBsubset_anno.png">
 * 最终dotplot
 <img src="..\figures\dotplot_Bsubset.png">
+
+## 最后用celltypist验证一下结果
+<img src="..\figures\umapcelltypist_coarse_B.png">
+<img src="..\figures\umapcelltypist_fine_B.png">
+可以的
