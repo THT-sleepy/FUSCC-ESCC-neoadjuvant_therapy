@@ -1,0 +1,157 @@
+# 髓系细胞注释过程及结果记录         (What)
+
+* Oct 22, 2025                                 (When)
+* liyi /data1/liyi/zhaoyue/FUSCC-ESCC-neoadjuvant_thrapy           (Where)
+* 单细胞需要注释后才能进行后续分析 (Why)
+
+## 1 再次检查有无混杂的其它细胞系如上皮的marker表达
+*聚类情况
+<img src="..\figures\umapMyeloid_umapmd0.4_cluster.png">
+```
+import scanpy as sc
+
+sc.settings.set_figure_params(
+    dpi=300,
+    facecolor="white",
+    frameon=False
+)
+sc.settings.figdir = "plots"
+
+adata = sc.read("RData/Myeloid__umapmd0.4.h5ad")
+
+marker_genes = {
+"Immune":["PTPRC"],
+"Fib": ["DCN","COL1A1","COL1A2","FN1","COL3A1","COL6A1"],
+"Endo" : ["VWF","PECAM1","ENG","CDH5"],
+"Epi" : ["EPCAM","SFN","KRT5","KRT14"],
+"T":["CD3D","CD2","CD3E","CD3G"],
+"B":["CD79A","JCHAIN","CD19","MZB1"],
+"Myeloid":["LYZ","CD14","CD68",
+           "HPGDS","TPSAB1",
+          "GCA"],
+"NK":["GZMA","NCAM1","NKG7","KLRC1","IFNG","GZMB","KLRD1"],
+}
+marker_genes_in_data = {}
+for ct, markers in marker_genes.items():
+    markers_found = []
+    for marker in markers:
+        if marker in adata.var.index:
+            markers_found.append(marker)
+    marker_genes_in_data[ct] = markers_found
+sc.pl.umap(adata,color=marker_genes_in_data["Fib"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Myesubset_Fib.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Endo"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Myesubset_Endo.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Epi"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Myesubset_Epi.png")
+sc.pl.umap(adata,color=marker_genes_in_data["B"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Mesubset_B.png")
+sc.pl.umap(adata,color=marker_genes_in_data["T"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Myesubset_T.png")
+```
+<img src="..\figures\umapMyesubset_Fib.png">
+看起来没有混的纤维细胞<br>
+
+<img src="..\figures\umapMyesubset_Endo.png">
+ENG这一大团要注意一下
+
+<img src="..\figures\umapMyesubset_Epi.png">
+好像是混了一些,但没有单独成群
+
+<img src="..\figures\umapMesubset_B.png">
+最左下角这一群要去掉,大类注释的时候也是发现有这么一群B+Myeloid,卧槽其实并不是双细胞而是
+plasmcytoid DC
+
+<img src="..\figures\umapMyesubset_T.png">
+没有混T细胞
+
+* 点图
+
+```
+sc.pl.dotplot(
+    adata,
+    groupby="leiden_res1_2",
+    var_names=marker_genes_in_data,
+    standard_scale="var",
+    save="Myesubset_大类marker.png"
+)
+```
+<img src="..\figures\dotplot_Myesubset_大类marker.png">
+12群是双
+
+## 去双细胞等确定好分辨率再做
+
+### 2 umap确定分辨率和优化marker
+```
+marker_genes ={
+"Mono CD14+": ["CD14", "S100A9", "S100A8",
+                "FCN1", "CD36", "SELL", "S100A12",
+                "CLEC12A", "MS4A6A", "CXCL14", "CEBPD"],
+"Mono CD16+": ["FCGR3A", "LST1", "LILRB2",
+              "TCF7L2", "LYN", "FCN1", "FCGR3B",
+              "LILRA1B1", "CX3CR1", "IFITM1",
+              "ICAM2", "MTSS1", "CDKN1C",
+              "CDH23", "SLC44A2", "KLF3",
+              "IKZF1", "FLI1"],
+"pDC": ["LILRA4", "GZMB", "IL3RA",
+        "COBLL1", "TCF4", "CLEC4C",
+        "IRF4", "IRF7", "IRF8",
+        "SPIB", "SOX4", "SLC15A4",
+        "PLD4", "CCDC50", "LY9",
+        "SELL", "GAS6", "LIRA4"],
+"cDC1": ["CLEC9A", "FLT3", "IDO1",
+        "CADM1", "BATF3", "ID2",
+        "ETV3", "XCR1", "PTDSS1",
+        "SCARB1", "IL6ST", "CD40",
+        "TNFRSF10B", "CST7", "CLIC2",
+        "NET1", "ANXA6"],
+"cDC2": ["CD1C", "FCER1A", "HLA-DQA1",
+        "CST3", "COTL1", "LYZ", "DMXL2",
+        "CLEC10A", "HMGA1", "PFDN1",
+        "IRF4", "FCGR2B", "S1RPA",
+        "ADAM8", "AXL", "ADAM28",
+        "LY86", "TIMM13", "ARAF"],
+"cDC3": ["LAMP3", "CCR7", "FSCN1"],
+"Mast": ["KIT", "TPSAB1", "CPA3",
+         "TPSB2", "GATA2", "EPAS1",
+         "PBX1", "TPSD1", "MS4A2",
+         "SIGLEC6", "SIGLEC8", "CD22",
+         "CSF1", "TIMP3"],
+"Neutrophil": ["CSF3R", "S100A9", "FGR3B",
+               "ALPL", "CXCR1"],
+"mDC": ["CD1C", "FCER1A"],
+"Macro": ["INHBA", "IL1RN", "CCL4",
+          "NLRP3", "EREG", "IL1B",
+          "LYVE1", "PLTP", "SEPP1",
+          "C1QC", "C1QA", "APOE", "CD68"],
+"Mono-CD14CD16": ["CEBPD", "ZFP36L2", "FCN1", "CD14", "FCGR3A", "CD300E", "FAM65B"],
+}
+marker_genes_in_data = {}
+for ct, markers in marker_genes.items():
+    markers_found = []
+    for marker in markers:
+        if marker in adata.var.index:
+            markers_found.append(marker)
+    marker_genes_in_data[ct] = markers_found
+sc.pl.umap(adata,color=marker_genes_in_data["Mono CD14+"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Myeresubset_monocd14.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Mono CD16+"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Myeresubset_monocd16.png")
+sc.pl.umap(adata,color=marker_genes_in_data["pDC"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Myeresubset_pDC.png")
+sc.pl.umap(adata,color=marker_genes_in_data["cDC1"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Myeresubset_cDC1.png")
+sc.pl.umap(adata,color=marker_genes_in_data["cDC2"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Myeresubset_cDC2.png")
+sc.pl.umap(adata,color=marker_genes_in_data["cDC3"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Myeresubset_cDC3.png")
+sc.pl.umap(adata,color=marker_genes_in_data["mDC"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Myeresubset_mDC.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Mast"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Myeresubset_Mast.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Neutrophil"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Myeresubset_Neutrophil.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Macro"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Myeresubset_Macro.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Mono-CD14CD16"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Myeresubset_Monocd14cd16.png")
+```
+<img src="..\figures\umapMyeloid_umapmd0.4_cluster.png">
+<img src="..\figures\umapMyeresubset_monocd14.png">
+留下CD14,S100A8,S100A9,S100A12,FCN1,CD36,SELL
+
+<img src="..\figures\umapMyeloid_umapmd0.4_cluster.png">
+<img src="..\figures\umapMyeresubset_monocd16.png">
+留下FCGR3A,TCF7L2,FCGR3B,CXC3R1,CDKN1C
+
+<img src="..\figures\umapMyeloid_umapmd0.4_cluster.png">
+<img src="..\figures\umapMyeresubset_pDC.png">
+留下LILRA4,GZMB,COBLL1,TCF4,CLEC4C
+
+<img src="..\figures\umapMyeloid_umapmd0.4_cluster.png">
+<img src="..\figures\umapMyeresubset_cDC1.png">
+留下IDO1,ID2,CD40,CST7,ANXA6

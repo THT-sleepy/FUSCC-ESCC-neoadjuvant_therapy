@@ -98,7 +98,8 @@ marker_genes = {
 }
 
 ### 并集
-{"Mono CD14+": ["CD14", "S100A9", "S100A8",
+marker_genes ={
+"Mono CD14+": ["CD14", "S100A9", "S100A8",
                 "FCN1", "CD36", "SELL", "S100A12",
                 "CLEC12A", "MS4A6A", "CXCL14", "CEBPD"],
 "Mono CD16+": ["FCGR3A", "LST1", "LILRB2",
@@ -139,4 +140,5 @@ marker_genes = {
           "NLRP3", "EREG", "IL1B",
           "LYVE1", "PLTP", "SEPP1",
           "C1QC", "C1QA", "APOE", "CD68"],
-"Mono-CD14CD16": ["CEBPD", "ZFP36L2", "FCN1", "CD14", "FCGR3A", "CD300E", "FAM65B"]}
+"Mono-CD14CD16": ["CEBPD", "ZFP36L2", "FCN1", "CD14", "FCGR3A", "CD300E", "FAM65B"],
+}
