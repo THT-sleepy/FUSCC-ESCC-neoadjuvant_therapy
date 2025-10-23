@@ -62,7 +62,7 @@ pericytes,vascular smooth muscle cells(VSMC)
 Chen结直肠癌 2024 Cancer Cell,没有分型，直接用的特征基因
 
 ### 整合的marker基因
-integrated_marker_genes = {
+marker_genes = {
     "Pericyte": ["RGS5", "MCAM", "ACTA2", "MYH11", "PDGFRB", "GJA4", "CD36", "NOTCH3"],
     "VSMC": ["TAGLN", "ACTA2", "ACTG2", "MYH11", "CNN1", "HHIP"],
     "NMF": ["SLPI", "PI16", "CLU"],
