@@ -25,19 +25,33 @@ myofibroblast(myCAF),细胞外基质细胞成纤维细胞(mCAF),
 炎性相关CAF(iCAF),抗原呈递相关CAFs(apCAFs),脂质相关CAFs(LipCAFs),
 周细胞(pericyte,有的文章称为vCAF),增殖相关CAFs(dCAF)
 marker_genes={
-"myCAF":["ACAT2","COL1A2","PDGFRB"],
+"myofibroblast":["ACAT2","COL1A2","PDGFRB"],
 "mCAF":["POSTN","FN1","LUM","DCN",
         "VCAN","COL5A1","COL5A2","COL6A3"],
-"iCAF":["FBLN1","IGF1","CXCL1","IGFBP6",
+"Inflammatory fibroblasts":["FBLN1","IGF1","CXCL1","IGFBP6",
         "SLPI","SAA1","C3","C7"],
-"apCAF":["CD74","HLA-DRA","HLA-DRB1"],
-"LipCAF":["APOPA2","FABP1","FABP4",
+"ap-fibroblasts":["CD74","HLA-DRA","HLA-DRB1"],
+"Lip-fibroblasts":["APOPA2","FABP1","FABP4",
           "FRZB","CFD","APOD"],
 "Pericyte":["MCAM","MYH11","GJA4","RGS5"],
-"dCAF":["MKI67","TOP2A"],
+"proliferative fibroblasts":["MKI67","TOP2A"],
 }
 
 # 张泽民
+{"Inflammatory fibroblasts": ["CXCL1", "CXCL2", "IL6","CEBPD",
+            "CLU", "CTGF", "HGF","HSPA6",
+            "DNAJB1", "MYC", "AFT4"],
+    "ap-fibroblasts": ["CXCL12", "CD74", "HLA-DRB1", "HLA-DRA"],
+    "myofibroblast": ["HOPX", "IGFBP5", "TIMP1","MMP11",
+            "COL10A1", "POSTN", "LRRC15","SFRP4",
+            "SFRP2", "COMP","MMP1", "COL7A1",
+            "WNT5A", "ISG15", "IL7R"],
+    "proliferative fibroblasts": ["RBP1", "STAR", "STMN1"],
+    "CTNN1+ fibroblasts": ["WSB1", "DDX17", "CTNNB1"],
+    "progenitor-like fibroblasts": ["MFAP5", "PI16", "CD34","APOD", "FGF7", "COL15A1"],
+    "VSMC": ["MYH11", "ACTA2", "TAGLN","ACTG2", "HHIP", "CNN1"],
+    "Pericyte": ["RGS5", "CD36", "NOTCH3"]
+}
 
 
 ### 各文献的分群情况
@@ -45,4 +59,21 @@ marker_genes={
 NMF(Normal mucosa fibroblasts),normal activated fibroblasts(NAF),
 pericytes,vascular smooth muscle cells(VSMC)
 胸科 2024 Cancer Cell,分为了CAF,NAF,VSMC和pericytes
-Chen结直肠癌 2024 Cancer Cell
+Chen结直肠癌 2024 Cancer Cell,没有分型，直接用的特征基因
+
+### 整合的marker基因
+integrated_marker_genes = {
+    "Pericyte": ["RGS5", "MCAM", "ACTA2", "MYH11", "PDGFRB", "GJA4", "CD36", "NOTCH3"],
+    "VSMC": ["TAGLN", "ACTA2", "ACTG2", "MYH11", "CNN1", "HHIP"],
+    "NMF": ["SLPI", "PI16", "CLU"],
+    "NAF": ["CLU", "IGF1", "C7", "APOD"],
+    "CAF": ["APOD", "CXCL1", "CXCL6", "CCL2", "CCL11", "CXCL14", "CXCL5", "CXCL8", "CSF3", "MMP1", "MMP3", "MMP11"],
+    "myofibroblast": ["ACAT2", "COL1A2", "PDGFRB", "HOPX", "IGFBP5", "TIMP1", "MMP11", "COL10A1", "POSTN", "LRRC15", "SFRP4", "SFRP2", "COMP", "MMP1", "COL7A1", "WNT5A", "ISG15", "IL7R"],
+    "mCAF": ["POSTN", "FN1", "LUM", "DCN", "VCAN", "COL5A1", "COL5A2", "COL6A3"],
+    "Inflammatory fibroblasts": ["FBLN1", "IGF1", "CXCL1", "IGFBP6", "SLPI", "SAA1", "C3", "C7", "CEBPD", "CLU", "CTGF", "HGF", "HSPA6", "DNAJB1", "MYC", "AFT4"],
+    "ap-fibroblasts": ["CD74", "HLA-DRA", "HLA-DRB1", "CXCL12"],
+    "Lip-fibroblasts": ["APOPA2", "FABP1", "FABP4", "FRZB", "CFD", "APOD"],
+    "proliferative fibroblasts": ["MKI67", "TOP2A", "RBP1", "STAR", "STMN1"],
+    "CTNNB1+ fibroblasts": ["WSB1", "DDX17", "CTNNB1"],
+    "progenitor-like fibroblasts": ["MFAP5", "PI16", "CD34", "APOD", "FGF7", "COL15A1"],
+}
