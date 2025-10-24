@@ -1,0 +1,239 @@
+# 内皮细胞注释过程及结果记录         (What)
+
+* Oct 23, 2025                                 (When)
+* liyi /data1/liyi/zhaoyue/FUSCC-ESCC-neoadjuvant_thrapy           (Where)
+* 单细胞需要注释后才能进行后续分析 (Why)
+
+## 1 再次检查有无混杂的其它细胞系如上皮的marker表达
+*聚类情况
+<img src="..\figures\umapEndo_umapmd0.4_cluster.png">
+```
+import scanpy as sc
+
+sc.settings.set_figure_params(
+    dpi=300,
+    facecolor="white",
+    frameon=False
+)
+sc.settings.figdir = "plots"
+
+adata = sc.read("RData/Endo__umapmd0.4.h5ad")
+
+marker_genes = {
+"Immune":["PTPRC"],
+"Fib": ["DCN","COL1A1","COL1A2","FN1","COL3A1","COL6A1"],
+"Endo" : ["VWF","PECAM1","ENG","CDH5"],
+"Epi" : ["EPCAM","SFN","KRT5","KRT14"],
+"T":["CD3D","CD2","CD3E","CD3G"],
+"B":["CD79A","JCHAIN","CD19","MZB1"],
+"Myeloid":["LYZ","CD14","CD68",
+           "HPGDS","TPSAB1",
+          "GCA"],
+}
+marker_genes_in_data = {}
+for ct, markers in marker_genes.items():
+    markers_found = []
+    for marker in markers:
+        if marker in adata.var.index:
+            markers_found.append(marker)
+    marker_genes_in_data[ct] = markers_found
+sc.pl.umap(adata,color=marker_genes_in_data["T"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Endosubset_T.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Fib"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Endosubset_Fib.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Epi"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Endosubset_Epi.png")
+sc.pl.umap(adata,color=marker_genes_in_data["B"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Endosubset_B.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Myeloid"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Endosubset_Myeloid.png")
+
+sc.pl.dotplot(
+    adata,
+    groupby="leiden_res0_8",
+    var_names=marker_genes_in_data,
+    standard_scale="var",
+    save="Endosubset_大类marker.png"
+)
+```
+<img src="..\figures\umapEndosubset_T.png">
+看起来没有混的T细胞<br>
+
+<img src="..\figures\umapEndosubset_Fib.png">
+右下角的小cluster为什么FN1表达这么高
+
+<img src="..\figures\umapEndosubset_Epi.png">
+第5群感觉是上皮?
+
+<img src="..\figures\umapEndosubset_B.png">
+无B细胞
+
+<img src="..\figures\umapEndosubset_Myeloid.png">
+没有混髓系的
+
+* 点图
+<img src="..\figures\dotplot_Endosubset_大类marker.png">
+第5群要特别注意,有必要的话就删掉，第6群也是稍微有点可疑
+
+### 先看看celltypist的结果
+<img src="..\figures\umapcelltypist__Endo.png">
+从celltypist的结果看都是EC,暂时先不删，注释看看
+
+### 利用umap挑选marker及确定分辨率
+```
+marker_genes = {
+    "LEC": ["PROX1", "PDPN", "ALCAM", "CD44", "VEGFA", "LYVE1", "CCL21"],
+    "VEC": ["EPHB4", "NR2F2", "ACKR1", "MMRN1", "SELP", "VCAM1", "POSTN", "IGFBP7", "CCL14", "PRCP", "CLU"],
+    "AEC": ["GJA4", "GJA5", "EFNB2", "VEGFC", "SOX17", "DKK2", "LTBP4", "FBLN5", "FN1", "MGP", "SERPINE2", "ENPP2", "TFPI", "NPR3"],
+    "TipEC": ["CXCL12", "CXCR4", "ACKR3", "LYVE1", "DLL4", "KCNE3", "ESM1", "ANGPT2", "APLN", "COL4A1", "KDR"],
+    "CapEC": ["CA4", "CD36", "RGCC"],
+    "ISG+EC": ["ISG20", "IFIT1", "IFIT3"],
+    "prolEC": ["MKI67", "TOP2A"],
+    "Hypoxia": ["MT1X", "MT1E", "MT2A"]
+}
+marker_genes_in_data = {}
+for ct, markers in marker_genes.items():
+    markers_found = []
+    for marker in markers:
+        if marker in adata.var.index:
+            markers_found.append(marker)
+    marker_genes_in_data[ct] = markers_found
+sc.pl.umap(adata,color=marker_genes_in_data["LEC"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Endoresubset_LEC.png")
+sc.pl.umap(adata,color=marker_genes_in_data["VEC"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Endoresubset_VEC.png")
+sc.pl.umap(adata,color=marker_genes_in_data["AEC"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Endoresubset_AEC.png")
+sc.pl.umap(adata,color=marker_genes_in_data["TipEC"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Endoresubset_TipEC.png")
+sc.pl.umap(adata,color=marker_genes_in_data["CapEC"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Endoresubset_CapEC.png")
+sc.pl.umap(adata,color=marker_genes_in_data["ISG+EC"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Endoresubset_ISGEC.png")
+sc.pl.umap(adata,color=marker_genes_in_data["prolEC"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Endoresubset_prolEC.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Hypoxia"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Endoresubset_hypoxia.png")
+```
+
+* LEC
+<img src="..\figures\umapEndo_umapmd0.4_cluster.png">
+<img src="..\figures\umapEndoresubset_LEC.png">
+保留PROX1,PDPN,LYVE1,CCL21,应该是右下角那一小团
+
+* VEC
+<img src="..\figures\umapEndo_umapmd0.4_cluster.png">
+<img src="..\figures\umapEndoresubset_VEC.png">
+保留NR2F2,ACKR1,SELP,res0_8的0,2,5,7
+
+* AEC
+<img src="..\figures\umapEndo_umapmd0.4_cluster.png">
+<img src="..\figures\umapEndoresubset_AEC.png">
+保留前4个marker,应该是第4群
+
+* TipEC
+<img src="..\figures\umapEndo_umapmd0.4_cluster.png">
+<img src="..\figures\umapEndoresubset_tipEC.png">
+感觉marker特异性不强，先弄其它群
+
+* CapEC
+<img src="..\figures\umapEndo_umapmd0.4_cluster.png">
+<img src="..\figures\umapEndoresubset_capEC.png">
+保留RGCC，应该是res0.8的1和3
+
+* ISG+EC
+<img src="..\figures\umapEndo_umapmd0.4_cluster.png">
+<img src="..\figures\umapEndoresubset_ISGEC.png">
+没有这一群
+
+* prolEC
+<img src="..\figures\umapEndo_umapmd0.4_cluster.png">
+<img src="..\figures\umapEndoresubset_prolEC.png">
+marker特异性可以,但这一群没有单独聚出来
+
+* Hypoxia
+<img src="..\figures\umapEndo_umapmd0.4_cluster.png">
+<img src="..\figures\umapEndoresubset_hypoxia.png">
+没有这一群
+
+总结一下和celltypist的结果差不多,res选0.8的话0,2,5,7是静脉内皮
+,1,3是微血管内皮，4是动脉内皮，6是淋巴内皮
+
+用优化后的marker画个点图看下5群要不要去掉
+```
+marker_genes = {
+    "LEC": ["PROX1", "PDPN", "LYVE1", "CCL21"],
+    "VEC": ["NR2F2", "ACKR1","SELP"],
+    "AEC": ["GJA4", "GJA5", "EFNB2", "VEGFC"],
+    "CapEC": ["RGCC"],
+}
+sc.pl.dotplot(
+        adata,
+        groupby="leiden_res0_8",
+        var_names=marker_genes,
+        standard_scale="var",
+        save="Endo亚群.png"
+    )
+
+```
+<img src="..\figures\dotplot_Endo亚群.png">
+
+第5群还是要去掉
+
+```
+adata = adata[adata.obs.leiden_res0_8 != '5'].copy()
+```
+### 3 DEG找marker
+
+```
+sc.tl.rank_genes_groups(
+ adata, groupby="leiden_res0_8", method="wilcoxon", key_added="dea_leiden_res0_8"
+)
+sc.tl.filter_rank_genes_groups(
+  adata,
+  min_in_group_fraction=0.2,
+  max_out_group_fraction=0.2,
+  key="dea_leiden_res0_8",
+  key_added="dea_leiden_res0_8_filtered",
+ )
+sc.pl.rank_genes_groups_dotplot(
+  adata,
+  groupby="leiden_res0_8",
+  standard_scale="var",
+  n_genes=10,
+  key="dea_leiden_res0_8_filtered",
+  save="Endo_top10gene.png"
+)
+```
+<img src="..\figures\umapEndo_umapmd0.4_cluster.png">
+<img src="..\figures\dotplot_Endo_top10gene.png">
+
+
+```
+adata = sc.read("RData/Endo__umapmd0.4.h5ad")
+adata = adata[adata.obs.leiden_res0_8 != '5'].copy()
+cl_annotation = {
+    "0": "VEC_IL33",
+    "1": "capEC_RGCC",
+    "2": "VEC_IL33",
+    "3": "capEC_RGCC",
+    "4": "AEC_GJA4",
+    "6": "LEC_CCL21",
+    "7": "VEC_CSF2RB",
+}
+adata.obs["final_anno_celltype"]=adata.obs.leiden_res0_8.map(cl_annotation)
+adata.write("RData/Endo_final_anno.h5ad")
+
+```
+
+### final umap和点图
+```
+sc.pl.umap(adata,color="final_anno_celltype",save="Endosubset_anno.png")
+
+marker_genes = {
+    "LEC_CCL21": ["PROX1", "PDPN", "LYVE1", "CCL21"],
+    "VEC_IL33": ["IL33", "ACKR1","SELP"],
+    "VEC_CSF2RB": ["CSF2RB","NR2F2", "ACKR1","SELP"],
+    "AEC_GJA4": ["GJA4", "GJA5", "EFNB2", "VEGFC"],
+    "CapEC_RGCC": ["RGCC"],
+}
+sc.pl.dotplot(
+    adata,
+    groupby="final_anno_celltype",
+    var_names=marker_genes,
+    standard_scale="var",
+    save="Endo_finalanno.png"
+)
+
+```
+* final umap
+<img src="..\figures\umapEndosubset_anno.png">
+* dotplot
+<img src="..\figures\dotplot_Endo_finalanno.png">

@@ -298,7 +298,7 @@ cl_annotation = {
     "11": "cDC3_LAMP3",
 }
 adata.obs["final_anno_celltype"]=adata.obs.leiden_res1.map(cl_annotation)
-adata.write("RData/Myeloid_final_anno.h5ad")
+adata.write("RData/Fib_final_anno.h5ad")
 
 ```
 
