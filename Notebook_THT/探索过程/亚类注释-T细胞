@@ -5,8 +5,9 @@
 * 单细胞需要注释后才能进行后续分析 (Why)
 
 ## 1 再次检查有无混杂的其它细胞系如上皮的marker表达
-*聚类情况
+* 聚类情况
 <img src="..\figures\umapT_umapmd0.4_cluster.png">
+
 ```
 import scanpy as sc
 
@@ -121,6 +122,7 @@ cl_annotation = {
     "11":"DP_T",
 }
 ```
+后面结合umap看了下分群有变化
 第8群有点麻烦,感觉需要提高一点分辨率(试一下2吧)
 
 ```
@@ -162,6 +164,16 @@ sc.pl.umap(adata,color=marker_genes_in_data["Tprf"],vmin=0,vmax="p99",sort_order
 <img src="..\figures\umapTsubset_Tprf.png">
 很少的prfT，可以不分这一类
 
+
+<img src="..\figures\umapT_umapmd0.4_cluster.png">
+<img src="..\figures\umapTsubset_T.png">
+<img src="..\figures\umapTsubset_NK.png">
+<img src="..\figures\dotplot_Tsubset_T_ILCmarker.png">
+
+## 先看看celltypist的结果
+<img src="..\figures\umapcelltypist_coarse_T.png">
+<img src="..\figures\umapcelltypist_fine_T.png">
+
 ```
 cl_annotation = {
     "0": "CD4+T",
@@ -173,7 +185,8 @@ cl_annotation = {
     "6": "CD4+T",
     "7": "CD8+T",
     "8": "CD8+T",
-    "9": "NKT_ILC"
+    "9": "NKT_ILC",
+    "11":"CD8+T"
 }
 adata.obs["TILC_celltype"]=adata.obs.leiden_res1_2.map(cl_annotation)
 adata.write("RData/T_1st_round_anno.h5ad")
@@ -274,6 +287,11 @@ for celltype in celltypes_to_process:
 ```
 
 ### final_anno NK,NKT,ILC
+## 先看看celltypist的结果
+<img src="..\figures\umapcelltypist_coarse_NKNKT.png">
+<img src="..\figures\umapcelltypist_fine_NKNKT.png">
+
+### 利用umap优化marker和确定分辨率
 ```
 import scanpy as sc
 
@@ -302,44 +320,43 @@ for ct, markers in marker_genes.items():
 sc.pl.umap(adata,color=marker_genes_in_data["NK"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Tresubset_NK.png")
 sc.pl.umap(adata,color=marker_genes_in_data["NKT"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Tsubset_NKT.png")
 sc.pl.umap(adata,color=marker_genes_in_data["ILC"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="Tsubset_ILC.png")
-## 筛几个基因画点图
-marker_genes = {
-"NK":["NCAM1","NKG7","KLRC1","KLRD1","KLRG1","GNLY", "TYROBP", "FCGR3A"],
-"NKT":["CD3D","CD3E","CD3G","NCAM1"],
-}
-sc.pl.dotplot(
-    adata,
-    groupby="leiden_res1",
-    var_names=marker_genes_in_data,
-    standard_scale="var",
-    save="Tresubset_NKNKT.png"
-)
-
-
-
 ```
 
 * 聚类情况
 <img src="..\figures\umapNKT_ILC_umapmd0.4_cluster.png">
 * NK
 <img src="..\figures\umapTresubset_NK.png">
+可以保留KLRC1,FCER1G,NCAM1,KLRD1
 
 * NKT
 <img src="..\figures\umapTresubset_NKT.png">
+NK的markerEOMES,NCAM1+T细胞marker CD3D,CD3G
 
 * ILC
 <img src="..\figures\umapTresubset_ILC.png">
+分不出单独的marker
+
 看下来res1的0,2,5,6像是NKT,其它的像是NK，ILC很难分出来
 
 *点图
-<img src="..\figures\dotplot_Tresubset_NKNKT.png">
-其实NK和NKT也分不太开,就归到NK/NKT好了，保守一点，不然主观性太强
+```
+marker_genes = {
+"NK":["KLRC1","FCGR3A","NCAM1","KLRD1"],
+"NKT":["EOMES","NCAM1","CD3D","CD3G"],
+}
+sc.pl.dotplot(
+        adata,
+        groupby="leiden_res1",
+        var_names=marker_genes,
+        standard_scale="var",
+        save="NKNKT亚群.png"
+    )
+```
 
-```
-adata.obs["final_anno_celltype"] = "NK/NKT"
-adata.write("RData/NK_NKT_final_anno.h5ad")
-```
-* 最后看下每个cluster top10gene
+<img src="..\figures\dotplot_NKNKT亚群.png">
+0,2,5,6归为NK/NKT;1,3,4,7归为NK
+
+* 再根据top10gene选marker
 ```
 ##各cluster top10gene
 sc.tl.rank_genes_groups(
@@ -363,7 +380,90 @@ sc.pl.rank_genes_groups_dotplot(
 ```
 <img src="..\figures\dotplot_NK_NKT_top10gene.png">
 
+### 后面发现0,2,5分不开,所以DEG要重新算一下
+```
+cl_annotation = {
+    "0": "NK/NKT_?",
+    "1": "NK_KLRC1",
+    "2": "NK/NKT_?",
+    "3": "NK_CXXC5",
+    "4": "NK_CXXC5",
+    "5":"NK/NKT_?",
+    "6": "NK/NKT_HSPA1B",
+    "7": "NK_NRGN",
+}
+adata.obs["final_anno_celltype"]=adata.obs.leiden_res1.map(cl_annotation)
+sc.tl.rank_genes_groups(
+ adata, groupby="final_anno_celltype", method="wilcoxon", key_added="dea_final_anno_celltype"
+)
+sc.tl.filter_rank_genes_groups(
+  adata,
+  min_in_group_fraction=0.2,
+  max_out_group_fraction=0.2,
+  key="dea_final_anno_celltype",
+  key_added="dea_final_anno_celltype_filtered",
+ )
+sc.pl.rank_genes_groups_dotplot(
+  adata,
+  groupby="final_anno_celltype",
+  standard_scale="var",
+  n_genes=10,
+  key="dea_final_anno_celltype_filtered",
+  save="NK_NKT_anno_top10gene.png"
+)
+```
+<img src="..\figures\dotplot_NK_NKT_anno_top10gene.png">
+
+
+
+
+## 最终注释
+```
+adata = sc.read("RData/NKT_ILC__umapmd0.4.h5ad")
+cl_annotation = {
+    "0": "NK/NKT_KLRC3",
+    "1": "NK_KLRC1",
+    "2": "NK/NKT_KLRC3",
+    "3": "NK_CXXC5",
+    "4": "NK_CXXC5",
+    "5":"NK/NKT_KLRC3",
+    "6": "NK/NKT_HSPA1B",
+    "7": "NK_NRGN",
+}
+adata.obs["final_anno_celltype"]=adata.obs.leiden_res1.map(cl_annotation)
+adata.write("RData/NKNKT_final_anno.h5ad")
+```
+### final umap和点图
+```
+sc.pl.umap(adata,color="final_anno_celltype",save="NKNKT_anno.png")
+
+marker_genes = {
+"T":["CD3D","CD3G"],
+"NK":["KLRC1","NCAM1","FCGR3A","KLRD1"],
+"others":["HSPA1B","KLRC3","CXXC5","NRGN"],
+}
+sc.pl.dotplot(
+    adata,
+    groupby="final_anno_celltype",
+    var_names=marker_genes,
+    standard_scale="var",
+    save="NKNKT_finalanno.png"
+)
+
+```
+* final umap
+<img src="..\figures\umapNKNKT_anno.png">
+* dotplot
+<img src="..\figures\dotplot_NKNKT_finalanno.png">
+
+
+
+
+
+
+
 ### final anno CD4+T细胞
+
 ```
 import scanpy as sc
 
