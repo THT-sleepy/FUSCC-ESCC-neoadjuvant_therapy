@@ -286,7 +286,7 @@ for celltype in celltypes_to_process:
     )
 ```
 
-### final_anno NK,NKT,ILC
+# final_anno NK,NKT,ILC
 ## 先看看celltypist的结果
 <img src="..\figures\umapcelltypist_coarse_NKNKT.png">
 <img src="..\figures\umapcelltypist_fine_NKNKT.png">
@@ -477,6 +477,13 @@ sc.settings.figdir = "plots"
 adata = sc.read("RData/CD4+T__umapmd0.4.h5ad")
 
 ```
+* 聚类图
+<img src="..\figures\umapCD4+T_umapmd0.4_cluster.png">
+## 先看看celltypist的结果
+<img src="..\figures\umapcelltypist_coarse_CD4T.png">
+<img src="..\figures\umapcelltypist_fine_CD4T.png">
+
+## 根据umap优化下marker
 
 ```
 marker_genes = {
@@ -586,6 +593,7 @@ sc.pl.rank_genes_groups_dotplot(
   save="CD4T_top10gene.png"
 )
 ```
+
 * 聚类图
 <img src="..\figures\umapCD4+T_umapmd0.4_cluster.png">
 * 点图
@@ -593,11 +601,11 @@ sc.pl.rank_genes_groups_dotplot(
 * DEG top10gene
 <img src="..\figures\dotplot_CD4T_top10gene.png">
 0群:Tn,CD4_Tn_?<br>
-1群:Tn+ANXA1,CD4_Tcm_ANXA1<br>
+1群:Tn+ANXA1,CD4_Tcm_ANXA1<br> 这个ANXA1是参考的张泽民结肠癌的marker
 2群:Foxp3+Treg,CD4_Treg_FOXP3<br>
 3群：FOS,JUN,IL7R根据胸科marker应该是CD4_Tem_?<br>
 4群：FOS,JUN,IL7R根据胸科marker应该是CD4_Tem_?<br>
-5群：之前觉得是Tcm，但CCR7是阴性的，所以应该不是，按照celltypist注释为Treg吧，CD4_Treg_?<br>
+5群：之前觉得是Tcm，但CCR7是阴性的而且耗竭marker都是阴性的，所以应该不是，按照celltypist注释为Treg吧，CD4_Treg_?<br>
 
 ```
 cl_annotation = {
@@ -611,11 +619,138 @@ cl_annotation = {
 adata.obs["final_anno_celltype"]=adata.obs.leiden_res0_8.map(cl_annotation)
 adata.write("RData/CD4T_final_anno.h5ad")
 ```
+后面有修改，3和4分不开
 
-1群和2群还有8群是真不太确定,后面可以再结合CellTypist看下,
-2群有一个非常奇怪的点是高表达的居然都是中性粒和上皮的marker
+### final umap和点图
+```
+marker_genes = {
+"Activated T" : ["CD69"],
+"Treg":["FOXP3"],
+"Tn/Tcm":["TCF7","LEF1","TXK","SELL","MAL","CCR7","IL7R"],
+"Tcm":["GPR183","ANXA1","ANXA2"],
+"Tem":["FOS","JUN"],
+"pre Tfh":["CXCR5"],
+"Th17":["RORA","RORC","CCR6","IL23R","IL22",
+"IL17A","IL17F","IL26"],
+"Trm":["ZNF683","CXCR6"],
+"Tex":["PDCD1","TOX","CXCL13","TIGIT",
+      "CTLA4","TNFRSF9","HAVCR2","LAG3"],
+"Tfh/Th1":["TOX2","IL21","GNG4","CD200","BCL6","ZBED2","CCL3","CCL4","IFNG","GZMB","LAG3",],
+"Th2":[
+    "CCR3",
+    "CCR8",
+    "CXCR4",
+    "ST2",
+    "STAT5"
+    "STAT6",
+    "GATA3",
+    "CCR4"
+],
+}
+marker_genes_in_data = {}
+for ct, markers in marker_genes.items():
+    markers_found = []
+    for marker in markers:
+        if marker in adata.var.index:
+            markers_found.append(marker)
+    marker_genes_in_data[ct] = markers_found
+sc.pl.dotplot(
+        adata,
+        groupby="leiden_res0_8",
+        var_names=marker_genes_in_data,
+        standard_scale="var",
+        save="Tsubset_CD4Tfinalanno.png"
+    )
+```
+<img src="..\figures\dotplot_Tsubset_CD4Tfinalanno.png">
+3群和4群实际上根据经典marker和topgene都分不开
 
-### final anno CD8+T
+
+## 重新选一下特征基因
+```
+cl_annotation = {
+    "0": "CD4_Tn_MYC",
+    "1": "CD4_Tcm_ANXA1",
+    "2": "CD4_Treg_FOXP3",
+    "3": "CD4_Tem_?",
+    "4": "CD4_Tem_?",
+    "5": "CD4_Treg_CDC25B",
+}
+adata.obs["final_anno_celltype"]=adata.obs.leiden_res0_8.map(cl_annotation)
+sc.tl.rank_genes_groups(
+ adata, groupby="final_anno_celltype", method="wilcoxon", key_added="dea_final_anno_celltype"
+)
+sc.tl.filter_rank_genes_groups(
+  adata,
+  min_in_group_fraction=0.2,
+  max_out_group_fraction=0.2,
+  key="dea_final_anno_celltype",
+  key_added="dea_final_anno_celltype_filtered",
+ )
+sc.pl.rank_genes_groups_dotplot(
+  adata,
+  groupby="final_anno_celltype",
+  standard_scale="var",
+  n_genes=10,
+  key="dea_final_anno_celltype_filtered",
+  save="CD4T_2nd_anno_top10gene.png"
+)
+```
+
+<img src="..\figures\dotplot_CD4T_2nd_anno_top10gene.png">
+
+
+```
+adata = sc.read("RData/CD4+T__umapmd0.4.h5ad")
+cl_annotation = {
+    "0": "CD4_Tn_TCF7",
+    "1": "CD4_Tcm_ANXA1",
+    "2": "CD4_Treg_FOXP3",
+    "3": "CD4_Tem_NR4A2",
+    "4": "CD4_Tem_NR4A2",
+    "5": "CD4_Treg_HLA-DPB1",
+}
+adata.obs["final_anno_celltype"]=adata.obs.leiden_res0_8.map(cl_annotation)
+sc.pl.umap(adata,color="final_anno_celltype",save="CD4T_finalanno.png")
+marker_genes = {
+"Treg":["FOXP3"],
+"Tn/Tcm":["TCF7","LEF1","TXK","SELL","MAL","CCR7","IL7R"],
+"Tcm":["GPR183","ANXA1","ANXA2"],
+"Tem":["NRF4A2","FOS","JUN"],
+"Trm":["ZNF683","CXCR6"],
+"Tex":["PDCD1","TOX","CXCL13","TIGIT",
+      "CTLA4","TNFRSF9","HAVCR2","LAG3"],
+"others":["NR4A2","HLA-DPB1"]
+}
+marker_genes_in_data = {}
+for ct, markers in marker_genes.items():
+    markers_found = []
+    for marker in markers:
+        if marker in adata.var.index:
+            markers_found.append(marker)
+    marker_genes_in_data[ct] = markers_found
+sc.pl.dotplot(
+        adata,
+        groupby="final_anno_celltype",
+        var_names=marker_genes_in_data,
+        standard_scale="var",
+        save="Tresubset_CD4Tfinalanno.png"
+    )
+```
+### final umap
+<img src="..\figures\umapCD4T_finalanno.png">
+
+### final点图
+<img src="..\figures\dotplot_Tresubset_CD4Tfinalanno.png">
+
+
+
+
+
+
+
+# final anno CD8+T
+
 ```
 import scanpy as sc
 
@@ -630,22 +765,26 @@ adata = sc.read("RData/CD8+T__umapmd0.4.h5ad")
 
 ```
 
+* 聚类
+<img src="..\figures\umapCD8+T_umapmd0.4_cluster.png">
+* 先看看celltypist的结果
+<img src="..\figures\umapcelltypist_coarse_CD8T.png">
+<img src="..\figures\umapcelltypist_fine_CD8T.png">
+
 ```
 marker_genes = {
     "Tn/Tcm": ["TCF7", "LEF1", "CCR7", "SELL", "MAL"],
-    "2": ["IL7R",
+    "Tm": ["IL7R",
           "GPR183",
           "ZFP36L2",
           "CXCR4"],
-    "3": ["ZNF683",
-          "CD52",
-          "HOPX",
-          "ID2",
+    "Trm": ["ZNF683",
           "CXCR6",
-          "XCL1",
-          "XCL2"],
-    "4": ["TBX21", "ASCL2", "CX3CR1", "KLRG1"],
-    "6": ["GZMK",
+          ],
+    "terminal differentiation": ["TBX21", "ASCL2", "CX3CR1", "KLRG1"],
+    "Tem": [
+         "ID2",
+         "GZMK",
          "GZMH",
          "CD27",
          "HLA-DRB1",
@@ -655,10 +794,8 @@ marker_genes = {
          "NKG7",
          "GZMA",
          "GZMB"],
-    "7": ["PDCD1", "CXCL13", "LAYN","LAG3","CTLA4","TIGIT",
+    "Tex": ["PDCD1", "CXCL13", "LAYN","LAG3","CTLA4","TIGIT",
         "HAVCR2"],
-    "9": ["STAT1", "ISG15", "IFIT1", "CCR1"],
-    "10": ["SLC4A10", "KLRB1", "TMIGD2", "RORA", "ZBTB16", "IL7R", "IL7A", "IL2RA"],
 }
 marker_genes_in_data = {}
 for ct, markers in marker_genes.items():
@@ -669,7 +806,7 @@ for ct, markers in marker_genes.items():
     marker_genes_in_data[ct] = markers_found
 sc.pl.dotplot(
     adata,
-    groupby="leiden_res1",
+    groupby="leiden_res0_6",
     var_names=marker_genes_in_data,
     standard_scale="var",
     save="Tsubset_CD8Tanno.png"
@@ -677,17 +814,9 @@ sc.pl.dotplot(
 
 ```
 * 聚类
-<img src="..\figures\umapCD8+T_umapmd0.4_cluster.png">
-res1<br>
-0群:首先是Tm(ZFP36L2,CXCR4),其它没啥特别的表达，可以归为CD8_Tm_?<br>
-1群:有效应分子GZMA,GZMB所以是Teff，同时耗竭分子也高表达，可以归为CD8_Tex_?<br>
-2群:有效应分子，同时有T细胞衰老，可以归为CD8_Temra_?<br>
-3群:有记忆细胞marker的表达，同时有效应分子GZMK,应该是GZMK+ early Tem 可以归为CD8_Tem_?<br>
-4群:有记忆细胞marker的表达，同时有效应分子GZMK,应该是GZMK+ Tem 可以归为CD8_Tem_?<br>
-5群:有记忆细胞marker的表达，也有效应分子GZMK,比较像GZMK+ Tem,但这一群有小部分细胞表达Tn/Tcm的marker,<br>
-查了下Tem会低表达TCF,还是归为CD8_Tem_?<br>
-6群:怎么啥都不表达?是累了吗?<br>
-看了下可能res1有点高了，像5群和6群其实就不太搞得清是什么细胞，就用res0.8吧
+<img src="..\figures\umapCD8+T_umapmd0.4_cluster.png"><br>
+<img src="..\figures\dotplot_Tsubset_CD8Tanno.png"><br>
+
 
 ```
 sc.pl.dotplot(
@@ -717,7 +846,7 @@ sc.pl.rank_genes_groups_dotplot(
   save="CD8T_top10gene.png"
 )
 ```
-<img src="..\figures\dotplot_Tsubset_CD8Tanno.png">
+
 0群:不是Tcm/Tn,也不是Temra,同时有记忆细胞marker的表达,ZNF683/CXCR6也没有高表达所以不能确定为Trm，可以就归到Tem,CD8_Tem_?
 1群:效应分子+耗竭分子,CD8_Tex_?,
 2群:效应分子+衰老分子+lack of CD27,CD8_Temra_?
@@ -734,25 +863,56 @@ cl_annotation = {
     "3": "CD8_Tem_GZMK",
     "4": "CD8_Tem_LTB",
 }
-adata.obs["final_anno_celltype"]=adata.obs.leiden_res0_8.map(cl_annotation)
+adata.obs["final_anno_celltype"]=adata.obs.leiden_res0_6.map(cl_annotation)
 adata.write("RData/CD8T_final_anno.h5ad")
 ```
-## 第3群有点奇怪的，DEG高表达的基因居然是S100A8,A9和KRT5,14这些..令人担忧,如果自动注释也认为其是其它类型细胞就去除吧，不过celltypist也认为是T
+### 第3群有点奇怪的，DEG高表达的基因居然是S100A8,A9和KRT5,14这些..令人担忧,如果自动注释也认为其是其它类型细胞就去除吧，不过celltypist也认为是T
 
+## final umap和点图
+sc.pl.umap(adata,color="final_anno_celltype",save="CD8T_finalanno.png")
+marker_genes = {
+    "Tn/Tcm": ["TCF7", "LEF1", "CCR7", "SELL", "MAL"],
+    "Tm": ["IL7R",
+          "GPR183",
+          "ZFP36L2",
+          "CXCR4"],
+    "Trm": ["ZNF683",
+          "CXCR6",
+          ],
+    "terminal differentiation": ["TBX21", "ASCL2", "CX3CR1", "KLRG1"],
+    "Tem": [
+         "ID2",
+         "GZMK",
+         "GZMH",
+         "CD27",
+         "HLA-DRB1",
+         "GNLY",
+         "IFNG",
+         "PRF1",
+         "NKG7",
+         "GZMA",
+         "GZMB"],
+    "Tex": ["PDCD1", "CXCL13", "LAYN","LAG3","CTLA4","TIGIT",
+        "HAVCR2"],
+    "others":["NR4A1","LTB"]
+}
+marker_genes_in_data = {}
+for ct, markers in marker_genes.items():
+    markers_found = []
+    for marker in markers:
+        if marker in adata.var.index:
+            markers_found.append(marker)
+    marker_genes_in_data[ct] = markers_found
+sc.pl.dotplot(
+        adata,
+        groupby="final_anno_celltype",
+        var_names=marker_genes_in_data,
+        standard_scale="var",
+        save="Tresubset_CD8Tfinalanno.png"
+    )
 
-## 用celltypist再注释,得到最终结果
-### NKT
-<img src="..\figures\umapcelltypist_coarse_NKNKT.png">
-<img src="..\figures\umapcelltypist_fine_NKNKT.png">
-没啥大问题，就这样
+## final umap
+<img src="..\figures\umapCD8T_finalanno.png">
 
-### CD8T
-<img src="..\figures\umapcelltypist_coarse_CD8T.png">
-<img src="..\figures\umapcelltypist_fine_CD8T.png">
-把CD8_Tm_NR4A1改成了CD8_Tem_NR4A1
-
-### CD4T
-<img src="..\figures\umapcelltypist_coarse_CD4T.png">
-<img src="..\figures\umapcelltypist_fine_CD4T.png">
-<img src="..\figures\umapCD4_final_anno.png">
-对比检查了后没有大问题
+## final 点图
+<img src="..\figures\dotplot_Tresubset_CD8Tfinalanno.png">
