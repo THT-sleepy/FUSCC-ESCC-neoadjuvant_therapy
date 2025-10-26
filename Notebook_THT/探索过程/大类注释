@@ -369,7 +369,7 @@ adata.write("RData/first_round_anno.h5ad")
 思路是首先画含UMAP坐标的图，对每个群肉眼得到UMAP大致范围，然后取出亚群子集，再加上UMAP限定得到最终亚群
 然后再合并，这样就可以去除那些散在的细胞群了
 
-
+## 这里是去除乱跑细胞的dirty work(bushi)
 ```
 import matplotlib.pyplot as plt
 import scanpy as sc
