@@ -107,7 +107,8 @@ cluster_mapping = {
     'SMC_TAGLN': 'c35_SMC_TAGLN',
     'Epi': 'c41_Epi_Tumor'
 }
-df['final_anno_celltype'] = df['final_anno_celltype'].replace(cluster_mapping)
+adata.obs['final_anno_celltype'] = adata.obs['final_anno_celltype'].replace(cluster_mapping)
+adata.write("RData/final_escc127.h5ad")
 
 
 
