@@ -79,3 +79,38 @@ adata_filtered.write("RData/2nd_round_anno_umapfiltered.h5ad")
 ```
 
 # 2开始分析
+<img src="..\figures\cnv_umapcnv_umap.png">
+<img src="..\figures\heatmapclustered_cnv_heatmap.png">
+<img src="..\figures\heatmapcnv_heatmap.png">
+<img src="..\figures\umapcnv_scanpyumap.png">
+<img src="..\figures\umaptumor_nomal.png">
+
+```
+最后添加上注释吧epi全是肿瘤细胞(顺便把前面写漏了的补上来)
+cluster_mapping = {
+    # B细胞相关
+    'Bn_FCER2': 'c16_Bn_FCER2',
+    'Bgc_HMGB2': 'c17_Bgc_HMGB2',
+    'Bm_TNFRSF13B': 'c18_Bm_TNFRSF13B',
+    'Bp_MZB1': 'c19_Bp_MZB1',
+
+    # 成纤维细胞相关
+    'Fib_CFD': 'c28_Fib_CFD',
+    'Fib_MMP1': 'c29_Fib_MMP1',
+    'Fib_CST1': 'c30_Fib_CST1',
+    'Fib_PTGDS': 'c31_Fib_PTGDS',
+    'apFib_CD74': 'c32_apFib_CD74',
+
+    # 周细胞/平滑肌
+    'Pericyte_RGS5': 'c33_Pericyte_RGS5',
+    'Pericyte_MYH11': 'c34_Pericyte_MYH11',
+    'SMC_TAGLN': 'c35_SMC_TAGLN',
+    'Epi': 'c41_Epi_Tumor'
+}
+df['final_anno_celltype'] = df['final_anno_celltype'].replace(cluster_mapping)
+
+
+
+
+
+```
