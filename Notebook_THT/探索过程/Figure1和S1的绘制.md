@@ -6,10 +6,15 @@
 
 需要出的图如下:
 * 1 umap(color=[大类,大类marker,亚群,(组织来源,treatment stage,患者)])
-* 2 箱线+jitter 图(每个大类MPR vs Non-MPR)
-* 3 百分比柱状图(pre-on-op)
+* 2 箱线+jitter 图(每个大类MPR vs Non-MPR)-done
+* 3 百分比柱状图(pre-on-op)-done
+* 3.5换下umap配色-done
 * 4 Ti vs Pi 散点图(这个琢磨下再弄)
+
 * 5 每个患者取样的时间(有空再弄)
+*
+
+
 
 ## 我准备使用紫禁城配色
 <img src="..\figures\紫禁城配色1.png">
@@ -20,7 +25,7 @@
 ## 使用ggplot2绘图
 需要3个东西
 1 数据框
-cell_id UMAP1 UMAP2 大类注释 亚类注释 anatomic_site treatment_stage patient
+cell_id UMAP1 UMAP2 大类注释 亚类注释 anatomic_site treatment_stage patient patient_id
 2 大类颜色
 <img src="..\figures\大类配色.png">
 {
@@ -34,60 +39,59 @@ cell_id UMAP1 UMAP2 大类注释 亚类注释 anatomic_site treatment_stage pati
 3 亚类颜色
 cluster_colors = {
     # T细胞相关（基色：T="#DBDBFF"）
-    'c01_CD4_Tn_TCF7': '#C4C4FF',
-    'c02_CD4_Tcm_ANXA1': '#ADADFF',
-    'c03_CD4_Treg_FOXP3': '#9696FF',
-    'c04_CD4_Treg_HLA-DPB1': '#7F7FFF',
-    'c05_CD4_Tem_NR4A2': '#6868FF',
-    'C08_D8_Tem_LTB': '#5151FF',
-    'c06_CD8_Tem_NR4A1': '#3A3AFF',
-    'c07_CD8_Tem_GZMK': '#2323FF',
-    'c09_CD8_Temra_CX3CR1': '#0C0CFF',
-    'c10_CD8_Tex_CXCL13': '#0000E6',
-    'c11_NK_KLRC1': '#0000CC',
-    'c12_NK_CXXC5': '#0000B3',
-    'c13_NK_NRGN': '#000099',
-    'c14_NK/NKT_KLRC3': '#000080',
-    'c15_NK/NKT_HSPA1B': '#000066',
+    'c01_CD4_Tn_TCF7': '#4279AD',
+    'c02_CD4_Tcm_ANXA1': '#AFCCD3',
+    'c03_CD4_Treg_FOXP3': '#A25936',
+    'c04_CD4_Treg_HLA-DPB1': '#6171A8',
+    'c05_CD4_Tem_NR4A2': '#BD5BA5',
+    'C08_D8_Tem_LTB': '#D5E1B4',
+    'c06_CD8_Tem_NR4A1': '#F2D7D0',
+    'c07_CD8_Tem_GZMK': '#E8A7BA',
+    'c09_CD8_Temra_CX3CR1': '#8A7FA0',
+    'c10_CD8_Tex_CXCL13': '#F4EFA9',
+    'c11_NK_KLRC1': '#E77772',
+    'c12_NK_CXXC5': '#4D4199',
+    'c13_NK_NRGN': '#F1B9AE',
+    'c14_NK/NKT_KLRC3': '#C5A4C7',
+    'c15_NK/NKT_HSPA1B': '#DF617B',
 
     # B细胞相关（基色：B="#FECF99"）
-    'c16_Bn_FCER2': '#FED8AC',
-    'c17_Bgc_HMGB2': '#FEE1BF',
-    'c18_Bm_TNFRSF13B': '#FEEAC2',
-    'c19_Bp_MZB1': '#FEF3D5',
+    'c16_Bn_FCER2': '#816AA9',
+    'c17_Bgc_HMGB2': '#CBD1E7',
+    'c18_Bm_TNFRSF13B': '#5BA0D4',
+    'c19_Bp_MZB1': '#5AA452',
 
     # 髓系相关（基色：Myeloid="#FFA430"）
-    'c20_Mono_CD14': '#FFAF47',
-    'c21_Mono_FCGR3A': '#FFBA5E',
-    'c22_Macro_C1QC': '#FFC575',
-    'c23_Macro_G0S2': '#FFD08C',
-    'c24_Mast_KIT': '#FFDB A3',  # 修正：实际应为#FFDBA3（去掉空格）
-    'c25_cDC1/2_CD1C': '#FFE6BA',
-    'c26_cDC3_LAMP3': '#FFF1D1',
-    'c27_pDC_LILRA4': '#FFFB E8',  # 修正：实际应为#FFFBE8（去掉空格）
+    'c20_Mono_CD14': '#F29696',
+    'c21_Mono_FCGR3A': '#D8432E',
+    'c22_Macro_C1QC': '#F19B9B',
+    'c23_Macro_G0S2': '#F4BC82',
+    'c24_Mast_KIT': '#ABE0ED',
+    'c25_cDC1/2_CD1C': '#C0FEFC',
+    'c26_cDC3_LAMP3': '#D8C6DF',
+    'c27_pDC_LILRA4': '#F6C589',
 
     # 成纤维细胞相关（基色：Fib="#E6CCE7"）
-    'c28_Fib_CFD': '#F0DEF0',
-    'c29_Fib_MMP1': '#FAF0FA',
-    'c30_Fib_CST1': '#F5E7F5',
-    'c31_Fib_PTGDS': '#EBD5EB',
-    'c32_apFib_CD74': '#F0DEF0',
+    'c28_Fib_CFD': '#F2ACAE',
+    'c29_Fib_MMP1': '#EF8E42',
+    'c30_Fib_CST1': '#8AA624',
+    'c31_Fib_PTGDS': '#D39FC8',
+    'c32_apFib_CD74': '#E5D9E3',
 
     # 周细胞/平滑肌（归为Fib相关变体）
-    'c33_Pericyte_RGS5': '#D9BBD9',
-    'c34_Pericyte_MYH11': '#E1C4E2',
+    'c33_Pericyte_RGS5': '#F2BF7D',
+    'c34_Pericyte_MYH11': '#E9655B',
 
-    'c35_SMC_TAGLN': '#D0B3D0'
+    'c35_SMC_TAGLN': '#7DD076',
     # 内皮细胞相关（基色：Endo="#C999CB"）
-    'c36_VEC_IL33': '#D3A3CF',
-    'c37_VEC_CSF2RB': '#DDAD D3',  # 修正：实际应为#DDADD3（去掉空格）
-    'c38_AEC_GJA4': '#E7B7D7',
-    'c39_LEC_CCL21': '#F1C1DB',
-    'c40_capEC_RGCC': '#FBCBE0',
+    'c36_VEC_IL33': '#5D7AB1',
+    'c37_VEC_CSF2RB': '#D2E9C7',
+    'c38_AEC_GJA4': '#9DD1C8',
+    'c39_LEC_CCL21': '#BCDD7A',
+    'c40_capEC_RGCC': '#EA8675',
 
     # 上皮细胞相关（基色：Epi="#CCCCCC"）
-    'c41_Epi_Normal': '#D5D5D5',
-    'c42_Epi_Tumor': '#DEDEDE',
+    'c41_Epi_Tumor': '#BCBBD7'
 }
 
 得到绘图df
