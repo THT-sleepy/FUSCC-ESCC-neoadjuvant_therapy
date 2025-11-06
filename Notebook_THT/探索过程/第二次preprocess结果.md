@@ -1,0 +1,186 @@
+# 第二次对127个样本做预处理及注释的过程和结果讨论         (What)
+
+* Oct 10, 2025                                 (When)
+* liyi /data1/liyi/zhaoyue/FUSCC-ESCC-neoadjuvant_thrapy           (Where)
+* 单细胞数据需要preprocess
+
+经过第一次preprocess,我发现去除cell-free RNA,去除双细胞,筛除低质量
+细胞(nFeature<500,pct_counts_mt>5,pct_counts_ribo<3)都是很有必要的,
+另外hvg还是选多一点比较好(2k-4k),去批次也是必须的(可尝试harmony,bbknn,scVI),
+PC实际上影响不是很大，可以就选30
+
+第二轮质控主要要达到的目标是：
+1 把hvg和去批次的方法确定下来(hvg通过preprocess_pipeline.sh的结果确定，去批次由test_bastchmethods.py结果决定)
+2 通过聚类和注释进一步去除低质量细胞和表达多系marker的细胞
+3 在1-2的基础上完成7大类细胞(T,B,Myeloid,ILC,Epi,Endo,Fib)的注释
+
+### 1比较重要的是结果最好细胞团比较紧密一点，通过leiden聚类后最好不要有一个cluster的细胞分布很散的情况
+* hvg3000 harmony的结果
+<img src="..\figures\hvg3000_harmonyumap.png">
+其实还可以，有一些大细胞团之间的散在细胞可能是表达多细胞系marker的双/多细胞,还有一些拖尾的情况要去除
+* hvg4000 harmony的结果
+<img src="..\figures\hvg4000_harmonyumap.png">
+和3000差不多
+* hvg2000 harmony的结果
+<img src="..\figures\hvg2000_harmonyumap.png">
+也差的不多<br>
+
+那就确定下来hvg就选4000吧
+
+去批次方法的选择目前就暂定Harmony,如果晚上发现scVI/BBKNN的结果明显更好再修改
+
+### 2通过聚类和注释进一步去除低质量细胞和表达多系marker的细胞
+主要是去掉很小的细胞团,大细胞团之间的散在细胞(如果是多marker的话),以及拖尾细胞
+
+* hvg4000 leiden结果
+<img src="..\figures\umaphvg4000_cluster.png">
+
+小细胞团:res2的35,41,42,43,44 res1的26 res0.2的11按高健师兄的说法这些是可以直接去
+大细胞团之间的散在细胞(要检查多marker表达情况):res1的22,res2的30,33(这三个昨天已经确认是多marker了,在Notebook_THT\探索过程\鉴定双细胞.pptx里),
+37要再看看
+拖尾细胞
+还有其它可能的一些双细胞(比如27)
+
+*去掉res2的35,41,42,43,44 res1的26 res0.2的11,res1的22,res2的30,33后
+```
+cond1 = adata.obs["leiden_res0_2"] != '11'
+cond2 = ~adata.obs["leiden_res1"].isin(['22', '26'])
+cond3 = ~adata.obs["leiden_res2"].isin(['30','33','35','41','42','43','44'])
+adata_subset = adata[cond1 & cond2 & cond3].copy()
+```
+<img src="..\figures\hvg4000_cluster_第一轮去cluster.png">
+
+进行1轮注释(免疫、上皮、基质)
+* 免疫
+<img src="..\figures\第一轮细胞去除后_CD45.png">
+<img src="..\figures\第一轮细胞去除后_leiden_res0_2.png">
+
+leiden res0.2 cluster1,2,3,5,6,8应该是免疫细胞
+
+* 上皮
+<img src="..\figures\第一列上皮去除_Epi.png">
+<img src="..\figures\第一轮细胞去除后_leiden_res0_2.png">
+
+leiden res0.2 0,9,12,13应该是上皮细胞,TTF3看起来不是很好的marker,SFN看起来
+特异性最好<br>
+做到这里，发现res2的39也是小细胞团
+```
+adata_subset = adata_subset[adata_subset.obs["leiden_res2"] != '39'].copy()
+```
+
+* 内皮
+<img src="..\figures\第一轮细胞去除后_Endo.png">
+<img src="..\figures\第一轮细胞去除后_leiden_res0_2.png">
+
+leiden res0.2 cluster7应该是内皮细胞(PECAM1是会在好几种细胞表达，不能说是双细胞)
+VWF,CDH5是比较特异性的标志
+
+* 纤维细胞
+<img src = "..\figures\第一轮细胞去除后_Fib.png">
+<img src="..\figures\第一轮细胞去除后_leiden_res0_2.png">
+leiden res0.2 cluster4应该是纤维细胞
+
+在这一轮注释除了已经去的那些cluster外没有看到特别的双细胞团
+
+* 一轮注释点图
+```
+markers = {
+    ct: [m for m in ct_markers if m in adata.var.index]
+    for ct, ct_markers in marker_genes.items()
+     if ct in level1_cts
+ }
+ sc.pl.dotplot(
+     adata,
+     groupby="leiden_res0_2",
+     var_names=markers,
+     standard_scale="var",  # standard scale: normalize each gene to range from 0 to 1
+ )
+```
+<img src = "..\figures\第一轮细胞去除和注释_点图.png">
+TFF3这个上皮marker确实应该去掉
+另外第6群其实有点奇怪
+
+### 添加一轮注释
+```
+cl_annotation = {
+     "0": "Epithelial Cell",
+     "1": "Immune Cell",
+     "2": "Immune Cell",
+     "3": "Immune Cell",
+     "4": "Fibrocyte",
+     "5": "Immune Cell",
+     "6": "Immune Cell",
+     "7": "Endothelial Cell",
+     "8": "Immune Cell",
+     "9":"Epithelial Cell",
+     "12":"Epithelial Cell",
+     "13":"Epithelial Cell",
+ }
+adata_subset.obs["manual_celltype_level1"] = adata_subset.obs.leiden_res0_2.map(cl_annotation)
+sc.pl.umap(adata_subset, color=["manual_celltype_level1"])
+```
+
+* 一轮注释后结果
+<img src="..\figures\第一轮注释结果(细胞团已去).png">
+
+* 再看下每个cluster特异性表达的top5 gene
+```
+sc.tl.rank_genes_groups(
+    adata_subset, groupby="leiden_res0_2", method="wilcoxon", key_added="dea_leiden_res0_2"
+)
+sc.tl.filter_rank_genes_groups(
+    adata_subset,
+    min_in_group_fraction=0.2,
+    max_out_group_fraction=0.2,
+    key="dea_leiden_res0_2",
+    key_added="dea_leiden_res0_2_filtered",
+)
+sc.pl.rank_genes_groups_dotplot(
+    adata_subset,
+    groupby="leiden_res0_2",
+    standard_scale="var",
+    n_genes=5,
+    key="dea_leiden_res0_2_filtered",
+)
+```
+
+to do
+目前不清除是否使用bbknn以及矫正细胞周期会不会让"杂群问题"好一些
+这两个明确之后就先不折腾这个事儿了,后面明确有多marker的表达的细胞群
+可以再去一下,其它的就算了,亚群分类如果能去一些也可以去一些
+
+矫正细胞周期并不能去掉呲呲啦啦的细胞,bbknn可以,因此去批次方法改为bbknn
+,怪不得这些大样本队列的研究用的都是bbknn..
+
+bbknn结果(因为默认umap min dist分不开所以把min dist调小试了一下)
+* min dist=0.5
+<img src="..\figures\bbknn_md0.5.png">
+
+* min dist=0.4
+<img src="..\figures\bbknn_md0.4.png">
+
+* min dist=0.2
+<img src="..\figures\bbknn_md0.2.png">
+
+* min dist=0.1
+<img src="..\figures\bbknn_md0.1.png">
+
+* min dist=0.05
+<img src="..\figures\bbknn_md0.05.png">
+
+min dist=0.4我觉得是最好的<br>
+
+所以就定下来preprocess soupX去cell-free RNA nFeature>500,pc_counts_ribo>3
+,pct_counts_mt<5,hvg=4000,去除双细胞,bbknn去批次,细胞周期影响不大就不矫正,
+后面看到多系marker表达的cluster再去一去就行
+
+## 修改去批次方法后重新一轮注释
+1 Immune vs NonImmune
+2 Immune先把T,B分出来,髓系用点图去找，剩下的再看是不是ILC
+3 NonImmune 把上皮,内皮和纤维分出来就行
+过程中res=2的cluster都检查下是不是双细胞群
+
+
+
+
+## 进行二轮大类注释-把免疫细胞的T,B,Myeloid和ILC(这个marker不清楚)分出来

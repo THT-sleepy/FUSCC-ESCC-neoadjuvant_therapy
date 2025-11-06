@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 *1 把对照的样本给去了然后把mt分别设为5和10看下免疫细胞会差多少(这个虽然麻烦但还是重要因为T,B分群越多后面可分析的东西越多)
 *2 再resubset做亚群注释
 *3 T细胞主要再看下Tpex marker和CD8里面有没有T naive，感觉是要把marker弄得更详细一点
@@ -5,3 +6,13 @@
 *5 髓系把Macro/Mono,Mast,DC再做亚群聚类注释-免疫细胞相关的都得搞得更详细点，
 *6 Fib看下能不能通过功能打分拿到功能相关的亚群
 *7 上皮得看下到底有没有normal epi cell(比如把阈值定为T细胞内的最大cnv score)
+=======
+## to do list
+* 1 检查除了T细胞以外的其它注释,结果整理到亚群注释结果-done
+* 2 将注释好的亚群合并起来,preprocess-done
+* 3 run inferCNV,整理好结果完成上皮的注释-running
+* 4 选好配色,绘制主图里的UMAP图(可能又要去一些乱跑的细胞,标记总细胞数,不要忘了patient,批次)以及对应的marker umap和点图
+* 5 绘制大类百分比柱状图(pre-on-op)
+* 6 计算大类和亚类的predictive index和therapeutic index
+* 7 可以先把示意图给画了-nearly done
+>>>>>>> 667f2aac06d4335c1de7df00471c3bc36c65de57

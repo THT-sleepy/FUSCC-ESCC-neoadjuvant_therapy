@@ -1,0 +1,170 @@
+# 第一次对127个样本做预处理的结果讨论         (What)
+
+* Oct 3, 2025                                 (When)
+* liyi /data1/liyi/zhaoyue/FUSCC-ESCC-neoadjuvant_thrapy           (Where)
+* 单细胞数据需要去除cell-free RNA,低质量细胞,必要的情况去除双细胞(Why)
+
+## (How) 质控-标化-筛选特征基因-降维聚类
+### QC
+* 1 对单个样本利用soupX去除cell-free RNA
+* 2 对单个样本利用log1p_total_counts,log1p_n_genes_by_counts,
+ pct_counts_in_top20_genes的情况进行去除，具体来说就是就算出样本中所有细胞的
+ 总counts数,总基因数,前20gene占所有counts的比例的median absolute deviation(MAD)
+然后去掉那些超过中位数+- nMAD的outlier
+* 3 对单个去线粒体基因过多者，标准是线粒体基因占比不超过8%,以及在中位数+- 3MAD范围内
+* 4 最后用scDblFinder标记可能的双细胞
+
+### 标化
+* 用的是Shifted logarithm
+
+### 特征基因筛选
+* 挑选了4000，2000，1000(高变基因)
+
+### 降维聚类
+* 利用scanpy自带的包做了pca,tsne以及umap
+
+## (Results)
+### 一开始MAD的n使用的是5
+* pca
+<img src="..\figures\mad5_pca.png">
+* tsne
+<img src="..\figures\mad5_tsne.png">
+* umap
+<img src="..\figures\mad5_umap_simple.png">
+
+结果看起来不太行，有很多散在的小细胞团，我推测可能是
+由于MAD的值设的太大，导致基因数很少的细胞没有被去除
+* Distribution of genes per cell
+<img src="..\figures\mad5_distribution_of_gene_percell.png">
+
+从上图看起来小于500基因的细胞有13w多，所以确实是有这个可能性，
+所以我把MAD设为4,3,2都跑了一遍，为了简单只看tsne和umap
+
+*tsne mad=5
+<img src="..\figures\mad5_tsne.png">
+*tsne mad=4
+<img src="..\figures\mad4_tsne.png">
+*tsne mad=3
+<img src="..\figures\mad3_tsne.png">
+*tsne mad=2
+<img src="..\figures\mad2_tsne.png">
+
+tsne结果不仔细看感觉没什么区别
+
+*umap mad=5
+<img src="..\figures\mad5_umap_simple.png">
+*umap mad=4
+<img src="..\figures\mad4_umap_simple.png">
+*umap mad=3
+<img src="..\figures\mad3_umap_simple.png">
+*tsne mad=2
+<img src="..\figures\mad2_umap_simple.png">
+
+umap不仔细看感觉也是没什么区别
+
+看了下原因是因为用这个MAD的方法去除不了基因数特别少的细胞，
+原因可能是这些细胞所在的样本总的细胞数就比较少？
+* mad=5 Distribution of genes per cell
+<img src="..\figures\mad5_distribution_of_gene_percell.png">
+* mad=4 Distribution of genes per cell
+<img src="..\figures\mad4_distribution_of_gene_percell.png">
+* mad=3 Distribution of genes per cell
+<img src="..\figures\mad3_distribution_of_gene_percell.png">
+* mad=2 Distribution of genes per cell
+<img src="..\figures\mad2_distribution_of_gene_percell.png">
+
+* 各样本的基因数分布箱线图
+<img src="..\figures\genes_per_cell_by_sample_boxplot.png">
+这个图可以看出来pbmc的总体来说gene数都会少一些，另外有一个样本SZR_op_2279307
+的细胞的基因数都特别少，后续可能要去掉
+
+
+
+
+### 为了快速验证下是不是把gene数特别少的细胞去掉就会好一些，在mad=5的基础上把gene<500的细胞都给去掉
+*mad=5 n_Feature>500 umap
+<img src= "..\figures\mad5_geneover500_umap.png">
+另外下面这张图也说明并不是gene数特别少的细胞太多的问题，因为那些
+分散的小细胞团的基因数并不都很少
+*mad=4 hvg=1000
+<img src="..\figures\mad4_hvg1000_ngenes_umap.png">
+
+
+发现并不是这个问题，但公司聚出来挺好的？？
+
+更有可能是batch effect?或者高变基因选的太多了?
+
+理论上来说高变基因选的多了只是会算的慢和过拟合，应该不至于
+对降维聚类有负性影响，但还是先看了一下
+
+*mad=4 hvg=3000
+<img src="..\figures\mad4_hvg3000_umap.png">
+
+*mad=4 hvg=2000
+<img src="..\figures\mad4_hvg2000_umap.png">
+
+*mad=4 hvg=1000
+<img src="..\figures\mad4_hvg1000_umap.png">
+
+出乎意料，hvg降低后聚类结果变得更好了，说明hvg4000可能确实太多了？？
+
+
+
+
+不过umap聚类还是不够理想，还需要检查批次效应和对双细胞进行去除
+
+
+## 检查和去除批次效应
+*mad=4 hvg=1000 color=sample_group
+<img src="..\figures\mad4_hvg1000_samplegroup_umap.png">
+可以看到批次效应还是相当明显的，特别是pbmc_op和其它两组几乎完全是分开的
+
+打算使用Harmony(linear embedding model)和bbknn(graph based model;使用bychen yuqing,2014,cancer cell)方法，以取样类型或样本为单位进行
+去批次，取效果最佳者
+
+*mad=4 hvg=1000 method=bbknn batch=sample_group
+<img src="..\figures\mad4_hvg1000_bbknn_samplegroup_corrected_umap.png">
+看起来op和pre混的不错，但pbmc_op还是混的不好
+
+*mad=4 hvg=1000 method=bbknn batch=sample
+<img src="..\figures\mad4_hvg1000_bbknn_sample_corrected_umap.png">
+这个看起来要比上面更好，但是pbmc_op混的更差
+
+*mad=4 hvg=1000 method=harmony batch=sample_group
+<img src="..\figures\mad4_hvg1000_harmony_samplegroup_corrected_umap.png">
+
+*mad=4 hvg=1000 method=harmony batch=sample neighbors=15
+<img src="..\figures\mad4_hvg1000_harmony_sample_corrected_umap.png">
+
+harmony的方法比起bbknn pbmc_op混的更好
+
+### 至此总结一下，MAD对聚类结果影响不大，因此可以就选择比较permisive的4，高变基因数对聚类结果有影响，hvg=1000和hvg=4000比起来聚类结果看起来要好一些(但选1000可能有点问题 理由见下一条)。对聚类结果影响最大的是批次效应，使用Harmony以单个样本为批次可以较好地去除批次效应。
+
+### 根据single cell best practices的说法，虽然选择较小的高变基因数的确有一定的去批次作用，但为了描述更多的生物学效应，选择 slightly too many要比too few好
+<img src="..\figures\scbp-关于hvg数目选择的建议.png">
+*选择hvg=1000 还有一个问题是前几十个PC的解释度比较低,解释度好一点的是hvg2000
+
+
+### 所以也试了下把hvg稍微设高一点会怎样
+*mad=5 hvg=4000 PC=50 neighbors=30 batch_method=harmony batch_key=sample
+<img src="..\figures\mad5_hvg4000_neighbor30_sample_harmony_corrected_umap.png">
+
+*mad=5 hvg=2000 PC=50 neighbors=30 batch_method=harmony batch_key=sample
+<img src="..\figures\mad5_hvg2000neighbors30_sample_harmony_corrected_umap.png">
+
+### 设高一些会出现的情况是有一些拉丝的和细胞大群之间的散在细胞，考虑可能是双细胞
+* 去掉双细胞 MAD=5,hvg=2000,PC=30,neighbors=30,method=harmony,batch=sample
+<img src="..\figures\umapmad5_hvg2000_neighbor30_pc30_nodouble.png">
+* 去掉双细胞 MAD=5,hvg=4000,PC=30,neighbors=30,method=harmony,batch=sample
+<img src="..\figures\umapmad5_hvg4000_neighbor30_pc30_nodouble.png">
+
+# okk,后面的注释就从去掉双细胞(scDoubleFinder)，MAD=5,hvg=2000,PC=30,neighbors=30,method=harmony,batch=sample开始吧
+
+
+
+## 需要获得/讨论的信息
+* hvg的选择-和傅师兄讨论下来觉得还是设高一点比较好
+* response group
+* color pallete/和颜色深浅
+* 关于level1注释 canonical marker的选择，EPCAM和MME不表达样本？(查查文献)
+* 有一个基因数特别低的样本是否要去除？-先不管吧
