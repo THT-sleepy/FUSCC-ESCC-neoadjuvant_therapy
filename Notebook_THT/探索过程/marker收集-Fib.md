@@ -47,7 +47,7 @@ marker_genes={
             "SFRP2", "COMP","MMP1", "COL7A1",
             "WNT5A", "ISG15", "IL7R"],
     "proliferative fibroblasts": ["RBP1", "STAR", "STMN1"],
-    "CTNN1+ fibroblasts": ["WSB1", "DDX17", "CTNNB1"],
+    "CTNNB1+ fibroblasts": ["WSB1", "DDX17", "CTNNB1"],
     "progenitor-like fibroblasts": ["MFAP5", "PI16", "CD34","APOD", "FGF7", "COL15A1"],
     "VSMC": ["MYH11", "ACTA2", "TAGLN","ACTG2", "HHIP", "CNN1"],
     "Pericyte": ["RGS5", "CD36", "NOTCH3"]
