@@ -593,3 +593,180 @@ dp = sc.pl.dotplot(
 dp.style(dot_edge_color='black', dot_edge_lw=1).savefig("plots/dotplot_CD4T.png")
 dp.add_totals().style(dot_edge_color='black', dot_edge_lw=1).savefig("plots/dotplot_CD4T_withtotal.png")
 ```
+
+事实上有些群就是分不开，没必要再细分了，就res0.8是对的
+
+## final anno CD8T
+### 先看看celltypist的结果
+<img src="..\figures\umapcelltypist_coarse_CD8T.png">
+<img src="..\figures\umapcelltypist_fine_CD8T.png">
+
+### 再看看聚类情况
+<img src="..\figures\umapCD8+T_umapmd0.4_cluster.png">
+
+### 筛marker
+```
+import scanpy as sc
+sc.settings.set_figure_params(
+    dpi=300,
+    facecolor="white",
+    frameon=False
+)
+sc.settings.figdir = "plots"
+adata = sc.read("RData/CD8+T__umapmd0.4.h5ad")
+marker_genes = {
+    "Tn": ["CCR7", "LEF1", "SELL", "TCF7", "MAL", "TXK", "CD27", "CD28", "S1PR1", "IL7R", "CD45RA", "CD38", "KLF2", "CHMP1B", "CYCS", "CD55", "AREG"],
+    "Temra": ["CD45RA", "GZMH", "GZMB", "TBX21", "ASCL2", "CX3CR1", "KLRG1", "FCGR3A", "FGFBP2", "PRF1", "EOMES", "S1PR1", "S1PR5", "NKG7", "GNLY", "CTSW"],
+    "Tcm": ["CCR7", "CCR4", "CXCR3", "CXCR4", "ANXA1", "GPR183", "LMNA", "CDKN1A", "GPR183", "TNFSF9", "GZMK", "SELL", "IL7R", "CD27", "CD28", "PRF1", "GZMA", "CCL5", "S1PR1", "PTGER2", "ICAM2", "ANXA2", "RGS1", "TCF7", "CD69"],
+    "Tem": ["GNLY", "FOS", "JUN", "IL7R", "CXCR3", "CXCR4", "CXCR5", "GZMK", "GZMH", "GZMA", "CD74", "CD28", "CCL4", "CCL4L2", "CD44", "NR4A1", "TNFSF9"],
+    "Trm": ["ZNF683", "CD52", "HOPX", "ID2", "CXCR6", "XCL1", "XCL2", "KLRC1", "GZMH", "GZMA", "CCR6", "HSPA1A", "HSPA1B", "CAPG", "CD6", "MYADM", "RORA", "NR4A1", "NR4A2", "NR4A3", "CD69", "ITGAE", "KLRB1", "PTGER4", "IL7R"],
+    "Tex": ["PDCD1", "HAVCR2", "LAG3", "LAYN", "TIGIT", "ENTPD1", "CXCL13", "HLA-DR", "CTLA4", "TNFRSF18", "TOX", "IFNG", "MIR155HG", "TNFRSF9", "ITGAE"],
+    "Tc17":["SLC4A10","KLRB1","TMIGD2","RORA","RORC","ZBTB16","IL26","IL17A","IL23R"],
+    "MAIT":["SLC4A10","KLRB1","TMIGD2","IL7R","NCR3","LTB","CCL20"],
+    "T_NK-like":["KLRG1","KLRD1","TYROBP",
+                "KIR2DL1","KIR2DL3","KIR3DL1",
+                "KIR3DL2","CD160","EOMES","TXK",
+                "KLRC1","KIR2DL4"]
+}
+marker_genes_in_data = {}
+for ct, markers in marker_genes.items():
+    markers_found = []
+    for marker in markers:
+        if marker in adata.var.index:
+            markers_found.append(marker)
+    marker_genes_in_data[ct] = markers_found
+sc.pl.umap(adata,color=marker_genes_in_data["Tn"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="CD8Tresubset_Tnmarkers.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Temra"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="CD8Tresubset_Temramarkers.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Tcm"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="CD8Tresubset_Tcmmarkers.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Tem"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="CD8Tresubset_Temmarkers.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Trm"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="CD8Tresubset_Trmmarkers.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Tex"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="CD8Tresubset_Texmarkers.png")
+sc.pl.umap(adata,color=marker_genes_in_data["Tc17"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="CD8Tresubset_Tc17markers.png")
+sc.pl.umap(adata,color=marker_genes_in_data["MAIT"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="CD8Tresubset_MAITmarkers.png")
+sc.pl.umap(adata,color=marker_genes_in_data["T_NK-like"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="CD8Tresubset_T_NKliemarkers.png")
+```
+"CCR7", "LEF1", "SELL", "TCF7"
+<img src="..\figures\umapCD8Tresubset_Tnmarkers.png">
+"CX3CR1","KLRG1","TBX21","FGFBP2","GNLY","GZMH","GZMB","ASCL2","S1PR1","S1PR5"
+<img src="..\figures\umapCD8Tresubset_Temramarkers.png">
+感觉是没有这一群
+<img src="..\figures\umapCD8Tresubset_Tcmmarkers.png">
+"FOS","JUN","CXCR4"
+<img src="..\figures\umapCD8Tresubset_Temmarkers.png">
+"CD69",可以注意下HSPA1A和HSPA1B
+<img src="..\figures\umapCD8Tresubset_Trmmarkers.png">
+"PDCD1","HAVCR2","LAG3","LAYN","TIGIT","ENTPD1","CXCL13","CTLA4","TNFRSF18"
+<img src="..\figures\umapCD8Tresubset_Texmarkers.png">
+"SLC4A10","KLRB1","RORC","ZBTB16"
+<img src="..\figures\umapCD8Tresubset_Tc17markers.png">
+"SLC4A10","KLRB1","NCR3"
+<img src="..\figures\umapCD8Tresubset_MAITmarkers.png">
+应该是没有这一群
+<img src="..\figures\umapCD8Tresubset_T_NKliemarkers.png">
+
+
+
+这样看来分辨率1都小了一点，试试1.2，1.4,1.6,1.8
+<img src="..\figures\umapCD8+T_umapmd0.4_cluster.png">
+<img src="..\figures\umapCD8_cluster_res1_2to1_8.png">
+我靠升高居然也分不出MAIT这一群吗？
+先用res1分析看看吧
+
+### 只用umap很难分得出各个亚群，结合点图再看看
+```
+marker_genes = {
+    "Tn": ["CCR7", "LEF1", "SELL", "TCF7", "MAL","IL7R"],
+    "Temra": ["CX3CR1","KLRG1","TBX21","FGFBP2","GNLY","GZMH","GZMB","ASCL2","S1PR1","S1PR5"],
+    "Tm" :["CXCR4","ZFP36L2"],
+    "Tem": ["FOS", "JUN"],
+    "Trm": ["ZNF683","CXCR6","CD69"],
+    "Tex": ["PDCD1", "HAVCR2", "LAG3", "LAYN", "TIGIT", "ENTPD1", "CXCL13", "CTLA4", "TNFRSF18", "TOX",],
+    "MAIT": ["SLC4A10","KLRB1","RORC","ZBTB16","NCR3"],
+}
+sc.pl.dotplot(
+        adata,
+        groupby="leiden_res1",
+        var_names=marker_genes,
+        standard_scale="var",
+        save="121_CD8亚群.png"
+    )
+```
+<img src="..\figures\dotplot_121_CD8亚群.png">
+第0群应该是Trm/Tem
+第1群应该是Temra
+第2群应该是Trm/Tem
+第3群像是Tex
+第4群像是Tex
+第5群像是Tm,但没法归类到Tcm/Tem/Trm
+第6群感觉是Tn混了MAIT
+
+看看DEG的结果
+```
+sc.tl.rank_genes_groups(
+ adata, groupby="leiden_res1", method="wilcoxon", key_added="dea_leiden_res1"
+)
+sc.tl.filter_rank_genes_groups(
+  adata,
+  min_in_group_fraction=0.2,
+  max_out_group_fraction=0.2,
+  key="dea_leiden_res1",
+  key_added="dea_leiden_res1_filtered",
+ )
+sc.pl.rank_genes_groups_dotplot(
+  adata,
+  groupby="leiden_res1",
+  standard_scale="var",
+  n_genes=10,
+  key="dea_leiden_res1_filtered",
+  save="121_res1_CD8T_top10gene.png"
+)
+```
+<img src="..\figures\dotplot_121_res1_CD8T_top10gene.png">
+第3群是混了上皮细胞要去掉
+其它的还是分的开的，试下把res升高到1.4
+```
+sc.pl.dotplot(
+        adata,
+        groupby="leiden_res1_4",
+        var_names=marker_genes,
+        standard_scale="var",
+        save="res1_4_121_CD8亚群.png"
+    )
+```
+<img src="..\figures\dotplot_res1_4_121_CD8亚群.png">
+
+```
+sc.tl.rank_genes_groups(
+ adata, groupby="leiden_res1_4", method="wilcoxon", key_added="dea_leiden_res1_4"
+)
+sc.tl.filter_rank_genes_groups(
+  adata,
+  min_in_group_fraction=0.2,
+  max_out_group_fraction=0.2,
+  key="dea_leiden_res1_4",
+  key_added="dea_leiden_res1_4_filtered",
+ )
+sc.pl.rank_genes_groups_dotplot(
+  adata,
+  groupby="leiden_res1_4",
+  standard_scale="var",
+  n_genes=10,
+  key="dea_leiden_res1_4_filtered",
+  save="121_res1_4_CD8T_top10gene.png"
+)
+```
+<img src="..\figures\dotplot_121_res1_4_CD8T_top10gene.png">
+1.4在去双细胞方面要优于1，把第10群去了应该就行
+0,4,8群是分不开的;3，6，9群是分不开的，其它勉强是分得开的
+看下res1_4的患者数是不是可以接受
+可以接受<br>
+<img src="..\figures\CD8_res1_4亚群患者数.png"><br>
+分辨率再往上，0群分开两群，没有必要
+
+0,4,8群：Temra,特征基因是CX3CR1,KLRG1?
+1群: Tem/Trm,归为Tem，理由是Trm应该耗竭marker也要阳性，特征基因是FOS,JUN,FOSB,ERG1
+2群: 和第一群类似，Tem，特征基因是FOS,JUN,ITM2C,TNFRSF9
+3,6,9群：Tex，特征基因是CXCL13,PDCD1,LAG3
+5群: Tem,特征基因是FOS,JUN,NR4A3,CRTAM
+7群:Tn,特征基因是TCF7,LEF1,IL7R
+11群Tem，特征基因是FOS,JUN,MT1X,MT1E,MT1F
