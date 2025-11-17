@@ -956,7 +956,57 @@ sc.pl.rank_genes_groups_dotplot(
 就res0.8吧，没招了
 
 ### 添加最终注释
-### dotplot
-### umap blood vs tumor
+0:Tem/Teff markergene是FOS,JUN
+4:Tem/Teff markergene是FOS,JUN,FOSB,KDM6B,ERG1,ATF3
+3:Tem/Teff GNLY,GZMH,GZMA,GZMB
+5:Tex "PDCD1", "HAVCR2", "LAG3", "LAYN", "TIGIT", "ENTPD1", "CXCL13", "CTLA4", "TNFRSF18", "TOX"
+6:T,marker_gene为LTB,GZMK,IL7R,TCF7
+1:Temra,makergene为FGFBP2,CX3CR1,TBX21,KLRG1
+2:Teff,没有很好的markgene GZMK,GZMH,GZMB
 
-今天先到这吧，我累了
+### dotplot
+```
+cl_annotation = {
+        "0": "CD8_Tem/Teff_FOS",
+        "4": "CD8_Tem/Teff_HSPA1B",
+        "3": "CD8_Tem/Teff_GNLY",
+        "5": "CD8_Tex_CXCL13",
+        "6": "CD8_T_IL7R",
+        "1": "CD8_Temra_FGFBP2",
+        "2": "CD8_Teff_GZMK"
+    }
+adata.obs["minor_celltype"]=adata.obs.leiden_res0_8.map(cl_annotation)
+adata.write("RData/CD8T_annotated.h5ad")
+marker_genes = [
+  "FOS","JUN","HSPA1B","HSPA1A",
+  "FOSB","KDM6B","EGR1","ATF3",
+  "GNLY","GZMH","GZMA","GZMB",
+  "CXCL13","ENTPD1","CTLA4","LAG3","TIGIT","PDCD1","HAVCR2","TNFRSF18","TOX",
+  "LTB","GZMK","IL7R","TCF7",
+"FGFBP2","CX3CR1","TBX21","KLRG1"
+]
+from matplotlib.colors import LinearSegmentedColormap
+custom_cmap = LinearSegmentedColormap.from_list("custom", ["#0A3D7C", "#F6F6F6", "#810426"])
+dp = sc.pl.dotplot(
+        adata,
+        groupby="minor_celltype",
+        categories_order = ["CD8_Tem/Teff_FOS",
+                            "CD8_Tem/Teff_HSPA1B",
+                            "CD8_Tem/Teff_GNLY",
+                            "CD8_Tex_CXCL13",
+                            "CD8_T_IL7R",
+                            "CD8_Temra_FGFBP2",
+                            "CD8_Teff_GZMK"],
+        var_names=marker_genes,
+        standard_scale="var",
+        return_fig=True,
+        var_group_labels="      ",
+        var_group_positions = [(0,3),(4,7),(8,11),
+        (12,20),(21,24),(25,28)],
+        cmap = custom_cmap
+    )
+dp.style(dot_edge_color='black', dot_edge_lw=1).savefig("plots/dotplot_CD8T.png")
+
+```
+<img src="..\figures\dotplot_CD8T.png">
+### umap blood vs tumor
