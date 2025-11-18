@@ -198,11 +198,28 @@ T细胞的注释比较特殊,不同细胞群会有相同的marker表达，比如
 
 
 ### 先看看celltypist的结果
-<img src="..\figures\umap121celltypist_coarse_CD4T.png">
-<img src="..\figures\umap121celltypist_fine_CD4T.png">
+<img src="..\figures\umap1118_celltypist_coarse_CD4T.png">
+<img src="..\figures\umap1118_celltypist_fine_CD4T.png">
 
 ### 再看看聚类情况
-<img src="..\figures\umapCD4+T_umapmd0.4_cluster.png">
+<img src="..\figures\umapCD4+T_umapmd0.4regressoutmtribo_cluster.png">
+
+### 看看大类marker
+```
+import scanpy as sc
+sc.settings.set_figure_params(
+    dpi=300,
+    facecolor="white",
+    frameon=False
+)
+sc.settings.figdir = "plots"
+adata = sc.read("RData/CD4+T__umapmd0.4_regressoutmtribo.h5ad")
+marker_genes = ["PTPRC","CD3E","CD79A","COL1A1",
+"VWF","PECAM1","EPCAM","SFN","KRT5","LYZ","GCA","TPSAB1"]
+sc.pl.umap(adata,color=marker_genes,vmin=0,vmax="p99",sort_order=False,cmap="Blues",save="121_CD4T_majormarker.png")
+```
+<img src="..\figures\umap121_CD4T_majormarker.png">
+顶上那个尖尖是有上皮marker表达的
 
 ### 筛marker
 ```
@@ -265,58 +282,7 @@ marker_genes = {
     "Tn": ["CCR7", "LEF1", "SELL", "TCF7", "MAL",],
     "Tcm": ["ANXA1","GZMK","IL7R",],
     "Tem": ["FOS", "JUN",],
-    "Trm": ["ZNF683"],
-    "Tex": ["PDCD1", "HAVCR2", "LAG3", "LAYN", "TIGIT", "ENTPD1", "CXCL13", "CTLA4", "TNFRSF18", "TOX",],
-    "Treg": ["FOXP3"],
-}
-sc.pl.dotplot(
-        adata,
-        groupby="leiden_res1",
-        var_names=marker_genes,
-        standard_scale="var",
-        save="CD4亚群.png"
-    )
-```
-如果是选res=1的话，明确的cluster是0,3是Tem,1,6,8是Treg,2,7是Tcm,4,5是Tn,9可能是Tem
-<img src="..\figures\dotplot_CD4亚群.png">
-
-
-
-### 利用差异基因找marker
-```
-sc.tl.rank_genes_groups(
- adata, groupby="leiden_res1", method="wilcoxon", key_added="dea_leiden_res1"
-)
-sc.tl.filter_rank_genes_groups(
-  adata,
-  min_in_group_fraction=0.2,
-  max_out_group_fraction=0.2,
-  key="dea_leiden_res1",
-  key_added="dea_leiden_res1_filtered",
- )
-sc.pl.rank_genes_groups_dotplot(
-  adata,
-  groupby="leiden_res1",
-  standard_scale="var",
-  n_genes=10,
-  key="dea_leiden_res1_filtered",
-  save="CD4T_top10gene.png"
-)
-
-```
-画完这个图发现第9群其实是T混了上皮
-0群:NR4A1,FOSB,UBE2S
-1,6群事实上分不开:TNFRSF18,FOXP3,TIGIT
-2,7群事实上也分不开
-3群好像也有问题
-
-把res降到0.8重新弄下
-```
-marker_genes = {
-    "Tn": ["CCR7", "LEF1", "SELL", "TCF7", "MAL",],
-    "Tcm": ["ANXA1","GZMK","IL7R",],
-    "Tem": ["FOS", "JUN",],
-    "Trm": ["ZNF683"],
+    "Trm": ["ZNF683","CXCR6"],
     "Tex": ["PDCD1", "HAVCR2", "LAG3", "LAYN", "TIGIT", "ENTPD1", "CXCL13", "CTLA4", "TNFRSF18", "TOX",],
     "Treg": ["FOXP3"],
 }
@@ -325,15 +291,21 @@ sc.pl.dotplot(
         groupby="leiden_res0_8",
         var_names=marker_genes,
         standard_scale="var",
-        save="res0_8CD4亚群.png"
+        save="1118_CD4亚群.png"
     )
 ```
-<img src="..\figures\dotplot_res0_8CD4亚群.png">
+<img src="..\figures\umapCD4+T_umapmd0.4regressoutmtribo_cluster.png">
+<img src="..\figures\dotplot_1118_CD4亚群.png">
+从res0_8来看的话0群是Tem，1和2是Tn，3是Tcm,4也是Tcm,5是Treg,
+6不知道是啥,7也不知道是啥
 
+
+### 利用差异基因找marker
 ```
 sc.tl.rank_genes_groups(
  adata, groupby="leiden_res0_8", method="wilcoxon", key_added="dea_leiden_res0_8"
 )
+sc.pl.rank_genes_groups(adata, n_genes=25, sharey=False,key="dea_leiden_res0_8",save="dea_CD4res0_8 _regressmtribo.png")
 sc.tl.filter_rank_genes_groups(
   adata,
   min_in_group_fraction=0.2,
@@ -347,30 +319,61 @@ sc.pl.rank_genes_groups_dotplot(
   standard_scale="var",
   n_genes=10,
   key="dea_leiden_res0_8_filtered",
-  save="CD4T_top10gene.png"
+  save="1118_CD4T_top10gene.png"
+)
+
+```
+<img src="..\figures\dotplot_1118_CD4T_top10gene.png">
+7是混了上皮的双细胞，1和2分不开
+```
+adata = adata[adata.obs.leiden_res0_8 != '7'].copy()
+```
+单独比一下1和2
+
+```
+mask = adata.obs['leiden_res0_8'].isin(['1', '2'])
+adata_filtered = adata[mask, :]
+sc.tl.rank_genes_groups(
+ adata_filtered, groupby="leiden_res0_8", method="wilcoxon", key_added="dea_leiden_res0_8"
+)
+sc.tl.filter_rank_genes_groups(
+  adata_filtered,
+  min_in_group_fraction=0.2,
+  max_out_group_fraction=0.2,
+  key="dea_leiden_res0_8",
+  key_added="dea_leiden_res0_8_filtered",
+ )
+sc.pl.rank_genes_groups_dotplot(
+  adata_filtered,
+  groupby="leiden_res0_8",
+  standard_scale="var",
+  n_genes=10,
+  key="dea_leiden_res0_8_filtered",
+  save="Tn_CD4T_top10gene.png"
 )
 ```
-<img src="..\figures\dotplot_CD4T_top10gene.png">
+<img src="..\figures\dotplot_Tn_CD4T_top10gene.png">
+确实分不开,1和2合并吧
 
-0群:Tcm,特征基因为ANXA1,TIMP1,PTGER2
-1群:Tn,特征基因为TCF7,SELL,CCR7,TXK
-2群：双细胞要去掉
-3群:Treg,特征基因为FOXP3,TNFRSF18,TNFRSF4
-4群:Tem,特征基因为NR4A1,FOS,JUN,
-5群:Treg,特征基因为SHMT2,HLA-DPB1,HLA-DRB1
-6群：双细胞要去掉
+0群:Tem,特征基因为NR4A1,FOS,JUN,
+1,2群:Tn,特征基因为TCF7,SELL,CCR7,LEF1,TXK
+3群:Tcm,特征基因为ANXA1,S1PR1,PTGER2
+4群:Tcm,特征基因为ANXA1
+5群:Treg,特征基因为FOXP3,TNFRSF18,TNFRSF4
+6群：T,不知道是啥，特征基因为TOX
 
 绘制放到S1最后的图
 ```
-adata = sc.read("RData/CD4+T__umapmd0.4.h5ad")
-adata = adata[adata.obs.leiden_res0_8 != '2'].copy()
-adata = adata[adata.obs.leiden_res0_8 != '6'].copy()
+adata = sc.read("RData/CD4+T__umapmd0.4_regressoutmtribo.h5ad")
+adata = adata[adata.obs.leiden_res0_8 != '7'].copy()
 cl_annotation = {
-    "0": "c02_CD4_Tcm_ANXA1",
-    "1": "c01_CD4_Tn_TCF7",
-    "3": "c04_CD4_Treg_FOXP3",
-    "4": "c03_CD4_Tem_NR4A1",
-    "5": "c05_CD4_Treg_SHMT2",
+    "1":"c01_CD4_Tn_TCF7",
+    "2":"c01_CD4_Tn_TCF7",
+    "3":"c02_CD4_Tcm_S1PR1",
+    "4":"c03_CD4_Tcm_ANXA1",
+    "5":"c05_CD4_Treg_FOXP3",
+    "6":"c06_CD4_TOX",
+    "0":"c04_CD4_Tem_NR4A1"
 }
 adata.obs["minor_celltype"]=adata.obs.leiden_res0_8.map(cl_annotation)
 adata.write("RData/CD4T_annotated.h5ad")
@@ -389,211 +392,57 @@ palette = {
      "c03":"#A25936",
      "c04":"#6171A8",
      "c05":"#BD5BA5",
+     "c06":"#D5E1B4",
 }
 cl_annotation = {
-    "0": "c02",
+    "0": "c04",
     "1": "c01",
-    "3": "c04",
+    "2": "c01",
+    "3": "c02",
     "4": "c03",
     "5": "c05",
+    "6": "c06"
 }
 adata.obs["minor_clt"]=adata.obs.leiden_res0_8.map(cl_annotation)
 sc.pl.umap(adata,color="minor_clt",legend_loc="on data",title="CD4+ T cells",palette=palette,save="CD4T.png")
-
 ```
 <img src="..\figures\umapCD4T.png">
 
 #### dotplot
 ```
-marker_genes = ["TCF7","SELL","CCR7","TXK",
-                "ANXA1","TIMP1","PTGER2",
-                "NR4A1","FOS","JUN",
-                "FOXP3","TNFRSF18","TNFRSF4",
-                "SHMT2","HLA-DPB1","HLA-DRB1"]
+marker_genes = ["TCF7","SELL","CCR7","LEF1","TXK",
+ "ANXA1","S1PR1","PTGER2",
+ "NR4A1","FOS","JUN",
+ "FOXP3","TNFRSF18","TNFRSF4",
+ "TOX",
+ ]
 from matplotlib.colors import LinearSegmentedColormap
 custom_cmap = LinearSegmentedColormap.from_list("custom", ["#0A3D7C", "#F6F6F6", "#810426"])
 dp = sc.pl.dotplot(
         adata,
         groupby="minor_celltype",
         categories_order = ["c01_CD4_Tn_TCF7",
-                            "c02_CD4_Tcm_ANXA1",
-                            "c03_CD4_Tem_NR4A1",
-                            "c04_CD4_Treg_FOXP3",
-                            "c05_CD4_Treg_SHMT2",],
+                            "c03_CD4_Tcm_ANXA1",
+                            "c02_CD4_Tcm_S1PR1",
+                            "c04_CD4_Tem_NR4A1",
+                            "c05_CD4_Treg_FOXP3",
+                            "c06_CD4_TOX",],
         var_names=marker_genes,
         standard_scale="var",
         return_fig=True,
         var_group_labels="     ",
-        var_group_positions = [(0,3),(4,6),(7,9),
-        (10,12),(13,15)],
+        var_group_positions = [(0,4),(5,7),(8,10),
+        (11,13),(14,14)],
         cmap = custom_cmap
     )
-dp.style(dot_edge_color='black', dot_edge_lw=1).savefig("plots/dotplot_CD4T.png")
-dp.add_totals().style(dot_edge_color='black', dot_edge_lw=1).savefig("plots/dotplot_CD4T_withtotal.png")
+dp.style(dot_edge_color='black', dot_edge_lw=1).savefig("plots/1118_dotplot_CD4T.png")
 
 ```
-<img src="..\figures\dotplot_CD4T.png">
-<img src="..\figures\dotplot_CD4T_withtotal.png">
+<img src="..\figures\1118_dotplot_CD4T.png">
 * 每个亚群的患者数目
-<img src="..\figures\CD4_亚群患者数.png">
-
-### 再尝试下res0.1
-前面发现如果是选res=1的话，明确的cluster是0是Tem,1,6,8是Treg,2,7是Tcm,4,5是Tn,3和9是T混了上皮
+<img src="..\figures\1118_亚群患者数_CD4T.png">
 
 
-```
-sc.tl.rank_genes_groups(
- adata, groupby="leiden_res1", method="wilcoxon", key_added="dea_leiden_res1"
-)
-sc.tl.filter_rank_genes_groups(
-  adata,
-  min_in_group_fraction=0.2,
-  max_out_group_fraction=0.2,
-  key="dea_leiden_res1",
-  key_added="dea_leiden_res1_filtered",
- )
-sc.pl.rank_genes_groups_dotplot(
-  adata,
-  groupby="leiden_res1",
-  standard_scale="var",
-  n_genes=10,
-  key="dea_leiden_res1_filtered",
-  save="res1_CD4T_top10gene.png"
-)
-```
-<img src="..\figures\dotplot_CD4亚群.png">
-<img src="..\figures\umapCD4+T_umapmd0.4_cluster.png">
-<img src="..\figures\dotplot_res1_CD4T_top10gene.png">
-0群：Tem，特征基因是NR4A1,FOS,JUN
-1群：Treg，特征基因是FOXP3,TNFRSF18
-6群：Treg，特征基因是FOXP3,TNFRSF18,FOSB,NR4A3
-8群：Treg，特征基因是FOXP3,SHMT2,HLA-DPB1,HLA-DRB1
-2群:Tcm,特征基因是ANXA1,TIMP1
-7群:Tcm，特征基因是ANXA1,TIMP1,SESN3
-4群:Tn,特征基因是CCR7,SELL,TCF,LEF1,FOXJ3
-5群:Tn,特征基因是CCR7,SELL,TCF,LEF1
-
-
-第1群和第6群经典marker和top10基因都分不开，单独做一个DEG看下
-```
-mask = adata.obs['leiden_res1'].isin(['1', '6'])
-adata_filtered = adata[mask, :]
-sc.tl.rank_genes_groups(
- adata_filtered, groupby="leiden_res1", method="wilcoxon", key_added="dea_leiden_res1"
-)
-sc.tl.filter_rank_genes_groups(
-  adata_filtered,
-  min_in_group_fraction=0.2,
-  max_out_group_fraction=0.2,
-  key="dea_leiden_res1",
-  key_added="dea_leiden_res1_filtered",
- )
-sc.pl.rank_genes_groups_dotplot(
-  adata_filtered,
-  groupby="leiden_res1",
-  standard_scale="var",
-  n_genes=10,
-  key="dea_leiden_res1_filtered",
-  save="Treg_CD4T_top10gene.png"
-)
-```
-<img src="..\figures\dotplot_Treg_CD4T_top10gene.png">
-
-第2群和第7群也是的
-```
-mask = adata.obs['leiden_res1'].isin(['2','7'])
-adata_filtered = adata[mask, :]
-sc.tl.rank_genes_groups(
- adata_filtered, groupby="leiden_res1", method="wilcoxon", key_added="dea_leiden_res1"
-)
-sc.tl.filter_rank_genes_groups(
-  adata_filtered,
-  min_in_group_fraction=0.2,
-  max_out_group_fraction=0.2,
-  key="dea_leiden_res1",
-  key_added="dea_leiden_res1_filtered",
- )
-sc.pl.rank_genes_groups_dotplot(
-  adata_filtered,
-  groupby="leiden_res1",
-  standard_scale="var",
-  n_genes=10,
-  key="dea_leiden_res1_filtered",
-  save="Tcm_CD4T_top10gene.png"
-)
-```
-第4群和第5群也是的
-```
-mask = adata.obs['leiden_res1'].isin(['4','5'])
-adata_filtered = adata[mask, :]
-sc.tl.rank_genes_groups(
- adata_filtered, groupby="leiden_res1", method="wilcoxon", key_added="dea_leiden_res1"
-)
-sc.tl.filter_rank_genes_groups(
-  adata_filtered,
-  min_in_group_fraction=0.2,
-  max_out_group_fraction=0.2,
-  key="dea_leiden_res1",
-  key_added="dea_leiden_res1_filtered",
- )
-sc.pl.rank_genes_groups_dotplot(
-  adata_filtered,
-  groupby="leiden_res1",
-  standard_scale="var",
-  n_genes=10,
-  key="dea_leiden_res1_filtered",
-  save="Tn_CD4T_top10gene.png"
-)
-```
-<img src="..\figures\dotplot_Tcm_CD4T_top10gene.png">
-<img src="..\figures\dotplot_Tn_CD4T_top10gene.png">
-
-
-```
-adata = sc.read("RData/CD4+T__umapmd0.4.h5ad")
-adata = adata[adata.obs.leiden_res1 != '3'].copy()
-adata = adata[adata.obs.leiden_res1 != '9'].copy()
-cl_annotation = {
-    "0": "c02_CD4_Tcm_ANXA1",
-    "1": "c01_CD4_Tn_TCF7",
-    "3": "c04_CD4_Treg_FOXP3",
-    "4": "c03_CD4_Tem_NR4A1",
-    "5": "c05_CD4_Treg_SHMT2",
-}
-adata.obs["minor_celltype"]=adata.obs.leiden_res0_8.map(cl_annotation)
-```
-<img src="..\figures\CD4_res1亚群患者数.png">
-
-### dotplot
-```
-marker_genes = ["TCF7","SELL","CCR7","TXK",
-                "ANXA1","TIMP1","PTGER2",
-                "NR4A1","FOS","JUN",
-                "FOXP3","TNFRSF18","TNFRSF4",
-                "SHMT2","HLA-DPB1","HLA-DRB1"]
-from matplotlib.colors import LinearSegmentedColormap
-custom_cmap = LinearSegmentedColormap.from_list("custom", ["#0A3D7C", "#F6F6F6", "#810426"])
-dp = sc.pl.dotplot(
-        adata,
-        groupby="minor_celltype",
-        categories_order = ["c01_CD4_Tn_TCF7",
-                            "c02_CD4_Tcm_ANXA1",
-                            "c03_CD4_Tem_NR4A1",
-                            "c04_CD4_Treg_FOXP3",
-                            "c05_CD4_Treg_SHMT2",],
-        var_names=marker_genes,
-        standard_scale="var",
-        return_fig=True,
-        var_group_labels="     ",
-        var_group_positions = [(0,3),(4,6),(7,9),
-        (10,12),(13,15)],
-        cmap = custom_cmap
-    )
-dp.style(dot_edge_color='black', dot_edge_lw=1).savefig("plots/dotplot_CD4T.png")
-dp.add_totals().style(dot_edge_color='black', dot_edge_lw=1).savefig("plots/dotplot_CD4T_withtotal.png")
-```
-
-事实上有些群就是分不开，没必要再细分了，就res0.8是对的
 
 ## final anno CD8T
 ### 先看看celltypist的结果
@@ -964,39 +813,73 @@ sc.pl.rank_genes_groups_dotplot(
 1:Temra,makergene为FGFBP2,CX3CR1,TBX21,KLRG1
 2:Teff,没有很好的markgene GZMK,GZMH,GZMB
 
-### dotplot
 ```
 cl_annotation = {
-        "0": "CD8_Tem/Teff_FOS",
-        "4": "CD8_Tem/Teff_HSPA1B",
-        "3": "CD8_Tem/Teff_GNLY",
-        "5": "CD8_Tex_CXCL13",
-        "6": "CD8_T_IL7R",
-        "1": "CD8_Temra_FGFBP2",
-        "2": "CD8_Teff_GZMK"
+        "0": "c07_CD8_Tem/Teff_FOS",
+        "4": "c08_CD8_Tem/Teff_HSPA1B",
+        "3": "c09_CD8_Tem/Teff_GNLY",
+        "2": "c10_CD8_Teff_GZMK",
+        "5": "c11_CD8_Tex_CXCL13",
+        "1": "c12_CD8_Temra_FGFBP2",
+        "6": "c13_CD8_IL7R",
     }
 adata.obs["minor_celltype"]=adata.obs.leiden_res0_8.map(cl_annotation)
 adata.write("RData/CD8T_annotated.h5ad")
+```
+
+
+### umap
+```
+sc.settings.set_figure_params(
+    dpi=300,
+    facecolor="white",
+    frameon=True
+)
+palette = {
+     "c07":"#F2D7D0",
+     "c08":"#E8A7BA",
+     "c09":"#8A7FA0",
+     "c10":"#F4EFA9",
+     "c11":"#E77772",
+     "c12":"#4D4199",
+     "c13":"#F1B9AE"
+}
+cl_annotation = {
+        "0": "c07",
+        "4": "c08",
+        "3": "c09",
+        "2": "c10",
+        "5": "c11",
+        "1": "c12",
+        "6": "c13",
+    }
+adata.obs["minor_clt"]=adata.obs.leiden_res0_8.map(cl_annotation)
+sc.pl.umap(adata,color="minor_clt",legend_loc="on data",title="CD8+ T cells",palette=palette,save="CD8T.png")
+```
+<img src="..\figures\umapCD8T.png">
+### dotplot
+
+```
 marker_genes = [
   "FOS","JUN","HSPA1B","HSPA1A",
   "FOSB","KDM6B","EGR1","ATF3",
   "GNLY","GZMH","GZMA","GZMB",
   "CXCL13","ENTPD1","CTLA4","LAG3","TIGIT","PDCD1","HAVCR2","TNFRSF18","TOX",
-  "LTB","GZMK","IL7R","TCF7",
-"FGFBP2","CX3CR1","TBX21","KLRG1"
+"FGFBP2","CX3CR1","TBX21","KLRG1",
+"LTB","GZMK","IL7R","TCF7",
 ]
 from matplotlib.colors import LinearSegmentedColormap
 custom_cmap = LinearSegmentedColormap.from_list("custom", ["#0A3D7C", "#F6F6F6", "#810426"])
 dp = sc.pl.dotplot(
         adata,
         groupby="minor_celltype",
-        categories_order = ["CD8_Tem/Teff_FOS",
-                            "CD8_Tem/Teff_HSPA1B",
-                            "CD8_Tem/Teff_GNLY",
-                            "CD8_Tex_CXCL13",
-                            "CD8_T_IL7R",
-                            "CD8_Temra_FGFBP2",
-                            "CD8_Teff_GZMK"],
+        categories_order = ["c07_CD8_Tem/Teff_FOS",
+        "c08_CD8_Tem/Teff_HSPA1B",
+        "c09_CD8_Tem/Teff_GNLY",
+        "c10_CD8_Teff_GZMK",
+        "c11_CD8_Tex_CXCL13",
+        "c12_CD8_Temra_FGFBP2",
+        "c13_CD8_IL7R",],
         var_names=marker_genes,
         standard_scale="var",
         return_fig=True,
@@ -1005,8 +888,209 @@ dp = sc.pl.dotplot(
         (12,20),(21,24),(25,28)],
         cmap = custom_cmap
     )
-dp.style(dot_edge_color='black', dot_edge_lw=1).savefig("plots/dotplot_CD8T.png")
+dp.style(dot_edge_color='black', dot_edge_lw=1).savefig("plots/1118_dotplot_CD8T.png")
 
 ```
-<img src="..\figures\dotplot_CD8T.png">
-### umap blood vs tumor
+<img src="..\figures\1118_dotplot_CD8T.png">
+
+### final anno ILC
+
+#### 先看下聚类和celltypist结果
+<img src="..\figures\umapNKT_ILC_umapmd0.4regressoutmtribo_cluster.png">
+<img src="..\figures\umap121celltypist_coarse_ILC.png">
+<img src="..\figures\umap121celltypist_fine_ILC.png">
+#### 看下大类marker
+```
+import scanpy as sc
+sc.settings.set_figure_params(
+    dpi=300,
+    facecolor="white",
+    frameon=False
+)
+sc.settings.figdir = "plots"
+adata = sc.read("RData/NKT_ILC__umapmd0.4_regressoutmtribo.h5ad")
+marker_genes = ["PTPRC","CD3E","CD79A","COL1A1",
+"VWF","PECAM1","EPCAM","SFN","KRT5","LYZ","GCA","TPSAB1"]
+sc.pl.umap(adata,color=marker_genes,vmin=0,vmax="p99",sort_order=False,cmap="Blues",save="121_ILC_majormarker.png")
+```
+<img src="..\figures\umap121_ILC_majormarker.png">
+看起来右下角这一群是混了上皮
+
+### 筛marker
+```
+marker_genes = {
+    "NKT": ["CD3D","CD3E","CD3G","NCAM1", "FCGR3A", "GNLY", "KLRD1"],
+    "CD56brightNK": ["NCAM1", "CCR7", "CSF2", "CXCR3", "IFNG", "IL2RB", "IL7R", "KIT", "KLRC1", "KLRD1", "NCR1", "SELL", "TYROBP"],
+    "CD56dimNK": ["NCAM1", "FCGR3A", "CX3CR1", "CXCR1", "ITGB2", "KIR2DL1", "KIR2DL2", "KIR2DL3", "KIR2DL5", "KIR3DL1", "KIR3DL2", "KIR3DL3", "KLRC2", "KLRG1", "PRF1", "TYROBP"],
+    "ILC1": ["TBX21", "NCR1", "NKR-P1C", "THY1", "KLRD1", "IL7R", "IFNG", "TNF"],
+    "ILC2": ["GATA3", "ST2", "IL17RB", "CRLF2", "NCR3", "CRTH2", "KIT", "IL2RA", "IL7R", "ICOS", "IL4", "IL5", "IL9", "IL13", "AREG"],
+    "ILC3": ["RORC", "AHR", "CCR6", "KLRB1", "KIT", "IL7R", "IL22", "AREG", "FXYD5"]
+}
+marker_genes_in_data = {}
+for ct, markers in marker_genes.items():
+    markers_found = []
+    for marker in markers:
+        if marker in adata.var.index:
+            markers_found.append(marker)
+    marker_genes_in_data[ct] = markers_found
+sc.pl.umap(adata,color=marker_genes_in_data["NKT"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="ILCresubset_NKTmarkers.png")
+sc.pl.umap(adata,color=marker_genes_in_data["CD56brightNK"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="ILCresubset_CD56brightNKmarkers.png")
+sc.pl.umap(adata,color=marker_genes_in_data["CD56dimNK"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="ILCresubset_CD56dimNKmarkers.png")
+sc.pl.umap(adata,color=marker_genes_in_data["ILC1"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="ILCresubset_ILC1markers.png")
+sc.pl.umap(adata,color=marker_genes_in_data["ILC2"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="ILCresubset_ILC2markers.png")
+sc.pl.umap(adata,color=marker_genes_in_data["ILC3"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="ILCresubset_ILC3markers.png")
+```
+"CD3E","NCAM1","FCGR3A","GNLY","KLRD1"
+<img src="..\figures\umapILCresubset_NKTmarkers.png">
+CD56不能作为区分的标志,CXCR3,IFNG,KLRC1右下角表达的比较多
+<img src="..\figures\umapILCresubset_CD56brightNKmarkers.png">
+"FCGR3A",CX3CR1,KIRs,ITGB2,KLRG1都是左上角表达比较多
+<img src="..\figures\umapILCresubset_CD56dimNKmarkers.png">
+没有这一群
+<img src="..\figures\umapILCresubset_ILC1markers.png">
+没有这一群
+<img src="..\figures\umapILCresubset_ILC2markers.png">
+没有这一群
+<img src="..\figures\umapILCresubset_ILC3markers.png">
+
+### 经典marker点图
+```
+marker_genes = {
+    "NKT": ["CD3E","NCAM1", "FCGR3A", "GNLY", "KLRD1"],
+    "NK1": ["CXCR3", "IFNG", "KLRC1",],
+    "NK2": ["FCGR3A","CX3CR1","KIR2DL1", "KIR2DL3","KIR3DL1", "KIR3DL2", "KIR3DL3","ITGB2","KLRG1"],
+}
+sc.pl.dotplot(
+            adata,
+            groupby="leiden_res0_6",
+            var_names=marker_genes,
+            standard_scale="var",
+            save="经典marker_ILC亚群.png"
+        )
+```
+
+### DEG
+```
+sc.tl.rank_genes_groups(
+ adata, groupby="leiden_res0_6", method="wilcoxon", key_added="dea_leiden_res0_6"
+)
+sc.pl.rank_genes_groups(adata, n_genes=25, sharey=False,key="dea_leiden_res0_6",save="dea_ILCres0_6_regressmtribo.png")
+sc.tl.filter_rank_genes_groups(
+  adata,
+  min_in_group_fraction=0.2,
+  max_out_group_fraction=0.2,
+  key="dea_leiden_res0_6",
+  key_added="dea_leiden_res0_6_filtered",
+ )
+sc.pl.rank_genes_groups_dotplot(
+  adata,
+  groupby="leiden_res0_6",
+  standard_scale="var",
+  n_genes=10,
+  key="dea_leiden_res0_6_filtered",
+  save="regressmtribo_121_res0_6_ILC_top10gene.png"
+)
+```
+<img src="..\figures\dotplot_regressmtribo_121_res0_6_ILC_top10gene.png">
+把1和2合并,就分得很开了
+### 添加最终注释
+0:NK markergene是"FCGR3A","CX3CR1","KIR2DL1", "KIR2DL3","KIR3DL1", "KIR3DL2", "KIR3DL3","ITGB2","KLRG1",CXXC5,CHST2
+1,2:NK/NKT markergenes是CD3E，LAG3,PTMS
+3:NK "CXCR3", "IFNG", "KLRC1",
+4:NK "NRGN","GPX1","TUBB1"
+
+```
+adata = sc.read("RData/NKT_ILC__umapmd0.4_regressoutmtribo.h5ad")
+cl_annotation = {
+        "0": "c14_NK_CXXC5",
+        "1": "c15_NK/NKT_LAG3",
+        "2": "c15_NK/NKT_LAG3",
+        "3": "c16_NK_KLRC1",
+        "4": "c17_NK_NRGN",
+    }
+adata.obs["minor_celltype"]=adata.obs.leiden_res0_6.map(cl_annotation)
+adata.write("RData/ILC_annotated.h5ad")
+```
+### umap clt
+```
+sc.settings.set_figure_params(
+    dpi=300,
+    facecolor="white",
+    frameon=True
+)
+palette = {
+     "c14":"#C5A4C7",
+     "c15":"#DF617B",
+     "c16":"#816AA9",
+     "c17":"#CBD1E7",
+}
+cl_annotation = {
+        "0": "c14",
+        "1": "c15",
+        "2": "c15",
+        "3": "c16",
+        "4": "c17",
+    }
+adata.obs["minor_clt"]=adata.obs.leiden_res0_6.map(cl_annotation)
+sc.pl.umap(adata,color="minor_clt",legend_loc="on data",title="NK&NKT cells\n(n=34203)",palette=palette,save="NKT_ILC.png")
+```
+<img src="..\figures\umapNKT_ILC.png">
+
+
+### umap sample_site
+```
+def determine_sample_site(group_name):
+    # 检查 group_name 是否是字符串并且包含 'pbmc'
+    if isinstance(group_name, str) and 'pbmc' in group_name.lower():
+        return 'blood'
+    else:
+        return 'tumor'
+
+# 使用 .apply() 将函数应用到 'sample_group' 列的每一个元素
+adata.obs['sample_site'] = adata.obs['sample_group'].apply(determine_sample_site)
+palette = {
+     "blood":"#3A6FA1",
+     "tumor":"#BA3931",
+}
+sc.pl.umap(adata,color="sample_site",palette=palette,save="NKT_ILC_samplesite.png")
+```
+<img src="..\figures\umapNKT_ILC_samplesite.png">
+
+### 检查每个cluster患者数
+```
+adata.obs['Patient_ID'] = adata.obs['sample'].str.split('_').str[-1]
+patient_count_by_celltype = adata.obs.groupby('minor_celltype')['Patient_ID'].nunique()
+```
+<img src="..\figures\NKNKT亚群患者数.png">
+
+
+### dotplot
+```
+marker_genes = ["CD3E","LAG3","PTMS",
+"FCGR3A","CX3CR1","CXXC5","CHST2",
+"CXCR3","IFNG","KLRC1",
+"NRGN","GPX1","TUBB1"
+]
+
+from matplotlib.colors import LinearSegmentedColormap
+custom_cmap = LinearSegmentedColormap.from_list("custom", ["#0A3D7C", "#F6F6F6", "#810426"])
+dp = sc.pl.dotplot(
+        adata,
+        groupby="minor_celltype",
+        categories_order = [
+          "c15_NK/NKT_LAG3",
+          "c14_NK_CXXC5",
+          "c16_NK_KLRC1",
+          "c17_NK_NRGN",],
+        var_names=marker_genes,
+        standard_scale="var",
+        return_fig=True,
+        var_group_labels="    ",
+        var_group_positions =[(0,2),(3,6),(7,9),
+        (10,12),],
+        cmap = custom_cmap
+    )
+dp.style(dot_edge_color='black', dot_edge_lw=1).savefig("plots/1118_dotplot_NKT_ILC.png")
+
+```
+<img src="..\figures\1118_dotplot_NKT_ILC.png">
