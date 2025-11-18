@@ -404,9 +404,30 @@ cl_annotation = {
     "6": "c06"
 }
 adata.obs["minor_clt"]=adata.obs.leiden_res0_8.map(cl_annotation)
-sc.pl.umap(adata,color="minor_clt",legend_loc="on data",title="CD4+ T cells",palette=palette,save="CD4T.png")
+sc.pl.umap(adata,color="minor_clt",legend_loc="on data",title="CD4+ T cells\n(n=80619)",palette=palette,save="CD4T.png")
 ```
 <img src="..\figures\umapCD4T.png">
+
+### umap sample_site
+```
+def determine_sample_site(group_name):
+    # 检查 group_name 是否是字符串并且包含 'pbmc'
+    if isinstance(group_name, str) and 'pbmc' in group_name.lower():
+        return 'blood'
+    else:
+        return 'tumor'
+
+# 使用 .apply() 将函数应用到 'sample_group' 列的每一个元素
+adata.obs['sample_site'] = adata.obs['sample_group'].apply(determine_sample_site)
+palette = {
+     "blood":"#3A6FA1",
+     "tumor":"#BA3931",
+}
+sc.pl.umap(adata,color="sample_site",palette=palette,save="CD4T_samplesite.png")
+```
+<img src="..\figures\umapCD4T_samplesite.png">
+
+
 
 #### dotplot
 ```
@@ -814,6 +835,7 @@ sc.pl.rank_genes_groups_dotplot(
 2:Teff,没有很好的markgene GZMK,GZMH,GZMB
 
 ```
+adata = sc.read("RData/CD8+T__umapmd0.4_filterepi_regressoutmtribo.h5ad")
 cl_annotation = {
         "0": "c07_CD8_Tem/Teff_FOS",
         "4": "c08_CD8_Tem/Teff_HSPA1B",
@@ -854,9 +876,34 @@ cl_annotation = {
         "6": "c13",
     }
 adata.obs["minor_clt"]=adata.obs.leiden_res0_8.map(cl_annotation)
-sc.pl.umap(adata,color="minor_clt",legend_loc="on data",title="CD8+ T cells",palette=palette,save="CD8T.png")
+sc.pl.umap(adata,color="minor_clt",legend_loc="on data",title="CD8+ T cells\n(n=66844)",palette=palette,save="CD8T.png")
 ```
 <img src="..\figures\umapCD8T.png">
+
+```
+def determine_sample_site(group_name):
+    # 检查 group_name 是否是字符串并且包含 'pbmc'
+    if isinstance(group_name, str) and 'pbmc' in group_name.lower():
+        return 'blood'
+    else:
+        return 'tumor'
+
+# 使用 .apply() 将函数应用到 'sample_group' 列的每一个元素
+adata.obs['sample_site'] = adata.obs['sample_group'].apply(determine_sample_site)
+palette = {
+     "blood":"#3A6FA1",
+     "tumor":"#BA3931",
+}
+sc.pl.umap(adata,color="sample_site",palette=palette,save="CD8T_samplesite.png")
+```
+<img src="..\figures\umapCD8T_samplesite.png">
+
+
+
+
+
+
+
 ### dotplot
 
 ```
