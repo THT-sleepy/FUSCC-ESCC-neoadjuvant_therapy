@@ -826,7 +826,7 @@ sc.pl.rank_genes_groups_dotplot(
 就res0.8吧，没招了
 
 ### 添加最终注释
-0:Tem/Teff markergene是FOS,JUN
+0:Tem/Teff markergene是TNFSF9,FOS,JUN
 4:Tem/Teff markergene是FOS,JUN,FOSB,KDM6B,ERG1,ATF3
 3:Tem/Teff GNLY,GZMH,GZMA,GZMB
 5:Tex "PDCD1", "HAVCR2", "LAG3", "LAYN", "TIGIT", "ENTPD1", "CXCL13", "CTLA4", "TNFRSF18", "TOX"
@@ -837,7 +837,7 @@ sc.pl.rank_genes_groups_dotplot(
 ```
 adata = sc.read("RData/CD8+T__umapmd0.4_filterepi_regressoutmtribo.h5ad")
 cl_annotation = {
-        "0": "c07_CD8_Tem/Teff_FOS",
+        "0": "c07_CD8_Tem/Teff_TNFSF9",
         "4": "c08_CD8_Tem/Teff_HSPA1B",
         "3": "c09_CD8_Tem/Teff_GNLY",
         "2": "c10_CD8_Teff_GZMK",
@@ -908,7 +908,7 @@ sc.pl.umap(adata,color="sample_site",palette=palette,save="CD8T_samplesite.png")
 
 ```
 marker_genes = [
-  "FOS","JUN","HSPA1B","HSPA1A",
+  "FOS","JUN","HSPA1B","HSPA1A","TNFSF9",
   "FOSB","KDM6B","EGR1","ATF3",
   "GNLY","GZMH","GZMA","GZMB",
   "CXCL13","ENTPD1","CTLA4","LAG3","TIGIT","PDCD1","HAVCR2","TNFRSF18","TOX",
@@ -920,7 +920,7 @@ custom_cmap = LinearSegmentedColormap.from_list("custom", ["#0A3D7C", "#F6F6F6",
 dp = sc.pl.dotplot(
         adata,
         groupby="minor_celltype",
-        categories_order = ["c07_CD8_Tem/Teff_FOS",
+        categories_order = ["c07_CD8_Tem/Teff_TNFSF9",
         "c08_CD8_Tem/Teff_HSPA1B",
         "c09_CD8_Tem/Teff_GNLY",
         "c10_CD8_Teff_GZMK",
@@ -931,8 +931,8 @@ dp = sc.pl.dotplot(
         standard_scale="var",
         return_fig=True,
         var_group_labels="      ",
-        var_group_positions = [(0,3),(4,7),(8,11),
-        (12,20),(21,24),(25,28)],
+        var_group_positions = [(0,4),(5,8),(9,12),
+        (13,21),(22,25),(26,29)],
         cmap = custom_cmap
     )
 dp.style(dot_edge_color='black', dot_edge_lw=1).savefig("plots/1118_dotplot_CD8T.png")

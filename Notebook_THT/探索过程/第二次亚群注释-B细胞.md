@@ -99,11 +99,11 @@ sc.pl.rank_genes_groups_dotplot(
 
 ```
 <img src="..\figures\dotplot_1118_B_top10gene.png">
-0和2群也分不开
 
 ### 添加最终注释
-0:Bn markergene是"MS4A1","TCL1A","FCER2","IGHD","IGHM","BACH2"
-1,2:Bm markergenes是"TNFRSF13B,"CXCR5","ZNF331"
+0:Bm markergene是"TUBA1A",
+1:Bn markergene是"MS4A1","TCL1A","FCER2","IGHD","IGHM","BACH2"
+2:Bm markergenes是"CHORDC1","PPP1R16B","CIITA","TNFRSF13B,"CXCR5",
 其它:Plasma cell markergenes是"MZB1","XBP1"
 
 
@@ -112,20 +112,20 @@ adata = sc.read("RData/B cell__umapmd1.2.h5ad")
 adata = adata[adata.obs.leiden_res0_8 != '8'].copy()
 adata = adata[adata.obs.leiden_res0_8 != '14'].copy()
 cl_annotation = {
-        "0": "c19_Bm_TNFRSF13B",
+        "0": "c20_Bm_TUBA1A",
         "1": "c18_Bn_TCL1A",
         "2": "c19_Bm_TNFRSF13B",
-        "3": "c20_Bp_MZB1",
-        "4": "c20_Bp_MZB1",
-        "5": "c20_Bp_MZB1",
-        "6": "c20_Bp_MZB1",
-        "7": "c20_Bp_MZB1",
-        "9": "c20_Bp_MZB1",
-        "10": "c20_Bp_MZB1",
-        "11": "c20_Bp_MZB1",
-        "12": "c20_Bp_MZB1",
-        "13": "c20_Bp_MZB1",
-        "15": "c20_Bp_MZB1"
+        "3": "c21_Bp_MZB1",
+        "4": "c21_Bp_MZB1",
+        "5": "c21_Bp_MZB1",
+        "6": "c21_Bp_MZB1",
+        "7": "c21_Bp_MZB1",
+        "9": "c21_Bp_MZB1",
+        "10": "c21_Bp_MZB1",
+        "11": "c21_Bp_MZB1",
+        "12": "c21_Bp_MZB1",
+        "13": "c21_Bp_MZB1",
+        "15": "c21_Bp_MZB1"
     }
 adata.obs["minor_celltype"]=adata.obs.leiden_res0_8.map(cl_annotation)
 adata.write("RData/B_annotated.h5ad")
@@ -142,28 +142,29 @@ palette = {
      "c18":"#5BA0D4",
      "c19":"#5AA452",
      "c20":"#F29696",
+     "c21":"#D8432E"
 }
 cl_annotation = {
-        "0": "c19",
+        "0": "c20",
         "1": "c18",
         "2": "c19",
-        "3": "c20",
-        "4": "c20",
-        "5": "c20",
-        "6": "c20",
-        "7": "c20",
-        "9": "c20",
-        "10": "c20",
-        "11": "c20",
-        "12": "c20",
-        "13": "c20",
-        "15": "c20"
+        "3": "c21",
+        "4": "c21",
+        "5": "c21",
+        "6": "c21",
+        "7": "c21",
+        "9": "c21",
+        "10": "c21",
+        "11": "c21",
+        "12": "c21",
+        "13": "c21",
+        "15": "c21"
     }
 adata.obs["minor_clt"]=adata.obs.leiden_res0_8.map(cl_annotation)
-sc.pl.umap(adata,color="minor_clt",legend_loc="on data",title="B cells\n(n=43183)",palette=palette,save="B.png")
+sc.pl.umap(adata,color="minor_clt",legend_loc="on data",title="B cells\n(n=43183)",palette=palette,save="1119_B.png")
 ```
 <img src="..\figures\umapB.png">
-
+<img src="..\figures\umap1119_B.png">
 
 ### umap sample_site
 ```
@@ -194,8 +195,9 @@ patient_count_by_celltype = adata.obs.groupby('minor_celltype')['Patient_ID'].nu
 
 ### dotplot
 ```
-marker_genes = ["MS4A1","TCL1A","FCER2","IGHD","IGHM","BACH2"
-,"TNFRSF13B","CXCR5","ZNF331",
+marker_genes = ["MS4A1","TCL1A","FCER2","IGHD","IGHM","BACH2",
+"CHORDC1","PPP1R16B","CIITA","TNFRSF13B","CXCR5",
+"TUBA1A",
 "MZB1","XBP1"
 ]
 
@@ -207,20 +209,18 @@ dp = sc.pl.dotplot(
         categories_order = [
           "c18_Bn_TCL1A",
           "c19_Bm_TNFRSF13B",
-          "c20_Bp_MZB1",],
+          "c20_Bm_TUBA1A",
+          "c21_Bp_MZB1",],
         var_names=marker_genes,
         standard_scale="var",
         return_fig=True,
-        var_group_labels="   ",
-        var_group_positions =[(0,5),(6,8),(9,11),],
+        var_group_labels="    ",
+        var_group_positions =[(0,5),(6,10),(11,11),(12,13)],
         cmap = custom_cmap
     )
-dp.style(dot_edge_color='black', dot_edge_lw=1).savefig("plots/1118_dotplot_B.png")
+dp.style(dot_edge_color='black', dot_edge_lw=1).savefig("plots/1119_dotplot_B.png")
 
 ```
 <img src="..\figures\1118_dotplot_B.png">
-
-
-
-
+<img src="..\figures\1119_dotplot_B.png">
 ```
