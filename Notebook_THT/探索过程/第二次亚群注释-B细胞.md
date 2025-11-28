@@ -112,20 +112,20 @@ adata = sc.read("RData/B cell__umapmd1.2.h5ad")
 adata = adata[adata.obs.leiden_res0_8 != '8'].copy()
 adata = adata[adata.obs.leiden_res0_8 != '14'].copy()
 cl_annotation = {
-        "0": "c20_Bm_TUBA1A",
-        "1": "c18_Bn_TCL1A",
-        "2": "c19_Bm_TNFRSF13B",
-        "3": "c21_Bp_MZB1",
-        "4": "c21_Bp_MZB1",
-        "5": "c21_Bp_MZB1",
-        "6": "c21_Bp_MZB1",
-        "7": "c21_Bp_MZB1",
-        "9": "c21_Bp_MZB1",
-        "10": "c21_Bp_MZB1",
-        "11": "c21_Bp_MZB1",
-        "12": "c21_Bp_MZB1",
-        "13": "c21_Bp_MZB1",
-        "15": "c21_Bp_MZB1"
+        "0": "c21_Bm_TUBA1A",
+        "1": "c19_Bn_TCL1A",
+        "2": "c20_Bm_TNFRSF13B",
+        "3": "c22_Bp_MZB1",
+        "4": "c22_Bp_MZB1",
+        "5": "c22_Bp_MZB1",
+        "6": "c22_Bp_MZB1",
+        "7": "c22_Bp_MZB1",
+        "9": "c22_Bp_MZB1",
+        "10": "c22_Bp_MZB1",
+        "11": "c22_Bp_MZB1",
+        "12": "c22_Bp_MZB1",
+        "13": "c22_Bp_MZB1",
+        "15": "c22_Bp_MZB1"
     }
 adata.obs["minor_celltype"]=adata.obs.leiden_res0_8.map(cl_annotation)
 adata.write("RData/B_annotated.h5ad")
@@ -139,32 +139,32 @@ sc.settings.set_figure_params(
     frameon=True
 )
 palette = {
-     "c18":"#5BA0D4",
-     "c19":"#5AA452",
-     "c20":"#F29696",
-     "c21":"#D8432E"
+     "c19":"#5BA0D4",
+     "c20":"#5AA452",
+     "c21":"#F29696",
+     "c22":"#D8432E"
 }
 cl_annotation = {
-        "0": "c20",
-        "1": "c18",
-        "2": "c19",
-        "3": "c21",
-        "4": "c21",
-        "5": "c21",
-        "6": "c21",
-        "7": "c21",
-        "9": "c21",
-        "10": "c21",
-        "11": "c21",
-        "12": "c21",
-        "13": "c21",
-        "15": "c21"
+        "0": "c21",
+        "1": "c19",
+        "2": "c20",
+        "3": "c22",
+        "4": "c22",
+        "5": "c22",
+        "6": "c22",
+        "7": "c22",
+        "9": "c22",
+        "10": "c22",
+        "11": "c22",
+        "12": "c22",
+        "13": "c22",
+        "15": "c22"
     }
 adata.obs["minor_clt"]=adata.obs.leiden_res0_8.map(cl_annotation)
-sc.pl.umap(adata,color="minor_clt",legend_loc="on data",title="B cells\n(n=43183)",palette=palette,save="1119_B.png")
+sc.pl.umap(adata,color="minor_clt",legend_loc="on data",title="B cells\n(n=43183)",palette=palette,save="1125_B.png")
 ```
 <img src="..\figures\umapB.png">
-<img src="..\figures\umap1119_B.png">
+<img src="..\figures\umap1125_B.png">
 
 ### umap sample_site
 ```
@@ -207,10 +207,10 @@ dp = sc.pl.dotplot(
         adata,
         groupby="minor_celltype",
         categories_order = [
-          "c18_Bn_TCL1A",
-          "c19_Bm_TNFRSF13B",
-          "c20_Bm_TUBA1A",
-          "c21_Bp_MZB1",],
+          "c19_Bn_TCL1A",
+          "c20_Bm_TNFRSF13B",
+          "c21_Bm_TUBA1A",
+          "c22_Bp_MZB1",],
         var_names=marker_genes,
         standard_scale="var",
         return_fig=True,
@@ -218,9 +218,7 @@ dp = sc.pl.dotplot(
         var_group_positions =[(0,5),(6,10),(11,11),(12,13)],
         cmap = custom_cmap
     )
-dp.style(dot_edge_color='black', dot_edge_lw=1).savefig("plots/1119_dotplot_B.png")
+dp.style(dot_edge_color='black', dot_edge_lw=1).savefig("plots/1125_dotplot_B.png")
 
 ```
-<img src="..\figures\1118_dotplot_B.png">
-<img src="..\figures\1119_dotplot_B.png">
-```
+<img src="..\figures\1125_dotplot_B.png">

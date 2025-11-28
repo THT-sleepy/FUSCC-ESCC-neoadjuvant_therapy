@@ -1,0 +1,135 @@
+# 理一下ESCC这个课题最近还要做的东西         (What)
+
+* Nov 25, 2025                                 (When)
+* liyi /data1/liyi/zhaoyue/FUSCC-ESCC-neoadjuvant_thrapy           (Where)
+* 理一下大致要做的工作和先后顺序 (Why)
+
+Part 1 队列和注释大致情况的展示
+
+* 1 总示意图-这个不着急现在就改好
+* 2 MPR患者的临床情况-这部分后面让傅师兄来弄吧，反正把能拿到的临床信息都展示一下
+图1：<br>
+<img src="..\figures\张泽民非小-临床图谱.png">
+图2:..
+* 3 总UMAP
+一张major一张minor左右并排就可以了
+* 4 Batch UAMP
+* 5 major_markers UMAP
+* 6 每个患者的百分比柱状图+拼在上面的小热图(总的和CD45+各一张)
+
+* 7 大亚群的基线(pre post都要看)和变化与疗效关系-箱线图
+* 8 中亚群的基线(pre post都要看)和变化与疗效关系-箱线图
+* 9 小亚群的基线(pre post都要看)和变化与疗效关系-箱线图(总细胞数CD45+和major以及CD4T这种亚major都试一下)
+* 10 所有的亚聚类结果和组织来源+markergene点图
+* 11 做完把methods给写了
+
+
+Part 2 围绕T细胞的相关分析
+
+张泽民结肠癌(2024 cancer cell):
+* 1 肿瘤浸润耗竭T(去掉血液来源T亚群)与疗效的关系
+图1：左边umap右边变化中的umap(对应的markgene点图在前面展示过了)
+<img src="..\figures\张泽民结直肠癌Figure3AB.png">
+图2：Tex(%CD8T)以及STARTRAC-expa指标与Tumor regression ratio的关系-线性回归图+箱线图
+<img src="..\figures\张泽民结肠癌Figure3C.png">
+<img src="..\figures\张泽民结肠癌S4B.png"><br>
+图3：把CRvsNCR，PrevsPost等可以比较的因素都拉了DEG-火山图
+<img src="..\figures\张泽民结直肠癌S4CD.png"><br>
+图4：用疗效+取样时间作为分组，计算了耗竭，Texp，杀伤的打分-热图
+<img src="..\figures\张泽民结直肠癌S4I.png"><br>
+图5：Tex(%CD8T)以及STARTRAC-expa指标在不同疗效组的治疗前中后变化的折线图
+<img src="..\figures\张泽民结肠癌3EF.png">
+
+* 2 肿瘤反应型CD8T细胞(Ttr-like T)在anti-PD-1治疗过程中的变化
+图1：展示了一下找到的Ttr-like T的特征(组织来源和打分情况)
+<img src="..\figures\张泽民结肠癌S5AB.png">
+图2：使用celltypist选取另一个研究做迁移注释，发现Ttr确实是neoantigen-specific的
+<img src="..\figures\张泽民结肠癌S5CD.png">
+图3：展示了Ttr与治疗时间、疗效等的关系(E-H)
+<img src="..\figures\张泽民结肠癌S5E-H.png">
+图4：用免疫多重荧光证明了Ttr这群细胞确实是在CR患者基线高而在PR患者治疗后样本高
+<img src="..\figures\张泽民结肠癌4A-C.png">
+图5：将Tcr-like T里面的克隆分为了4组(1：baseline无但在后续取样过程中出现的new emerged clones；
+2 baseline就有，经历了克隆扩增；3 baseline就有，经历了克隆减少；4 baseline有后续都检测不到了)
+<img src="..\figures\张泽民结肠癌S5I.png">
+图6: 对Ttr-like细胞再聚类进行分析
+<img src="..\figures\张泽民结肠癌4D-G.png">
+<img src="..\figures\张泽民结肠癌S6AB.png">
+
+
+* 3 外周血来源的Ttr-like在anti-PD-1治疗过程中的变化<br>
+图1：把肿瘤组织里来自血液Ttr克隆的T细胞定义为blood-associated Ttr-like cells
+<img src="..\figures\张泽民结肠癌5A.png"><br>
+这些细胞在血液里和肿瘤里的克隆大小是相关的<br>
+<img src="..\figures\张泽民结肠癌S7A.png"><br>
+图2：发现每个治疗阶段都有blood-associated Ttr-like cells的存在<br>
+<img src="..\figures\张泽民结肠癌5B.png"><br>
+图3：这些肿瘤反应性T细胞从血里面到肿瘤里面，耗竭marker是逐渐增强的,
+并且做了体内实验验证<br>
+<img src="..\figures\张泽民结肠癌5C.png">
+<img src="..\figures\张泽民结肠癌S7BC.png">
+<img src="..\figures\张泽民结肠癌S7D.png">
+<img src="..\figures\张泽民结肠癌S7EF.png">
+图4：研究了这些血液来源或相关的Ttr-like细胞和疗效的关系
+<img src="..\figures\张泽民结肠癌5DE.png"><br>
+
+* 4 外周血来源免疫细胞和疗效的关系<br>
+
+图1：计算了各个血液来源亚群和疗效的关系，找到一个有点意义的<br>
+<img src="..\figures\张泽民结肠癌S7H.png"><br>
+图2：计算了各患者血液CD8T的多样性，发现NCR组显著更低，且NCR的Tn细胞也要更少<br>
+<img src="..\figures\张泽民结直肠癌6A.png"><br>
+<img src="..\figures\张泽民结肠癌S7IJ.png"><br>
+图3：血液新出现和扩增亚群数量和疗效的关系<br>
+<img src="..\figures\张泽民结肠癌6B.png"><br>
+图4：又对血液里的CD8T做了聚类，发现Ttrlike 细胞clone更大
+<img src="..\figures\张泽民结肠癌6C.png">
+<img src="..\figures\张泽民结肠癌6D.png"><br>
+图5：把血里的Ttr-like和非Ttr-like细胞的做了DEG<br>
+<img src="..\figures\张泽民结肠癌6EF.png"><br>
+图6：用MHC II类相关基因做了分类器<br>
+<img src="..\figures\张泽民结肠癌6GH.png"><br>
+图7：继续对几个基因的预测效用做了验证<br>
+<img src="..\figures\张泽民结肠癌6IJK.png">
+
+董晨肝癌(2025 Cancer Cell):<br>
+*1 CD8+T中的Teff/Tem与疗效相关
+图1：对CD8T做了聚类，展示了细胞的组织来源以及分群markergene,还详细介绍了他的分群策略
+ABC
+<img src="..\figures\董晨肝癌1ABC.png">
+<img src="..\figures\董晨肝癌S3A.png">
+
+图2：对分好的CD8T亚群进行耗竭和杀伤打分
+<img src="..\figures\董晨肝癌S3B.png">
+
+图3：用ProjectTILs和CellHint两个软件用别人注释好的亚群验证自己注释的亚群<br>
+<img src="..\figures\董晨肝癌S3D.png">
+<img src="..\figures\董晨肝癌S3E.png">
+
+图4：每个CD8T小亚群去探究和疗效的关系<br>
+<img src="..\figures\董晨肝癌2E.png">
+<img src="..\figures\董晨肝癌S3FG.png">
+
+图5：结合scTCR做相关分析-发现CD8T比CD4T的克隆数要多一点<br>
+<img src="..\figures\董晨肝癌S4A.png">
+<img src="..\figures\董晨肝癌S4B.png">
+
+图6：R比NR克隆扩增要多一点,具体来说R的效应T会扩增,tTex会下降
+<img src="..\figures\董晨肝癌2FGH.png">
+
+图7：草草地把STRATRAC的结果都给展示了一下
+<img src="..\figures\董晨肝癌S4C-F.png">
+
+图8：研究了一下Tem/Teff和其它亚群间的转化关系
+<img src="..\figures\董晨肝癌3ABC.png">
+
+*2 Tpex细胞和疗效正相关
+图1：把Tem/Teff中和tTex shareTCR的细胞定义为Tpex，否则为cTem,分析了和疗效关系以及打分情况
+<img src="..\figures\董晨肝癌3DEFG.png">
+
+图2：把新得到的细胞亚群进行差异基因分析和找markergene的不同
+<img src="..\figures\董晨肝癌3HIJ.png">
+
+*3 cTem也和疗效相关，并且把一个单药的研究纳了进来做对比
+*4 后面还把特殊的一群KIR+T以及Treg做了分析，每群T总的思路就是看和疗效的关系，
+不同组别找差异（correlation+DEG）,和其它T细胞亚群的转化关系

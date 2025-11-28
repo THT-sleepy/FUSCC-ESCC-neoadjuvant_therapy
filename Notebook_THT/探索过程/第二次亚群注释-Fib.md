@@ -112,13 +112,13 @@ sc.pl.rank_genes_groups_dotplot(
 ```
 adata = sc.read("RData/Fibrocyte__umapmd0.4.h5ad")
 cl_annotation = {
-        "0": "c46_proFib_CD34",
-        "1": "c43_Fib_COL11A1",
-        "2": "c44_Fib_MMP1",
-        "3": "c45_Fib_COL6A5",
-        "4": "c48_PC_RGS5",
-        "5": "c49_PC_MYH11",
-        "6": "c47_apFib_HLA-DRB1",
+        "0": "c47_proFib_CD34",
+        "1": "c44_Fib_COL11A1",
+        "2": "c45_Fib_MMP1",
+        "3": "c46_Fib_COL6A5",
+        "4": "c49_PC_RGS5",
+        "5": "c50_PC_MYH11",
+        "6": "c48_apFib_HLA-DRB1",
     }
 adata.obs["minor_celltype"]=adata.obs.leiden_res0_6.map(cl_annotation)
 adata.write("RData/Fib_annotated.h5ad")
@@ -172,13 +172,13 @@ dp = sc.pl.dotplot(
         adata,
         groupby="minor_celltype",
         categories_order = [
-             "c43_Fib_COL11A1",
-             "c44_Fib_MMP1",
-             "c45_Fib_COL6A5",
-             "c46_proFib_CD34",
-             "c47_apFib_HLA-DRB1",
-             "c48_PC_RGS5",
-             "c49_PC_MYH11",],
+             "c44_Fib_COL11A1",
+             "c45_Fib_MMP1",
+             "c46_Fib_COL6A5",
+             "c47_proFib_CD34",
+             "c48_apFib_HLA-DRB1",
+             "c49_PC_RGS5",
+             "c50_PC_MYH11",],
         var_names=marker_genes,
         standard_scale="var",
         return_fig=True,
@@ -187,9 +187,9 @@ dp = sc.pl.dotplot(
         (12,14),(15,17),(18,23),(24,26)],
         cmap = custom_cmap
     )
-dp.style(dot_edge_color='black', dot_edge_lw=1).savefig("plots/1122_dotplot_Fib.png")
+dp.style(dot_edge_color='black', dot_edge_lw=1).savefig("plots/1125_dotplot_Fib.png")
 ```
-<img src="..\figures\1122_dotplot_Fib.png">
+<img src="..\figures\1125_dotplot_Fib.png">
 
 后面让傅师兄再弄10个颜色吧，豆包弄的颜色不太对
 ### umap clt

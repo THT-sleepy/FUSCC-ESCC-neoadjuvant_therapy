@@ -98,8 +98,8 @@ adata.obs["TILC_celltype"]=adata.obs.leiden_res0_8.map(cl_annotation)
 adata.write("RData/T_1st_round_anno.h5ad")
 ###Tprf可以直接注释保存
 adata_prf = adata[adata.obs.TILC_celltype == 'Tprf'].copy()
-adata_prf.obs["final_anno_celltype"] = "Tprf"
-adata_prf.write("RData/Tprf_finalanno.h5ad")
+adata_prf.obs["minor_celltype"] = "c14_Tprf_MKI67"
+adata_prf.write("RData/Tprf_annotated.h5ad")
 ```
 
 ### 3 再跑亚群聚类
@@ -971,7 +971,8 @@ marker_genes = {
     "CD56dimNK": ["NCAM1", "FCGR3A", "CX3CR1", "CXCR1", "ITGB2", "KIR2DL1", "KIR2DL2", "KIR2DL3", "KIR2DL5", "KIR3DL1", "KIR3DL2", "KIR3DL3", "KLRC2", "KLRG1", "PRF1", "TYROBP"],
     "ILC1": ["TBX21", "NCR1", "NKR-P1C", "THY1", "KLRD1", "IL7R", "IFNG", "TNF"],
     "ILC2": ["GATA3", "ST2", "IL17RB", "CRLF2", "NCR3", "CRTH2", "KIT", "IL2RA", "IL7R", "ICOS", "IL4", "IL5", "IL9", "IL13", "AREG"],
-    "ILC3": ["RORC", "AHR", "CCR6", "KLRB1", "KIT", "IL7R", "IL22", "AREG", "FXYD5"]
+    "ILC3": ["RORC", "AHR", "CCR6", "KLRB1", "KIT", "IL7R", "IL22", "AREG", "FXYD5"],
+    "gdT",:["CD3D","CD3E","CD3G","CD4","CD8A","CD8B","TRDV1","TRDV2","TRGV5","TRGV9","TYROBP","XCL2","KLRD1","TRGC1","TRDC"]
 }
 marker_genes_in_data = {}
 for ct, markers in marker_genes.items():
@@ -986,6 +987,7 @@ sc.pl.umap(adata,color=marker_genes_in_data["CD56dimNK"],vmin=0,vmax="p99",sort_
 sc.pl.umap(adata,color=marker_genes_in_data["ILC1"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="ILCresubset_ILC1markers.png")
 sc.pl.umap(adata,color=marker_genes_in_data["ILC2"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="ILCresubset_ILC2markers.png")
 sc.pl.umap(adata,color=marker_genes_in_data["ILC3"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="ILCresubset_ILC3markers.png")
+sc.pl.umap(adata,color=marker_genes_in_data["gdT"],vmin=0,vmax="p99",sort_order=False,cmap="Reds",save="ILCresubset_gdTmarkers.png")
 ```
 "CD3E","NCAM1","FCGR3A","GNLY","KLRD1"
 <img src="..\figures\umapILCresubset_NKTmarkers.png">
@@ -999,6 +1001,8 @@ CD56不能作为区分的标志,CXCR3,IFNG,KLRC1右下角表达的比较多
 <img src="..\figures\umapILCresubset_ILC2markers.png">
 没有这一群
 <img src="..\figures\umapILCresubset_ILC3markers.png">
+也没有gdT
+<img src="..\figures\umapILCresubset_gdTmarkers.png">
 
 ### 经典marker点图
 ```
@@ -1049,11 +1053,11 @@ sc.pl.rank_genes_groups_dotplot(
 ```
 adata = sc.read("RData/NKT_ILC__umapmd0.4_regressoutmtribo.h5ad")
 cl_annotation = {
-        "0": "c14_NK_CXXC5",
-        "1": "c15_NK/NKT_LAG3",
-        "2": "c15_NK/NKT_LAG3",
-        "3": "c16_NK_KLRC1",
-        "4": "c17_NK_NRGN",
+        "0": "c15_NK_CXXC5",
+        "1": "c16_NK/NKT_LAG3",
+        "2": "c16_NK/NKT_LAG3",
+        "3": "c17_NK_KLRC1",
+        "4": "c18_NK_NRGN",
     }
 adata.obs["minor_celltype"]=adata.obs.leiden_res0_6.map(cl_annotation)
 adata.write("RData/ILC_annotated.h5ad")
@@ -1066,17 +1070,17 @@ sc.settings.set_figure_params(
     frameon=True
 )
 palette = {
-     "c14":"#C5A4C7",
-     "c15":"#DF617B",
-     "c16":"#816AA9",
-     "c17":"#CBD1E7",
+     "c15":"#C5A4C7",
+     "c16":"#DF617B",
+     "c17":"#816AA9",
+     "c18":"#CBD1E7",
 }
 cl_annotation = {
-        "0": "c14",
-        "1": "c15",
-        "2": "c15",
-        "3": "c16",
-        "4": "c17",
+        "0": "c15",
+        "1": "c16",
+        "2": "c16",
+        "3": "c17",
+        "4": "c18",
     }
 adata.obs["minor_clt"]=adata.obs.leiden_res0_6.map(cl_annotation)
 sc.pl.umap(adata,color="minor_clt",legend_loc="on data",title="NK&NKT cells\n(n=34203)",palette=palette,save="NKT_ILC.png")
@@ -1125,10 +1129,10 @@ dp = sc.pl.dotplot(
         adata,
         groupby="minor_celltype",
         categories_order = [
-          "c15_NK/NKT_LAG3",
-          "c14_NK_CXXC5",
-          "c16_NK_KLRC1",
-          "c17_NK_NRGN",],
+          "c16_NK/NKT_LAG3",
+          "c15_NK_CXXC5",
+          "c17_NK_KLRC1",
+          "c18_NK_NRGN",],
         var_names=marker_genes,
         standard_scale="var",
         return_fig=True,
@@ -1137,7 +1141,7 @@ dp = sc.pl.dotplot(
         (10,12),],
         cmap = custom_cmap
     )
-dp.style(dot_edge_color='black', dot_edge_lw=1).savefig("plots/1118_dotplot_NKT_ILC.png")
+dp.style(dot_edge_color='black', dot_edge_lw=1).savefig("plots/1125_dotplot_NKT_ILC.png")
 
 ```
-<img src="..\figures\1118_dotplot_NKT_ILC.png">
+<img src="..\figures\1125_dotplot_NKT_ILC.png">
