@@ -11,14 +11,14 @@ Part 1 队列和注释大致情况的展示
 图1：<br>
 <img src="..\figures\张泽民非小-临床图谱.png">
 图2:..
-* 3 总UMAP
+* 3 总UMAP-done
 一张major一张minor左右并排就可以了
-* 4 Batch UAMP
+* 4 Batch UAMP-done
 * 5 major_markers UMAP
 * 6 每个患者的百分比柱状图+拼在上面的小热图(总的和CD45+各一张)
 
-* 7 大亚群的基线(pre post都要看)和变化与疗效关系-箱线图
-* 8 中亚群的基线(pre post都要看)和变化与疗效关系-箱线图
+* 7 大亚群的基线(pre post都要看)和变化与疗效关系-箱线图-done
+* 8 中亚群的基线(pre post都要看)和变化与疗效关系-箱线图-done
 * 9 小亚群的基线(pre post都要看)和变化与疗效关系-箱线图(总细胞数CD45+和major以及CD4T这种亚major都试一下)
 * 10 所有的亚聚类结果和组织来源+markergene点图
 * 11 做完把methods给写了

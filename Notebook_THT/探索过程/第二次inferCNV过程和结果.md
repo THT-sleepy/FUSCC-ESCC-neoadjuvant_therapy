@@ -4,7 +4,7 @@
 * liyi /data1/liyi/zhaoyue/FUSCC-ESCC-neoadjuvant_thrapy           (Where)
 *  no why(Why)
 
-### 有一些细胞会乱跑需要去掉
+### 有一些细胞会乱跑需要去掉,另外还要去掉血液来源的非血液细胞
 ```
 import scanpy as sc
 import matplotlib.pyplot as plt
@@ -110,7 +110,7 @@ sc.pl.umap(adata, color="cnv_status", ax=ax2,save="1128umaptumor_nomal.png")
 ```
 <img src="..\figures\umap1128umaptumor_nomal.png">
 
-最后添加上上皮的注释
+最后添加上上皮的注释,另外还要去掉血液来源的非血液细胞
 
 ```
 adata.obs["minor_celltype"] = adata.obs["minor_celltype"].cat.add_categories(["c51_Epi_Normal", "c52_Epi_Tumor"])
@@ -120,6 +120,14 @@ adata.obs.loc[cond_tumor, "minor_celltype"] = "c52_Epi_Tumor"
 
 cond_normal = (adata.obs["major_celltype"] == "Epithelial cell") & (adata.obs["cnv_status"] == "normal")
 adata.obs.loc[cond_normal, "minor_celltype"] = "c51_Epi_Normal"
+
+#删除血液来源的非血液细胞
+cond_pbmc = adata.obs["sample"].str.contains("pbmc", case=False, na=False)
+cond_celltype = adata.obs["major_celltype"].isin(["Epithelial cell", "Endothelial cell", "Fibrocyte"])
+cond_drop = cond_pbmc & cond_celltype
+
+# 步骤2：保留“非需删除”的细胞（~表示取反）
+adata_filtered = adata[~cond_drop, :].copy()
 
 adata.write("RData/1128_final_escc121.h5ad")
 ```

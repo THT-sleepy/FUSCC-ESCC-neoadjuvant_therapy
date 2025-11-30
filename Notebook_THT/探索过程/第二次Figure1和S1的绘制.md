@@ -100,7 +100,7 @@ for col in ["major_celltype", "TILC_celltype", "myeloid_celltype"]:
 
 # 1. 提取基础列
 adata.obs["middle_celltype"] = adata.obs["major_celltype"].copy()
-adata.obs.loc[adata.obs["major_celltype"] == "T cell", "middle_celltype"] = adata.obs["TILC_celltype"]
+adata.obs.loc[adata.obs["major_celltype"] == "T&ILC cell", "middle_celltype"] = adata.obs["TILC_celltype"]
 adata.obs.loc[adata.obs["major_celltype"] == "Myeloid cell", "middle_celltype"] = adata.obs["myeloid_celltype"]
 
 df = adata.obs[['major_celltype','middle_celltype', 'minor_celltype', 'sample']].copy()
