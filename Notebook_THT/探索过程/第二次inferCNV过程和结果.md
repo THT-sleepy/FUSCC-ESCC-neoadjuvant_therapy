@@ -129,5 +129,7 @@ cond_drop = cond_pbmc & cond_celltype
 # 步骤2：保留“非需删除”的细胞（~表示取反）
 adata_filtered = adata[~cond_drop, :].copy()
 
-adata.write("RData/1128_final_escc121.h5ad")
+adata_filtered.write("RData/1128_final_escc121.h5ad")
 ```
+
+### 后面还把有一个基因数特别少的样本给去掉了 2279307_post_tumor

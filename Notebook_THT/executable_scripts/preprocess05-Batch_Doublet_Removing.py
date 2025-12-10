@@ -51,30 +51,30 @@ plt_path="hvg"+sys.argv[1]+".png"
 sc.pl.pca_variance_ratio(adata, log=True,save=plt_path)
 
 #min dist=0.05
-adata1 = adata.copy()
-sc.external.pp.bbknn(adata1, batch_key="sample",n_pcs=30)  # running bbknn 1.6.0
-sc.tl.umap(adata1,min_dist=0.05)
-umapplt_path = "hvg" +sys.argv[1] + "PC30"+"_bbknn_batch_corrected" + "_doubletremoved_umapmd0.05.pdf"
-sc.pl.umap(
-    adata1,
-    color=["sample_group","n_genes_by_counts", "pct_counts_mt","scDblFinder_class"],
-    save=umapplt_path
-)
-output_fpath="RData/hvg"+ sys.argv[1] +"_PC30"+"_batchdoubletremoved_umapmd0.05.h5ad"
-adata1.write(output_fpath)
+#adata1 = adata.copy()
+#sc.external.pp.bbknn(adata1, batch_key="sample",n_pcs=30)  # running bbknn 1.6.0
+#sc.tl.umap(adata1,min_dist=0.05)
+#umapplt_path = "hvg" +sys.argv[1] + "PC30"+"_bbknn_batch_corrected" + "_doubletremoved_umapmd0.05.pdf"
+#sc.pl.umap(
+#    adata1,
+#    color=["sample_group","n_genes_by_counts", "pct_counts_mt","scDblFinder_class"],
+#    save=umapplt_path
+#)
+#output_fpath="RData/hvg"+ sys.argv[1] +"_PC30"+"_batchdoubletremoved_umapmd0.05.h5ad"
+#adata1.write(output_fpath)
 
 #min dist=0.1
-adata2 = adata.copy()
-sc.external.pp.bbknn(adata2, batch_key="sample",n_pcs=30)  # running bbknn 1.6.0
-sc.tl.umap(adata2,min_dist=0.1)
-umapplt_path = "hvg" +sys.argv[1] + "PC30"+"_bbknn_batch_corrected" + "_doubletremoved_umapmd0.1.pdf"
-sc.pl.umap(
-    adata2,
-    color=["sample_group","n_genes_by_counts", "pct_counts_mt","scDblFinder_class"],
-    save=umapplt_path
-)
-output_fpath="RData/hvg"+ sys.argv[1] +"_PC30"+"_batchdoubletremoved_umapmd0.1.h5ad"
-adata2.write(output_fpath)
+#adata2 = adata.copy()
+#sc.external.pp.bbknn(adata2, batch_key="sample",n_pcs=30)  # running bbknn 1.6.0
+#sc.tl.umap(adata2,min_dist=0.1)
+#umapplt_path = "hvg" +sys.argv[1] + "PC30"+"_bbknn_batch_corrected" + "_doubletremoved_umapmd0.1.pdf"
+#sc.pl.umap(
+#    adata2,
+#    color=["sample_group","n_genes_by_counts", "pct_counts_mt","scDblFinder_class"],
+#    save=umapplt_path
+#)
+#output_fpath="RData/hvg"+ sys.argv[1] +"_PC30"+"_batchdoubletremoved_umapmd0.1.h5ad"
+#adata2.write(output_fpath)
 
 #min dist=0.2
 adata3 = adata.copy()

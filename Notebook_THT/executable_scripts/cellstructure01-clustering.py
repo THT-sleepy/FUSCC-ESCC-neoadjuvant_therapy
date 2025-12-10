@@ -16,12 +16,12 @@ sc.tl.leiden(adata, key_added="leiden_res0_6", resolution=0.6)
 sc.tl.leiden(adata, key_added="leiden_res1", resolution=1.0)
 sc.tl.leiden(adata, key_added="leiden_res1_2", resolution=1.2)
 sc.tl.leiden(adata, key_added="leiden_res2", resolution=2)
-
+sc.tl.leiden(adata, key_added="leiden_res4", resolution=4)
 
 
 ##绘图1
 plot_path="hvg"+sys.argv[1]+"_cluster.png"
-sc.pl.umap( adata, color=["leiden_res0_2", "leiden_res0_6", "leiden_res1","leiden_res1_2","leiden_res2"], legend_loc="on data",save=plot_path)
+sc.pl.umap( adata, color=["leiden_res0_2", "leiden_res0_6", "leiden_res1","leiden_res1_2","leiden_res2","leiden_res4"], legend_loc="on data",save=plot_path)
 
 output_path="RData/hvg"+ sys.argv[1] +"_cluster.h5ad"
 adata.write(output_path)

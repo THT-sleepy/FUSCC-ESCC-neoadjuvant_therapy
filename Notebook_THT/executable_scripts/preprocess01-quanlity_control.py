@@ -271,7 +271,7 @@ adata.obs.outlier.value_counts()
 adata.obs["mt_outlier"] = (
     adata.obs["pct_counts_mt"] > 5
 )
-adata.obs.mt_outlier.value_counts()
+#adata.obs.mt_outlier.value_counts()
 
 
 adata.obs["ribo_outlier"] =  (
