@@ -129,6 +129,9 @@ cond_drop = cond_pbmc & cond_celltype
 # 步骤2：保留“非需删除”的细胞（~表示取反）
 adata_filtered = adata[~cond_drop, :].copy()
 
+#删除SZR_op_2279307
+adata_filtered = adata_filtered[~adata_filtered.obs['sample']=="SZR_op_2279307", :].copy()
+
 adata_filtered.write("RData/1128_final_escc121.h5ad")
 ```
 

@@ -29,7 +29,7 @@ Part 2 围绕T细胞的相关分析
 张泽民结肠癌(2024 cancer cell):
 * 1 肿瘤浸润耗竭T(去掉血液来源T亚群)与疗效的关系
 图1：左边umap右边变化中的umap(对应的markgene点图在前面展示过了)
-<img src="..\figures\张泽民结直肠癌Figure3AB.png">
+<img src="..\figures\张泽民结直肠癌Figure3AB.png"><br>
 图2：Tex(%CD8T)以及STARTRAC-expa指标与Tumor regression ratio的关系-线性回归图+箱线图
 <img src="..\figures\张泽民结肠癌Figure3C.png">
 <img src="..\figures\张泽民结肠癌S4B.png"><br>
