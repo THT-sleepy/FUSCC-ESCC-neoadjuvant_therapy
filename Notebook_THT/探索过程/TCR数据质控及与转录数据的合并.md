@@ -126,16 +126,26 @@ plt.close()
 
 ### 保存
 ```python
-adata_tcr.write("RData/TCR_merge_1211.h5ad")
+adata_tcr.write("RData/TCR_merge_1216.h5ad")
 ```
 
 ### 把转录组数据和TCR数据整合到一起
+### 要注意这里其实是错的(这样会导致TCR数据和转录组数据实际上对不上-A样本测到的T细胞的细胞id会匹配到B样本的相同细胞id上去)
+
+### 导出用于R语言分析的数据框
+```
+df.to_csv('output/df_1216.tsv', sep='\t', index=False)
+```
+
+
+
+
 ```python
 # Load the TCR data
-adata_tcr = sc.read("RData/TCR_merge_1211.h5ad")
+adata_tcr = sc.read("RData/TCR_merge_1216.h5ad")
 
 # Load the associated transcriptomics data
-adata_gex = sc.read("RData/1128_final_escc121.h5ad")
+adata_gex = sc.read("RData/1128_final_escc120.h5ad")
 
 mdata = mu.MuData({"gex": adata_gex, "airr": adata_tcr})
 ```
@@ -153,7 +163,7 @@ plt.savefig(
 )
 plt.close()
 ```
-确实是重合的，莫问题
+确实是重合的，莫问题,但有个不小的问题是不是T细胞也有很多测出来有TCR..
 <img src="..\figures\TCR_umap.png">
 
 ### 画几张scirpy示例的克隆分析图
@@ -276,18 +286,39 @@ plt.close()
 <img src="..\figures\clonal_abundance_samplesite.png">
 <img src="..\figures\clonal_abundance_patient.png">
 
-### 导出用于startrac分析的数据框
-mask = mdata.obs["airr:cc_aa_identity"].notna()
+### 导出用于R分析的数据框(包括注释,包括TCR,包括metadata)
+```python
+mask = mdata.obs["gex:minor_celltype"].notna()
 obs_filtered = mdata.obs[mask].copy()
 
-df_extracted = pd.DataFrame({
-    "Cell_Name": obs_filtered.index,  # Cell_Name 对应 obs 的索引
-    "clone.id": obs_filtered["airr:cc_aa_identity"],  # clone.id 对应 airr:cc_aa_identity
-    "patient": obs_filtered["gex:patient"],  # patient 对应 gex:patient
-    "loc": obs_filtered["gex:sample_site"],  # loc 对应 gex:sample_site
-    "majorCluster": obs_filtered["gex:minor_celltype"],  # majorCluster 对应 gex:minor_celltype
-    "sample" : obs_filtered["gex:sample"]
-})
+for col in ["gex:major_celltype", "gex:TILC_celltype", "gex:myeloid_celltype"]:
+    if col in obs_filtered.columns:
+        obs_filtered[col] = obs_filtered[col].astype(str)
+
+# 1. 生成middle_celltype并提取需要的列
+obs_filtered["gex:middle_celltype"] = obs_filtered["gex:major_celltype"].copy()
+obs_filtered.loc[obs_filtered["gex:major_celltype"] == "T&ILC cell", "gex:middle_celltype"] = obs_filtered["gex:TILC_celltype"]
+obs_filtered.loc[obs_filtered["gex:major_celltype"] == "Myeloid cell", "gex:middle_celltype"] = obs_filtered["gex:myeloid_celltype"]
+
+df = obs_filtered[['gex:major_celltype','gex:middle_celltype', 'gex:minor_celltype', 'gex:sample','airr:cc_aa_identity']].copy()
+df['major_celltype'] = df['gex:major_celltype'].copy()
+df['middle_celltype'] = df['gex:middle_celltype'].copy()
+df['minor_celltype'] = df['gex:minor_celltype'].copy()
+
+
+# 2. 添加细胞ID（行索引即为cell_id）
+df['cell_id'] = df.index
+
+# 3. 添加UMAP坐标（假设存储在obsm['X_umap']中）
+df[['umap1', 'umap2']] = mdata["gex"].obsm['X_umap']
+df['minor_umap1'] = obs_filtered['gex:minor_UMAP1']
+df['minor_umap2'] = obs_filtered['gex:minor_UMAP2']
+
+# 4. 处理anatomic_site：sample含pbmc则为blood，否则为tumor
+df['sample'] = df['gex:sample'].copy()
+df['anatomic_site'] = df['sample'].apply(lambda x: 'blood' if 'pbmc' in x.lower() else 'tumor')
+
+# 5. 处理treatment_stage：根据sample中的关键词判断
 def get_treatment_stage(sample):
     sample_lower = sample.lower()  # 统一转为小写，避免大小写问题
     if 'prec1' in sample_lower:
@@ -299,10 +330,47 @@ def get_treatment_stage(sample):
     else:
         return 'unknown'  # 处理未匹配到的情况
 
-df_extracted['treatment_stage'] = df_extracted['sample'].apply(get_treatment_stage)
+df['treatment_stage'] = df['sample'].apply(get_treatment_stage)
 
-df_extracted = df_extracted.reset_index(drop=True)
-df_extracted.to_csv("RData/df_Tclonotype_1211_.csv", index=False, encoding="utf-8")
+# 6. 处理patient：sample中以"_"分隔的第一项加最后一项
+df['patient'] = df['sample'].apply(lambda x: '_'.join([x.split('_')[0], x.split('_')[-1]]))
+# 有几个患者的住院号是不对的，要调整下
+#PDD_2284071应该是PDD_2284017
+#ZJM_2306458应该是ZJM_2306548
+#YLY_2282682应该是YLY_2286282
+replace_map = {
+    'PDD_2284071': 'PDD_2284017',
+    'ZJM_2306458': 'ZJM_2306548',
+    'YLY_2282682': 'YLY_2286282'
+}
+df['patient'] = df['patient'].replace(replace_map)
+df['patient_id'] = df['patient'].str.split('_').str[-1]
+
+# 7 添加Patient_Number
+unique_patients = df['patient'].unique()
+patient_id_map = {pat: f"P{str(i+1).zfill(2)}" for i, pat in enumerate(unique_patients)}
+df['patient_number'] = df['patient'].map(patient_id_map)
+
+# 8 添加治疗信息
+clin_df = pd.read_csv("input/clin_metadata.csv")
+clin_df['patient_id'] = clin_df['patient_id'].astype(str).str.strip()
+mpr_mapping = dict(zip(clin_df['patient_id'], clin_df['MPR']))
+pcr_mapping = dict(zip(clin_df['patient_id'], clin_df['pCR']))
+df['response_mpr'] = df['patient_id'].map(mpr_mapping)
+df['response_pcr'] = df['patient_id'].map(pcr_mapping)
+
+# 9 添加clone信息
+df["clone.id"] = df["airr:cc_aa_identity"].copy()
+
+
+# 10. 调整列顺序并命名
+df = df[['cell_id', 'umap1', 'umap2','minor_umap1','minor_umap2','major_celltype',
+        'middle_celltype','minor_celltype', 'anatomic_site', 'treatment_stage', 'patient','patient_id','patient_number','clone.id','response_mpr',
+        'response_pcr']]
+
+# 11. 保存为TSV文件
+df.to_csv('output/df_1216.tsv', sep='\t', index=False)
+```
 
 # 查看结果（前5行）
 print("提取的数据框前5行：")
