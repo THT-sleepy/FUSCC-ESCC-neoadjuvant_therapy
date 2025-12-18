@@ -92,7 +92,7 @@ import anndata as ad
 import pandas as pd
 import scanpy as sc
 
-adata = sc.read("RData/1128_final_escc121.h5ad")
+adata = sc.read("RData/1128_final_escc120.h5ad")
 
 for col in ["major_celltype", "TILC_celltype", "myeloid_celltype"]:
     if col in adata.obs.columns:
@@ -149,13 +149,20 @@ unique_patients = df['patient'].unique()
 patient_id_map = {pat: f"P{str(i+1).zfill(2)}" for i, pat in enumerate(unique_patients)}
 df['patient_number'] = df['patient'].map(patient_id_map)
 
+# 8 添加治疗信息
+clin_df = pd.read_csv("input/clin_metadata.csv")
+clin_df['patient_id'] = clin_df['patient_id'].astype(str).str.strip()
+mpr_mapping = dict(zip(clin_df['patient_id'], clin_df['MPR']))
+pcr_mapping = dict(zip(clin_df['patient_id'], clin_df['pCR']))
+df['response_mpr'] = df['patient_id'].map(mpr_mapping)
+df['response_pcr'] = df['patient_id'].map(pcr_mapping)
 
-# 8. 调整列顺序并命名
+# 9. 调整列顺序并命名
 df = df[['cell_id', 'umap1', 'umap2','minor_umap1','minor_umap2','major_celltype',
-        'middle_celltype','minor_celltype', 'anatomic_site', 'treatment_stage', 'patient','patient_id','patient_number']]
+        'middle_celltype','minor_celltype', 'anatomic_site', 'treatment_stage', 'patient','patient_id','patient_number','sample','response_mpr','response_pcr']]
 
-# 9. 保存为TSV文件
-df.to_csv('output/df_1128.tsv', sep='\t', index=False)
+# 10. 保存为TSV文件
+df.to_csv('output/df_1216.tsv', sep='\t', index=False)
 ```
 
 ## 除了绘制umap大类的绘图代码在biotrainee上面

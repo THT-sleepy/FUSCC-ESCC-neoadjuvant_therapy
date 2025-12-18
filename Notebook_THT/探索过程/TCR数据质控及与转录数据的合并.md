@@ -96,9 +96,9 @@ plt.close()
 
 ### 计算clonotype
 ```python
-ir.pp.ir_dist(adata_tcr, sequence="aa")
-ir.tl.define_clonotype_clusters(
-    adata_tcr, sequence="aa", receptor_arms="all", dual_ir="primary_only"
+ir.pp.ir_dist(adata_tcr,sequence="aa")
+ir.tl.define_clonotypes(
+    adata_tcr, receptor_arms="all", dual_ir="primary_only",
 )
 ```
 
@@ -126,19 +126,67 @@ plt.close()
 
 ### 保存
 ```python
+mdata=mu.MuData({"gex": adata_gex, "airr": adata_tcr})
 adata_tcr.write("RData/TCR_merge_1216.h5ad")
 ```
 
-### 把转录组数据和TCR数据整合到一起
-### 要注意这里其实是错的(这样会导致TCR数据和转录组数据实际上对不上-A样本测到的T细胞的细胞id会匹配到B样本的相同细胞id上去)
+
 
 ### 导出用于R语言分析的数据框
+#### clone信息数据框
+```python
+adata_tcr = sc.read("RData/TCR_merge_1216.h5ad")
+df=adata_tcr.obs[["sample",'clone_id','clone_id_size','chain_pairing']].copy()
+df['cell_id'] = df.index
+df.to_csv('output/df_cc_1216.tsv', sep='\t', index=False)
 ```
-df.to_csv('output/df_1216.tsv', sep='\t', index=False)
+#### CXCL13表达数据框
+```
+t_clusters = [
+    'c01_CD4_Tn_TCF7',
+    'c02_CD4_Tcm_S1PR1',
+    'c03_CD4_Tcm_ANXA1',
+    'c04_CD4_Tem_NR4A1',
+    'c05_CD4_Treg_FOXP3',
+    'c06_CD4_TOX',
+    'c07_CD8_Tem/Teff_TNFSF9',
+    'c08_CD8_Tem/Teff_HSPA1B',
+    'c09_CD8_Tem/Teff_GNLY',
+    'c10_CD8_Teff_GZMK',
+    'c11_CD8_Tex_CXCL13',
+    'c12_CD8_Temra_FGFBP2',
+    'c13_CD8_IL7R',
+    'c14_Tprf_MKI67',
+]
+target_gene = "CXCL13"
+output_path = "output/CXCL13_expression_t_clusters.csv"
+mask= adata_gex.obs["minor_celltype"].isin(t_clusters)
+adata_filtered= adata_gex[mask, :].copy()  # 筛选细胞（保留所有基因）
+if hasattr(adata_filtered.X, "toarray"):
+    cxcl13_expr = adata_filtered[:, target_gene].X.toarray().flatten()
+else:
+    cxcl13_expr = adata_filtered[:, target_gene].X.flatten()
+df_expr = pd.DataFrame({
+    "cell_id": adata_filtered.obs.index,  # 细胞索引转为cell_id列
+    "minor_celltype": adata_filtered.obs["minor_celltype"].values,  
+    f"{target_gene}_expression": cxcl13_expr  # 基因表达值列
+})
+# 处理可能的NaN值（如表达值为空）
+expr_col = f"{target_gene}_expression"
+df_expr[expr_col] = df_expr[expr_col].fillna(0.0)
+
+df_expr.to_csv(output_path,sep="\t",index=False,header=True,encoding="utf-8")
+
 ```
 
 
 
+### 把转录组数据和TCR数据整合到一起
+### 要注意这里其实是错的(这样会导致TCR数据和转录组数据实际上对不上-A样本测到的T细胞的细胞id会匹配到B样本的相同细胞id上去)
+### 但那些图其实是对的，因为图只反映了TCR数据
+
+
+# ！！！！！！！！！！！！！！！！！！！错误！！！！！！！！！！！！
 
 ```python
 # Load the TCR data
@@ -369,7 +417,7 @@ df = df[['cell_id', 'umap1', 'umap2','minor_umap1','minor_umap2','major_celltype
         'response_pcr']]
 
 # 11. 保存为TSV文件
-df.to_csv('output/df_1216.tsv', sep='\t', index=False)
+df.to_csv('output/错误df_1216.tsv', sep='\t', index=False)
 ```
 
 # 查看结果（前5行）
