@@ -1,4 +1,4 @@
-# Ttr-like细胞亚群的相关分析       (What)
+# tumorTtr-like细胞亚群的相关分析       (What)
 
 * Dec 18, 2025                                 (When)
 * liyi /data1/liyi/zhaoyue/FUSCC-ESCC-neoadjuvant_thrapy           (Where)
@@ -30,33 +30,10 @@ clone_map = dict(zip(df_clone_id["cell_id"], df_clone_id["clone.id"]))
 adata.obs["clone_id"] = adata.obs.index.map(clone_map)
 
 ### 整合Ttr
-df_Ttr = pd.read_csv("input/Ttr_cellids.csv", sep=",")
+df_Ttr = pd.read_csv("input/tumorTtr_cellids.csv", sep=",")
 ttr_map = dict(zip(df_Ttr["cell_id"], df_Ttr["Ttr"]))
 adata.obs["Ttr"] = adata.obs.index.map(ttr_map)
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

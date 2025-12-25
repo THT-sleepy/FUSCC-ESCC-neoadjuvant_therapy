@@ -132,7 +132,12 @@ adata_filtered = adata[~cond_drop, :].copy()
 #删除SZR_op_2279307
 adata_filtered = adata_filtered[~adata_filtered.obs['sample']=="SZR_op_2279307", :].copy()
 
-adata_filtered.write("RData/1128_final_escc121.h5ad")
+#修改c10的注释(从Teff修改为Tem/Teff)
+adata_filtered.obs['minor_celltype'] = adata_filtered.obs['minor_celltype'].replace(
+    'c10_CD8_Teff_GZMK',
+    'c10_CD8_Tem/Teff_GZMK'
+)
+adata_filtered.write("RData/1128_final_escc120.h5ad")
 ```
 
 ### 后面还把有一个基因数特别少的样本给去掉了 2279307_post_tumor
